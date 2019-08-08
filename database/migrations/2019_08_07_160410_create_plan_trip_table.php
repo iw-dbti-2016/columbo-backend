@@ -14,21 +14,22 @@ class CreatePlanTripTable extends Migration
     public function up()
     {
         Schema::create('plan_trip', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('trip_id')->unsigned();
-            $table->bigInteger('plan_id')->unsigned();
+            $table->bigInteger('plan_id')->unsigned()->index();
+            $table->bigInteger('trip_id')->unsigned()->index();
 
             $table->timestamps();
+
+            $table->foreign('plan_id')
+                    ->references('id')
+                    ->on('plans')
+                    ->onDelete('cascade');
 
             $table->foreign('trip_id')
                     ->references('id')
                     ->on('trips')
                     ->onDelete('cascade');
 
-            $table->foreign('plan_id')
-                    ->references('id')
-                    ->on('plans')
-                    ->onDelete('cascade');
+            $table->primary(['plan_id', 'trip_id']);
         });
     }
 

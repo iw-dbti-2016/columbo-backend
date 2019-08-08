@@ -14,12 +14,13 @@ class CreateUserUserTable extends Migration
     public function up()
     {
         Schema::create('user_user', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('user_1_id')->unsigned();
-            $table->bigInteger('user_2_id')->unsigned();
-            $table->boolean('confirmed')->default(false);
+            $table->bigInteger('user_1_id')->unsigned()->index();
+            $table->bigInteger('user_2_id')->unsigned()->index();
 
+            $table->boolean('confirmed')->default(false);
             $table->datetime('acceptance_date')->nullable();
+
+            $table->date('meeting_date')->nullable();
             $table->text('meeting_circumstance')->nullable();
 
             $table->timestamps();
@@ -33,6 +34,8 @@ class CreateUserUserTable extends Migration
                     ->references('id')
                     ->on('users')
                     ->onDelete('cascade');
+
+            $table->primary(['user_1_id', 'user_2_id']);
         });
     }
 

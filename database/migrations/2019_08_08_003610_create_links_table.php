@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDocumentsTable extends Migration
+class CreateLinksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,16 @@ class CreateDocumentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('documents', function (Blueprint $table) {
+        Schema::create('links', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('trip_id')->unsigned();
-            $table->string('document');
 
-            $table->boolean('public')->default(false);
+            $table->string('name')->nullable();
+            $table->string('url');
+
+            $table->morphs('linkable');
 
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreign('trip_id')
-                    ->references('id')
-                    ->on('trips')
-                    ->onDelete('cascade');
         });
     }
 
@@ -37,6 +33,6 @@ class CreateDocumentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('documents');
+        Schema::dropIfExists('links');
     }
 }

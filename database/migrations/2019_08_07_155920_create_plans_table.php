@@ -15,6 +15,17 @@ class CreatePlansTable extends Migration
     {
         Schema::create('plans', function (Blueprint $table) {
             $table->bigIncrements('id');
+
+            $table->date('date');
+            $table->text('program');
+
+            $table->float('driving_distance_km')->default(0.0);
+            $table->string('sleeping_location')->nullable();
+
+            $table->enum('status_sleep', ['TODO', 'IN PROGRESS', 'PENDING', 'DONE'])->default('TODO');
+            $table->enum('status_activities', ['TODO', 'IN PROGRESS', 'PENDING', 'DONE'])->default('TODO');
+
+            $table->softDeletes();
             $table->timestamps();
         });
     }

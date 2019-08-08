@@ -15,11 +15,12 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('trip_id')->unsigned();
-            $table->bigInteger('plan_id')->unsigned();
+            $table->bigInteger('trip_id')->unsigned()->index();
+            $table->bigInteger('plan_id')->unsigned()->nullable()->index();
 
             $table->string('title');
             $table->text('description')->nullable();
+            $table->datetime('published_at');
 
             $table->softDeletes();
             $table->timestamps();

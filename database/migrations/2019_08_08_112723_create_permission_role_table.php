@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePaymentUserTable extends Migration
+class CreatePermissionRoleTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,25 +13,23 @@ class CreatePaymentUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_user', function (Blueprint $table) {
-            $table->bigInteger('payment_id')->unsigned()->index();
-            $table->bigInteger('user_id')->unsigned()->index();
-
-            $table->float('personal_amount')->default(0.0);
+        Schema::create('permission_role', function (Blueprint $table) {
+            $table->bigInteger('permission_id')->unsigned()->index();
+            $table->bigInteger('role_id')->unsigned()->index();
 
             $table->timestamps();
 
-            $table->foreign('payment_id')
+            $table->foreign('permission_id')
                     ->references('id')
-                    ->on('payments')
+                    ->on('permissions')
                     ->onDelete('cascade');
 
-            $table->foreign('user_id')
+            $table->foreign('role_id')
                     ->references('id')
-                    ->on('users')
+                    ->on('roles')
                     ->onDelete('cascade');
 
-            $table->primary(['payment_id', 'user_id']);
+            $table->primary(['permission_id', 'role_id']);
         });
     }
 
@@ -42,6 +40,6 @@ class CreatePaymentUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payment_user');
+        Schema::dropIfExists('permission_role');
     }
 }

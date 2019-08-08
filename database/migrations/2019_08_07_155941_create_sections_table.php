@@ -15,9 +15,10 @@ class CreateSectionsTable extends Migration
     {
         Schema::create('sections', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('report_id')->unsigned();
+            $table->bigInteger('report_id')->unsigned()->index();
 
             $table->text('content')->nullable();
+            $table->datetime('written_at');
 
             $table->softDeletes();
             $table->timestamps();

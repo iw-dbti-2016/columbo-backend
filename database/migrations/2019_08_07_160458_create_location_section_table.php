@@ -14,9 +14,8 @@ class CreateLocationSectionTable extends Migration
     public function up()
     {
         Schema::create('location_section', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('location_id')->unsigned();
-            $table->bigInteger('section_id')->unsigned();
+            $table->bigInteger('location_id')->unsigned()->index();
+            $table->bigInteger('section_id')->unsigned()->index();
 
             $table->timestamps();
 
@@ -29,6 +28,8 @@ class CreateLocationSectionTable extends Migration
                     ->references('id')
                     ->on('sections')
                     ->onDelete('cascade');
+
+            $table->primary(['location_id', 'section_id']);
         });
     }
 

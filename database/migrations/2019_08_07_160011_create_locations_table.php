@@ -16,8 +16,11 @@ class CreateLocationsTable extends Migration
         Schema::create('locations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->point('coordinates');
+            $table->string('name')->nullable();
+            $table->text('info')->nullable();
             $table->string('image')->nullable();
 
+            $table->softDeletes();
             $table->timestamps();
         });
     }

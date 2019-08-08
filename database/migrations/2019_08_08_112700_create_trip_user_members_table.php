@@ -13,25 +13,34 @@ class CreateTripUserMembersTable extends Migration
      */
     public function up()
     {
-        Schema::create('trip_user_members', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('user_id')->unsigned();
-            $table->bigInteger('trip_id')->unsigned();
+        Schema::create('trip_user_role_members', function (Blueprint $table) {
+            $table->bigInteger('trip_id')->unsigned()->index();
+            $table->bigInteger('user_id')->unsigned()->index();
+            $table->bigInteger('role_id')->unsigned()->index();
 
-            $table->datetime('join_date')->nullable();
-            $table->datetime('leave_date')->nullable();
+            $table->boolean('owner')->default(false);
+
+            $table->date('join_date')->nullable();
+            $table->date('leave_date')->nullable();
 
             $table->timestamps();
+
+            $table->foreign('trip_id')
+                    ->references('id')
+                    ->on('trips')
+                    ->onDelete('cascade');
 
             $table->foreign('user_id')
                     ->references('id')
                     ->on('users')
                     ->onDelete('cascade');
 
-            $table->foreign('trip_id')
+            $table->foreign('role_id')
                     ->references('id')
-                    ->on('trips')
+                    ->on('roles')
                     ->onDelete('cascade');
+
+            $table->primary(['trip_id', 'user_id']);
         });
     }
 

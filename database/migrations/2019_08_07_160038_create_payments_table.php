@@ -15,13 +15,14 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('trip_id')->unsigned();
-            $table->bigInteger('section_id')->unsigned()->nullable();
+            $table->bigInteger('trip_id')->unsigned()->index();
+            $table->bigInteger('section_id')->unsigned()->nullable()->index();
 
-            $table->float('tax_amount')->default(0.0);
-            $table->float('tip')->default(0.0);
-            $table->float('amount');
+            $table->float('total_amount');                  // Amount with tax
+            $table->float('tax_percentage')->default(0.0);  // Tax percentage
+            $table->float('tip_amount')->default(0.0);      // Tip after tax
 
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('trip_id')

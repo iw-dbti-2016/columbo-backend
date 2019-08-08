@@ -14,9 +14,12 @@ class CreateLocationPlanTable extends Migration
     public function up()
     {
         Schema::create('location_plan', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('location_id')->unsigned();
-            $table->bigInteger('plan_id')->unsigned();
+            $table->bigInteger('location_id')->unsigned()->index();
+            $table->bigInteger('plan_id')->unsigned()->index();
+
+            $table->text('description')->nullable();
+            $table->time('time')->nullable();
+            $table->integer('duration_minutes')->default(60);
 
             $table->timestamps();
 
@@ -29,6 +32,8 @@ class CreateLocationPlanTable extends Migration
                     ->references('id')
                     ->on('plans')
                     ->onDelete('cascade');
+
+            $table->primary(['location_id', 'plan_id']);
         });
     }
 
