@@ -17,9 +17,10 @@ class CreateLocationPlanTable extends Migration
             $table->bigInteger('location_id')->unsigned()->index();
             $table->bigInteger('plan_id')->unsigned()->index();
 
+            /* DATA */
             $table->text('description')->nullable();
             $table->time('time')->nullable();
-            $table->integer('duration_minutes')->default(60);
+            $table->integer('duration_minutes')->nullable();
 
             $table->timestamps();
 

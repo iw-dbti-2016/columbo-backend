@@ -15,17 +15,23 @@ class CreateDocumentsTable extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('trip_id')->unsigned();
-            $table->string('document');
+            // Owner
+            $table->bigInteger('user_id')->unsigned()->index();
 
-            $table->boolean('public')->default(false);
+            /* DATA */
+            $table->string('name');
+            $table->string('document');     // Path to document on server
+            $table->morphs('documentable'); // Object to which document belongs
+
+            /* VISIBILITY */
+            $table->boolean('private')->default(true);
 
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('trip_id')
+            $table->foreign('user_id')
                     ->references('id')
-                    ->on('trips')
+                    ->on('users')
                     ->onDelete('cascade');
         });
     }

@@ -17,10 +17,15 @@ class CreateReportsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('trip_id')->unsigned()->index();
             $table->bigInteger('plan_id')->unsigned()->nullable()->index();
+            // Owner
+            $table->bigInteger('user_id')->unsigned()->index();
 
+            /* DATA */
             $table->string('title');
             $table->text('description')->nullable();
-            $table->datetime('published_at');
+
+            /* VISIBILITY */
+            $table->timestamp('published_at');
 
             $table->softDeletes();
             $table->timestamps();
@@ -34,6 +39,10 @@ class CreateReportsTable extends Migration
                     ->references('id')
                     ->on('plans')
                     ->onDelete('cascade');
+
+            $table->foreign('user_id')
+                    ->references('id')
+                    ->on('users');
         });
     }
 

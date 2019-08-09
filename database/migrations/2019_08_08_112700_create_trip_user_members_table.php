@@ -18,8 +18,7 @@ class CreateTripUserMembersTable extends Migration
             $table->bigInteger('user_id')->unsigned()->index();
             $table->bigInteger('role_id')->unsigned()->index();
 
-            $table->boolean('owner')->default(false);
-
+            /* DATA */
             $table->date('join_date')->nullable();
             $table->date('leave_date')->nullable();
 

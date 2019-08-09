@@ -17,9 +17,11 @@ class CreateUserUserTable extends Migration
             $table->bigInteger('user_1_id')->unsigned()->index();
             $table->bigInteger('user_2_id')->unsigned()->index();
 
+            /* ACCEPTANCE DATA */
             $table->boolean('confirmed')->default(false);
             $table->datetime('acceptance_date')->nullable();
 
+            /* DATA */
             $table->date('meeting_date')->nullable();
             $table->text('meeting_circumstance')->nullable();
 

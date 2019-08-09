@@ -16,11 +16,17 @@ class CreatePaymentsTable extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('trip_id')->unsigned()->index();
+            // section_id == null => payment for trip, not for specific section
             $table->bigInteger('section_id')->unsigned()->nullable()->index();
+            // Payer
+            $table->bigInteger('user_id')->unsigned()->index();
 
-            $table->float('total_amount');                  // Amount with tax
-            $table->float('tax_percentage')->default(0.0);  // Tax percentage
-            $table->float('tip_amount')->default(0.0);      // Tip after tax
+            /* DATA */
+            $table->datetime('date');
+            $table->integer('total_amount')->unsigned();            // Amount with tax
+            $table->string('currency', 4);
+            $table->float('tax_percentage')->default(0.0);          // Tax percentage? Need tax amount or not needed at all?
+            $table->integer('tip_amount')->unsigned()->default(0);  // Tip after tax
 
             $table->softDeletes();
             $table->timestamps();
@@ -33,7 +39,15 @@ class CreatePaymentsTable extends Migration
             $table->foreign('section_id')
                     ->references('id')
                     ->on('sections')
-                    ->onDelete('cascade');
+                    ->onDelete('set null');
+
+            $table->foreign('user_id')
+                    ->references('id')
+                    ->on('users');
+
+            $table->foreign('currency')
+                    ->references('id')
+                    ->on('currencies');
         });
     }
 

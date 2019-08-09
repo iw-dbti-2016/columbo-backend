@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSectionsTable extends Migration
+class CreateActionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,29 +13,21 @@ class CreateSectionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sections', function (Blueprint $table) {
+        Schema::create('actions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('report_id')->unsigned()->index();
-            // Owner
+            // User executing action
             $table->bigInteger('user_id')->unsigned()->index();
 
             /* DATA */
-            $table->text('content')->nullable();
+            $table->enum('action', ['CREATE', 'UPDATE', 'DELETE', 'RESTORE']);
+            $table->morphs('actionable'); // Object to which action was applied
 
-            /* VISIBILITY */
-            $table->timestamp('published_at');
-
-            $table->softDeletes();
             $table->timestamps();
-
-            $table->foreign('report_id')
-                    ->references('id')
-                    ->on('reports')
-                    ->onDelete('cascade');
 
             $table->foreign('user_id')
                     ->references('id')
-                    ->on('users');
+                    ->on('users')
+                    ->onDelete('cascade');
         });
     }
 
@@ -46,6 +38,6 @@ class CreateSectionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sections');
+        Schema::dropIfExists('actions');
     }
 }

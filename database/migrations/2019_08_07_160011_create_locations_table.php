@@ -15,13 +15,18 @@ class CreateLocationsTable extends Migration
     {
         Schema::create('locations', function (Blueprint $table) {
             $table->bigIncrements('id');
+
+            /* DATA */
             $table->point('coordinates');
             $table->string('name')->nullable();
             $table->text('info')->nullable();
-            $table->string('image')->nullable();
+            $table->string('image')->nullable();    // Path to image on server
 
             $table->softDeletes();
             $table->timestamps();
+
+            // Spatial index is impossible on the currently targeted server
+            //$table->spatialIndex('coordinates');
         });
     }
 

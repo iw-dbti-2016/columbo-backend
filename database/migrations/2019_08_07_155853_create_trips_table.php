@@ -15,17 +15,26 @@ class CreateTripsTable extends Migration
     {
         Schema::create('trips', function (Blueprint $table) {
             $table->bigIncrements('id');
+            // Owner
+            $table->bigInteger('user_id')->unsigned()->index();
+
+            /* DATA */
             $table->string('name');
             $table->text('description')->nullable();
-
             $table->date('start_date');
             $table->date('end_date');
 
-            $table->boolean('public')->default(true);
-            $table->datetime('publish_at')->nullable();
+            /* VISIBILITY */
+            $table->boolean('private')->default(false);
+            $table->timestamp('published_at');
 
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('user_id')
+                    ->references('id')
+                    ->on('users')
+                    ->onDelete('cascade');
         });
     }
 

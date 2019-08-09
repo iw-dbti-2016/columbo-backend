@@ -17,7 +17,9 @@ class CreatePaymentUserTable extends Migration
             $table->bigInteger('payment_id')->unsigned()->index();
             $table->bigInteger('user_id')->unsigned()->index();
 
-            $table->float('personal_amount')->default(0.0);
+            /* DATA */
+            $table->integer('personal_amount')->unsigned()->default(0);
+            $table->boolean('payed')->default(false);
 
             $table->timestamps();
 

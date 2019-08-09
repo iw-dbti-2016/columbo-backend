@@ -16,10 +16,10 @@ class CreateLinksTable extends Migration
         Schema::create('links', function (Blueprint $table) {
             $table->bigIncrements('id');
 
+            /* DATA */
             $table->string('name')->nullable();
             $table->string('url');
-
-            $table->morphs('linkable');
+            $table->morphs('linkable'); // Object to which link belongs
 
             $table->softDeletes();
             $table->timestamps();
