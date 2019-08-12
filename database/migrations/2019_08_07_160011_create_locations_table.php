@@ -18,9 +18,13 @@ class CreateLocationsTable extends Migration
 
             /* DATA */
             $table->point('coordinates');
-            $table->string('name')->nullable();
+            $table->string('name', 100)->nullable();
             $table->text('info')->nullable();
-            $table->string('image')->nullable();    // Path to image on server
+            $table->string('image', 100)->nullable();    // Path to image on server
+
+            /* VISIBILITY */
+            $table->enum('visibility', ['public', 'hidden', 'private'])->index();
+            $table->timestamp('published_at');
 
             $table->softDeletes();
             $table->timestamps();

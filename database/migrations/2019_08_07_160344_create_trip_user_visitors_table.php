@@ -21,6 +21,9 @@ class CreateTripUserVisitorsTable extends Migration
             $table->date('visit_start_date');
             $table->date('visit_end_date');
 
+            /* VISIBILITY */
+            $table->enum('visibility', ['public', 'hidden', 'private'])->index();
+
             $table->timestamps();
 
             $table->foreign('trip_id')

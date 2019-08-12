@@ -19,12 +19,13 @@ class CreateDocumentsTable extends Migration
             $table->bigInteger('user_id')->unsigned()->index();
 
             /* DATA */
-            $table->string('name');
-            $table->string('document');     // Path to document on server
+            $table->string('name', 100);
+            $table->string('document', 100);     // Path to document on server
             $table->morphs('documentable'); // Object to which document belongs
 
             /* VISIBILITY */
-            $table->boolean('private')->default(true);
+            $table->enum('visibility', ['public', 'hidden', 'private'])->index();
+            $table->timestamp('published_at');
 
             $table->softDeletes();
             $table->timestamps();

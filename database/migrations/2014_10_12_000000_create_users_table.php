@@ -24,14 +24,14 @@ class CreateUsersTable extends Migration
 
             /* OPTIONAL DATA */
             $table->string('telephone', 40)->nullable();
-            $table->string('image')->nullable();
+            $table->string('image', 100)->nullable();
             $table->point('home_location')->nullable();
             $table->date('birth_date')->nullable();
             $table->text('description')->nullable();
 
             /* APPLICATION-RELATED DATA */
             $table->string('language', 10);
-            $table->string('currency_preference')->nullable();
+            $table->string('currency_preference', 4);
 
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
@@ -42,8 +42,7 @@ class CreateUsersTable extends Migration
 
             $table->foreign('currency_preference')
                     ->references('id')
-                    ->on('currencies')
-                    ->onDelete('set null');
+                    ->on('currencies');
 
             // Spatial index is impossible on the currently targeted server
             //$table->spatialIndex('home_location');

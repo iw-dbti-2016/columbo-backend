@@ -17,9 +17,13 @@ class CreateLinksTable extends Migration
             $table->bigIncrements('id');
 
             /* DATA */
-            $table->string('name')->nullable();
+            $table->string('name', 100)->nullable();
             $table->string('url');
             $table->morphs('linkable'); // Object to which link belongs
+
+            /* VISISBILITY */
+            $table->enum('visibility', ['public', 'hidden', 'private'])->index();
+            $table->timestamp('published_at');
 
             $table->softDeletes();
             $table->timestamps();

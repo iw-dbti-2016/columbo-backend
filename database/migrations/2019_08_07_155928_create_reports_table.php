@@ -21,10 +21,12 @@ class CreateReportsTable extends Migration
             $table->bigInteger('user_id')->unsigned()->index();
 
             /* DATA */
-            $table->string('title');
+            $table->string('title', 100);
+            $table->date('date')->nullable();
             $table->text('description')->nullable();
 
             /* VISIBILITY */
+            $table->enum('visibility', ['public', 'hidden', 'private'])->index();
             $table->timestamp('published_at');
 
             $table->softDeletes();

@@ -19,7 +19,7 @@ class CreateActionsTable extends Migration
             $table->bigInteger('user_id')->unsigned()->index();
 
             /* DATA */
-            $table->enum('action', ['CREATE', 'UPDATE', 'DELETE', 'RESTORE']);
+            $table->enum('action', ['CREATE', 'UPDATE', 'DELETE', 'RESTORE'])->index();
             $table->morphs('actionable'); // Object to which action was applied
 
             $table->timestamps();

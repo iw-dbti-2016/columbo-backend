@@ -17,8 +17,8 @@ class CreateRolesTable extends Migration
             $table->bigIncrements('id');
 
             /* DATA */
-            $table->string('name')->unique();   // Name used in application
-            $table->string('label');            // Visual label for clients
+            $table->string('name', 100)->unique();   // Name used in application
+            $table->string('label', 100);            // Visual label for clients
             $table->text('description')->nullable();
 
             $table->timestamps();

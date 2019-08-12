@@ -19,13 +19,14 @@ class CreateTripsTable extends Migration
             $table->bigInteger('user_id')->unsigned()->index();
 
             /* DATA */
-            $table->string('name');
+            $table->string('name', 100);
+            $table->string('synopsis', 100)->nullable();
             $table->text('description')->nullable();
             $table->date('start_date');
             $table->date('end_date');
 
             /* VISIBILITY */
-            $table->boolean('private')->default(false);
+            $table->enum('visibility', ['public', 'hidden', 'private'])->index();
             $table->timestamp('published_at');
 
             $table->softDeletes();

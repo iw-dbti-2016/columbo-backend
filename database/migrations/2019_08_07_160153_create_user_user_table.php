@@ -19,7 +19,7 @@ class CreateUserUserTable extends Migration
 
             /* ACCEPTANCE DATA */
             $table->boolean('confirmed')->default(false);
-            $table->datetime('acceptance_date')->nullable();
+            $table->timestamp('acceptance_date')->nullable();
 
             /* DATA */
             $table->date('meeting_date')->nullable();

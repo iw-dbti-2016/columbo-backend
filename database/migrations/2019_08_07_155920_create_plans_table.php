@@ -22,13 +22,17 @@ class CreatePlansTable extends Migration
 
             $table->float('driving_distance_km')->nullable();
             $table->boolean('wifi_available')->default(true);
-            $table->string('sleeping_location')->nullable();
+            $table->string('sleeping_location', 100)->nullable();
             $table->integer('estimated_price')->unsigned()->nullable();
             $table->string('currency', 4)->nullable();
 
             /* STATUS */
             $table->enum('status_sleep', ['TODO', 'IN PROGRESS', 'PENDING', 'DONE'])->nullable();
             $table->enum('status_activities', ['TODO', 'IN PROGRESS', 'PENDING', 'DONE'])->nullable();
+
+            /* VISIBILITY */
+            $table->enum('visibility', ['public', 'hidden', 'private'])->index();
+            $table->timestamp('published_at');
 
             $table->softDeletes();
             $table->timestamps();

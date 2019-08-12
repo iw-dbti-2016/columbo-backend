@@ -22,6 +22,8 @@ class CreatePaymentsTable extends Migration
             $table->bigInteger('user_id')->unsigned()->index();
 
             /* DATA */
+            $table->string('name', 100)->nullable();
+            $table->string('benificiary', 100);
             $table->datetime('date');
             $table->integer('total_amount')->unsigned();            // Amount with tax
             $table->string('currency', 4);
