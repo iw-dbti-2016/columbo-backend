@@ -24,7 +24,7 @@ class CreateDocumentsTable extends Migration
             $table->morphs('documentable'); // Object to which document belongs
 
             /* VISIBILITY */
-            $table->enum('visibility', ['public', 'hidden', 'visitors', 'members', 'private'])->index();
+            $table->tinyInteger('visibility')->unsigned()->index();
             $table->timestamp('published_at');
 
             $table->softDeletes();

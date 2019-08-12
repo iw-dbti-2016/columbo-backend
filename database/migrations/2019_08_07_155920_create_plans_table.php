@@ -27,11 +27,11 @@ class CreatePlansTable extends Migration
             $table->string('currency', 4)->nullable();
 
             /* STATUS */
-            $table->enum('status_sleep', ['TODO', 'IN PROGRESS', 'PENDING', 'DONE'])->nullable();
-            $table->enum('status_activities', ['TODO', 'IN PROGRESS', 'PENDING', 'DONE'])->nullable();
+            $table->tinyInteger('status_sleep')->unsigned()->nullable(); // TODO, IN PROGRESS, PENDING, DONE
+            $table->tinyInteger('status_activities')->unsigned()->nullable(); // TODO, IN PROGRESS, PENDING, DONE
 
             /* VISIBILITY */
-            $table->enum('visibility', ['public', 'hidden', 'visitors', 'members', 'private'])->index();
+            $table->tinyInteger('visibility')->unsigned()->index(); // public,hidden,vistors,members,private
             $table->timestamp('published_at');
 
             $table->softDeletes();
