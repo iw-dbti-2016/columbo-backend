@@ -22,7 +22,7 @@ class CreateLinksTable extends Migration
             $table->morphs('linkable'); // Object to which link belongs
 
             /* VISISBILITY */
-            $table->enum('visibility', ['public', 'hidden', 'private'])->index();
+            $table->enum('visibility', ['public', 'hidden', 'visitors', 'members', 'private'])->index();
             $table->timestamp('published_at');
 
             $table->softDeletes();

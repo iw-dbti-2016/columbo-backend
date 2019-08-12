@@ -31,7 +31,7 @@ class CreatePlansTable extends Migration
             $table->enum('status_activities', ['TODO', 'IN PROGRESS', 'PENDING', 'DONE'])->nullable();
 
             /* VISIBILITY */
-            $table->enum('visibility', ['public', 'hidden', 'private'])->index();
+            $table->enum('visibility', ['public', 'hidden', 'visitors', 'members', 'private'])->index();
             $table->timestamp('published_at');
 
             $table->softDeletes();

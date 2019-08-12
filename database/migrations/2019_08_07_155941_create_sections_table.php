@@ -23,7 +23,7 @@ class CreateSectionsTable extends Migration
             $table->text('content')->nullable();
 
             /* VISIBILITY */
-            $table->enum('visibility', ['public', 'hidden', 'private'])->index();
+            $table->enum('visibility', ['public', 'hidden', 'visitors', 'members', 'private'])->index();
             $table->timestamp('published_at');
 
             $table->softDeletes();

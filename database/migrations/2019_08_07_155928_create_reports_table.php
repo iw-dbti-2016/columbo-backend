@@ -26,7 +26,7 @@ class CreateReportsTable extends Migration
             $table->text('description')->nullable();
 
             /* VISIBILITY */
-            $table->enum('visibility', ['public', 'hidden', 'private'])->index();
+            $table->enum('visibility', ['public', 'hidden', 'visitors', 'members', 'private'])->index();
             $table->timestamp('published_at');
 
             $table->softDeletes();
