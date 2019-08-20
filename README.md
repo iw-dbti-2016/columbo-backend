@@ -52,14 +52,20 @@ The requirements to run this back-end are the following (they mostly follow from
 # Setup
 
 * Clone this repo onto you local machine and cd into it's directory.
-* Run `Composer install`
-* Run `npm install`
 * Create a `.env` file in the root directory and configure the required keys for this application (pusher, redis queue, mysql credentials). The `.env.example` can be used as an example to fill in the required keys.
 * [Optionally] For testing add a `.env.testing` with the required keys. Preferably create a new database for testing, because the `RefreshDatabase` trait is used in the PHPUnit tests.
+* Run `Composer install`
+* Run `npm install`
+* Run `php artisan key:generate` to create a unique key for the application
+* Run `php artisan migrate`
 * [tbd] setup passport?
 * [tbd] insert client grant?
 * [tbd] setup jwt?
 * [Optionally] Set up telescope by running `php artisan telescope:install`.
+* Run `npm run dev`
+* Run `php artisan serve`
+* Go to the browser, this application is now live on you machine.
+* [Optionally] You can run `npm run watch` when making changes to the resource-files (js/css).
 
 # Functionalities
 
