@@ -31,7 +31,7 @@ class CreateUsersTable extends Migration
 
             /* APPLICATION-RELATED DATA */
             $table->string('language', 10);
-            $table->string('currency_preference', 4);
+            $table->string('currency_preference', 4)->nullable();
 
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
