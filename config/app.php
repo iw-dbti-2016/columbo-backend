@@ -173,6 +173,7 @@ return [
         TravelCompanion\Providers\AuthServiceProvider::class,
         // TravelCompanion\Providers\BroadcastServiceProvider::class,
         TravelCompanion\Providers\EventServiceProvider::class,
+        TravelCompanion\Providers\TelescopeServiceProvider::class,
         TravelCompanion\Providers\RouteServiceProvider::class,
 
     ],

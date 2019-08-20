@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22a53f32c9e852c2b34357c207f38935",
+    "content-hash": "c6c9c1282ea0e507c350aa8ee819d2a2",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -1242,6 +1242,48 @@
                 "geospatial"
             ],
             "time": "2015-09-27T15:35:21+00:00"
+        },
+        {
+            "name": "laravel-frontend-presets/tailwindcss",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-frontend-presets/tailwindcss.git",
+                "reference": "1f388791e60ca35b395db3bc9cea10bdcc890ab1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-frontend-presets/tailwindcss/zipball/1f388791e60ca35b395db3bc9cea10bdcc890ab1",
+                "reference": "1f388791e60ca35b395db3bc9cea10bdcc890ab1",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^5.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LaravelFrontendPresets\\TailwindCssPreset\\TailwindCssPresetServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LaravelFrontendPresets\\TailwindCssPreset\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Laravel frontend preset for Tailwind CSS",
+            "keywords": [
+                "laravel",
+                "preset",
+                "tailwindcss"
+            ],
+            "time": "2019-08-14T23:48:28+00:00"
         },
         {
             "name": "laravel/framework",
