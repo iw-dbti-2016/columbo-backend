@@ -37,7 +37,7 @@ class TripTest extends TestCase
         $trip->save();
 
         $this->assertDatabaseHas('trips', ['user_id' => $user->id]);
-        $this->assertEquals($user->tripsOwner()->first()->id, $user->id);
+        $this->assertCount(1, $user->tripsOwner()->get());
     }
 
     /** @test */

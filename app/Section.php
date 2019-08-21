@@ -3,8 +3,10 @@
 namespace TravelCompanion;
 
 use Illuminate\Database\Eloquent\Model;
+use TravelCompanion\Action;
 use TravelCompanion\Location;
 use TravelCompanion\Report;
+use TravelCompanion\Trip;
 use TravelCompanion\User;
 
 class Section extends Model
@@ -22,5 +24,10 @@ class Section extends Model
     public function locations()
     {
     	return $this->belongsToMany(Location::class);
+    }
+
+    public function actions()
+    {
+        return $this->morphMany(Action::class, 'actionable');
     }
 }

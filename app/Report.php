@@ -3,6 +3,7 @@
 namespace TravelCompanion;
 
 use Illuminate\Database\Eloquent\Model;
+use TravelCompanion\Action;
 use TravelCompanion\Section;
 use TravelCompanion\Trip;
 use TravelCompanion\User;
@@ -22,5 +23,10 @@ class Report extends Model
     public function sections()
     {
     	return $this->hasMany(Section::class);
+    }
+
+    public function actions()
+    {
+        return $this->morphMany(Action::class, 'actionable');
     }
 }
