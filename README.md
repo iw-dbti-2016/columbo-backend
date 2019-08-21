@@ -19,23 +19,25 @@ Front-end will use [Tailwind CSS](https://tailwindcss.com/) and (probably) [Vue.
 
 We plan to use following services at some point:
 
-* [OpenStreetMap](https://www.openstreetmap.org/)
-
+* [OpenStreetMap](https://www.openstreetmap.org/)\
 	For showing maps in the reports.
-* [Pusher](https://pusher.com/)
-
+* [Pusher](https://pusher.com/)\
 	For pushing messages to clients and to the mobile app.
-* [Open Exchange Rates](https://openexchangerates.org/)
-
+* [Open Exchange Rates](https://openexchangerates.org/)\
 	To retreive the exchange rates for price conversion when payments are implemented and an overview of the cost must be generated.
+* Probably [Let's Encrypt](https://letsencrypt.org/)\
+	For SSL-certificates.
+* We are looking into [DigitalOcean](https://www.digitalocean.com/)\
+	For hosting
+* We are looking into [Cloudflare](https://www.cloudflare.com/)\
+	For DDoS Protection & Caching
 * To be continued...
 
 # Requirements
 
 The requirements to run this back-end are the following (they mostly follow from the Laravel-requirements):
 
-* PHP >= 7.1.3
-
+* PHP >= 7.1.3\
 	With following extensions (from the [Laravel Docs page](https://laravel.com/docs/5.8)):
 	* BCMath PHP Extension
 	* Ctype PHP Extension
@@ -45,12 +47,11 @@ The requirements to run this back-end are the following (they mostly follow from
 	* PDO PHP Extension
 	* Tokenizer PHP Extension
 	* XML PHP Extension
-* MySQL >= 5.6
-
+* MySQL >= 5.6\
 	With InnoDB 5.6.43 or higher. Starting at MySQL 5.7.4 InnoDB supports spatial indexes, which is something we'll definitely look into during development.
 * Redis, version t.b.d. chances are very high that redis will be used though.
-* Composer
-* npm
+* Composer (v1.9.* preferred)
+* npm (v6.* should work)
 
 # Setup
 
@@ -80,16 +81,15 @@ Following are the steps for running the tests:
 
 # Functionalities
 
-Updated on: 20/08/2019
+Updated on: 21/08/2019
 
-The core functionality will be written first. This includes the authentication (which is included in Laravel + laravel passport/a JWT package), the trips, reports, sections and locations.
+The core functionality will be written first. This includes the authentication (which is included in Laravel + JWT-auth), the trips, reports, sections, locations and actions.
 
 Following functionalities are currently planned to be added in the future, they will be added after the full implementation of the core functionalities. The database migrations for these items are already available in the database-folder, they have been added in the initial design in order to allow for an overview of the full application (listed in random order):
 
 * Payments
 * Planning
 * Documents
-* Actions
 * Links
 * Roles & Permissions
 * Friends
