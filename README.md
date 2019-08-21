@@ -13,12 +13,15 @@ This document will cover following items:
 
 The TravelCompanion back-end is implemented using the PHP-framework [Laravel](https://www.laravel.com/).
 
-Either Laravel Passport or JWT will be used for authentication over the API. Selection of which will be implemented is currently happening. Considering there is only a 1st party app, JWT could be used. Though because of possible extension to 3rd party applications later (unlikely though) and (mainly) because of the easy of consuming our own API for the SPA front-end through Vue and Axios, Passport might be a better solution.
+JWT will be used for authentication over the API. Considering there is only a first-party app, JWT seems a good option. The package [JWT-auth](https://github.com/tymondesigns/jwt-auth) is used. In the Setup, the generation of a `JWT_SECRET`-key is included.
 
-Front-end will (propably) use [Tailwind CSS](https://tailwindcss.com/) and [Vue.js](https://vuejs.org/). The front-end communicates with the back-end via the back-end api, which is also used by the Android application you can find [here](https://github.com/iw-dbti-2016/travel-companion-app).
+Front-end will use [Tailwind CSS](https://tailwindcss.com/) and (probably) [Vue.js](https://vuejs.org/). The front-end communicates with the back-end via the back-end api, which is also used by the Android application you can find [here](https://github.com/iw-dbti-2016/travel-companion-app). Both will use the JWT-authentication. Tokens will be stored in the secure storage on android. In Vue, we are currently looking into Vue's JWT options (external packages).
 
-We plan to use following services:
+We plan to use following services at some point:
 
+* [OpenStreetMap](https://www.openstreetmap.org/)
+
+	For showing maps in the reports.
 * [Pusher](https://pusher.com/)
 
 	For pushing messages to clients and to the mobile app.
@@ -57,15 +60,16 @@ The requirements to run this back-end are the following (they mostly follow from
 * Run `Composer install`
 * Run `npm install`
 * Run `php artisan key:generate` to create a unique key for the application
+* Run `php artisan storage:link`
 * Run `php artisan migrate`
-* [tbd] setup passport?
-* [tbd] insert client grant?
-* [tbd] setup jwt?
+* Run `php artisan jwt:generate` to generate a `JWT_SECRET` in your `.env`.
 * [Optionally] Set up telescope by running `php artisan telescope:install`.
 * Run `npm run dev`
 * Run `php artisan serve`
 * Go to the browser, this application is now live on you machine.
 * [Optionally] You can run `npm run watch` when making changes to the resource-files (js/css).
+
+For a production environment one would obviously run `npm run production`. Note that Laravel mix automatically adds versioning to the resource-files and uses purgeCSS to decrease the final css-file even further! Autoprefixer is always used, also in development. Thus no need to worry about this.
 
 # Functionalities
 

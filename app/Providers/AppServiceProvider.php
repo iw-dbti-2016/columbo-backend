@@ -38,9 +38,5 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(\Parsedown::class);
-
-        // Passport::routes(function($router) {
-        //     $router->forAccessTokens();
-        // });
     }
 }

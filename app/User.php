@@ -6,17 +6,17 @@ use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
+use TravelCompanion\Action;
 use TravelCompanion\Currency;
 use TravelCompanion\Report;
 use TravelCompanion\Section;
 use TravelCompanion\Trip;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
     use SpatialTrait;
-    use HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -49,6 +49,26 @@ class User extends Authenticatable
         'home_location',
     ];
 
+    /**
+     * Get the ientifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
     public function currency()
     {
         return $this->belongsTo(Currency::class, 'currency_preference');
@@ -72,5 +92,10 @@ class User extends Authenticatable
     public function tripsMember()
     {
         return $this->belongsToMany(Trip::class, 'trip_user_role_members');
+    }
+
+    public function actions()
+    {
+        return $this->morphMany(Action::class, 'actionable');
     }
 }
