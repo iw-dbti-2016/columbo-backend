@@ -54,22 +54,29 @@ The requirements to run this back-end are the following (they mostly follow from
 
 # Setup
 
+Following are the steps for the project-setup (all commands are run from the root directory):
+
 * Clone this repo onto you local machine and cd into it's directory.
 * Create a `.env` file in the root directory and configure the required keys for this application (pusher, redis queue, mysql credentials). The `.env.example` can be used as an example to fill in the required keys.
-* [Optionally] For testing add a `.env.testing` with the required keys. Preferably create a new database for testing, because the `RefreshDatabase` trait is used in the PHPUnit tests.
+* [Optionally] For testing add a `.env.testing` with the required keys. Preferably create a new database for testing, because the `RefreshDatabase` trait is used in the PHPUnit tests. More on tests below.
 * Run `Composer install`
 * Run `npm install`
 * Run `php artisan key:generate` to create a unique key for the application
 * Run `php artisan storage:link`
 * Run `php artisan migrate`
-* Run `php artisan jwt:generate` to generate a `JWT_SECRET` in your `.env`.
-* [Optionally] Set up telescope by running `php artisan telescope:install`.
+* Run `php artisan jwt:secret` to generate a `JWT_SECRET` in your `.env` (confirm with `yes` when asked to invalidate tokens and override secret key).
+* [Unnecessary] Set up telescope by running `php artisan telescope:install`.
 * Run `npm run dev`
 * Run `php artisan serve`
 * Go to the browser, this application is now live on you machine.
 * [Optionally] You can run `npm run watch` when making changes to the resource-files (js/css).
 
 For a production environment one would obviously run `npm run production`. Note that Laravel mix automatically adds versioning to the resource-files and uses purgeCSS to decrease the final css-file even further! Autoprefixer is always used, also in development. Thus no need to worry about this.
+
+Following are the steps for running the tests:
+
+* Make sure you have a `.env.testing`-file in the root directory (next to the `.env`-file). This file can be identical to `.env` with the distinction that there should be a different database for running the tests. Our PHPUnit-tests use the `RefreshDatabase` trait extensively. This will refresh the database after each test. Refreshing the application database is not desirable, hence the seperate database.
+* From the root directory, run `./vendor/phpunit/phpunit/phpunit`. This will run all tests. To filter to specific tests or files, use the `--filter` option.
 
 # Functionalities
 
