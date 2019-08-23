@@ -16,10 +16,10 @@
                 @csrf
 
                 <div>
-                    <label for="email">{{ __('Username') }}</label>
+                    <label for="email">{{ __('Email') }}</label>
 
                     <div>
-                        <input class="focus:shadow mt-1 outline-none px-4 py-3 rounded-lg w-full" id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                        <input class="shadow focus:shadow-lg mt-1 outline-none px-4 py-3 rounded-lg w-full" id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
 
                         @error('email')
                             <span class="text-red-600" role="alert">{{ $message }}</span>
@@ -31,7 +31,7 @@
                     <label for="password">{{ __('Password') }}</label>
 
                     <div>
-                        <input class="focus:shadow mt-1 outline-none px-4 py-3 rounded-lg w-full" id="password" type="password" name="password" required autocomplete="current-password">
+                        <input class="shadow focus:shadow-lg mt-1 outline-none px-4 py-3 rounded-lg w-full" id="password" type="password" name="password" required autocomplete="current-password">
 
                         @error('password')
                             <span class="text-red-600" role="alert">{{ $message }}</span>
@@ -48,7 +48,7 @@
                 </div>
 
                 <div>
-                    <button class="block w-full mt-2 bg-blue-600 hover:bg-blue-500 focus:bg-blue-700 focus:outline-none text-white px-4 py-3 rounded-lg uppercase text-sm font-semibold tracking-wider" type="submit">
+                    <button class="shadow block w-full mt-2 bg-blue-600 hover:bg-blue-500 focus:bg-blue-700 focus:outline-none text-white px-4 py-3 rounded-lg uppercase text-sm font-semibold tracking-wider" type="submit">
                         {{ __('Login') }}
                     </button>
 
