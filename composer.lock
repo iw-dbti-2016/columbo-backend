@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eda70b546ea163a68c75d6a2f4679fd0",
+    "content-hash": "c82fb0db4f09f6882343a322fda02507",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -753,36 +753,38 @@
         },
         {
             "name": "grimzy/laravel-mysql-spatial",
-            "version": "1.1.4",
+            "version": "2.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/grimzy/laravel-mysql-spatial.git",
-                "reference": "bb0836afd67a67369cfbe7908820aaac85ab0378"
+                "reference": "f124c2327c653880a17f693d059170fbcef404b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/grimzy/laravel-mysql-spatial/zipball/bb0836afd67a67369cfbe7908820aaac85ab0378",
-                "reference": "bb0836afd67a67369cfbe7908820aaac85ab0378",
+                "url": "https://api.github.com/repos/grimzy/laravel-mysql-spatial/zipball/f124c2327c653880a17f693d059170fbcef404b9",
+                "reference": "f124c2327c653880a17f693d059170fbcef404b9",
                 "shasum": ""
             },
             "require": {
+                "ext-json": "*",
+                "ext-pdo": "*",
                 "geo-io/wkb-parser": "^1.0",
                 "illuminate/database": "^5.2",
                 "jmikola/geojson": "^1.0",
-                "php": ">=5.5.9"
+                "php": ">=5.5"
             },
             "require-dev": {
-                "codeclimate/php-test-reporter": "dev-master",
                 "doctrine/dbal": "^2.5",
                 "laravel/browser-kit-testing": "^2.0",
                 "laravel/laravel": "^5.2",
                 "mockery/mockery": "^0.9.9",
+                "php-coveralls/php-coveralls": "^2.0",
                 "phpunit/phpunit": "~4.8||~5.7"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-mysql-5.6": "1.0.x-dev"
+                    "dev-master": "2.0.x-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -806,7 +808,7 @@
                 }
             ],
             "description": "MySQL spatial data types extension for Laravel.",
-            "time": "2019-02-05T05:09:18+00:00"
+            "time": "2019-03-04T04:39:59+00:00"
         },
         {
             "name": "jakub-onderka/php-console-color",

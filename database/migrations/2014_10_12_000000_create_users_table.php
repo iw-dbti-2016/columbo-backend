@@ -25,12 +25,12 @@ class CreateUsersTable extends Migration
             /* OPTIONAL DATA */
             $table->string('telephone', 40)->nullable();
             $table->string('image', 100)->nullable();
-            $table->point('home_location')->nullable();
+            $table->point('home_location'); // NOT nullable for possible spatial index
             $table->date('birth_date')->nullable();
             $table->text('description')->nullable();
 
             /* APPLICATION-RELATED DATA */
-            $table->string('language', 10);
+            $table->string('language', 10)->nullable();
             $table->string('currency_preference', 4)->nullable();
 
             $table->timestamp('email_verified_at')->nullable();
@@ -45,7 +45,7 @@ class CreateUsersTable extends Migration
                     ->on('currencies');
 
             // Spatial index is impossible on the currently targeted server
-            //$table->spatialIndex('home_location');
+            $table->spatialIndex('home_location');
         });
     }
 

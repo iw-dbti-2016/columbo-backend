@@ -30,7 +30,7 @@ class CreateLocationsTable extends Migration
             $table->timestamps();
 
             // Spatial index is impossible on the currently targeted server
-            //$table->spatialIndex('coordinates');
+            $table->spatialIndex('coordinates');
         });
     }
 
