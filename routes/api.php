@@ -13,11 +13,24 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('insert-client-secret')->post('/oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken')->name('passport.token');
-Route::post('/oauth/token/refresh', '\Laravel\Passport\Http\Controllers\TransientTokenController@refresh')->name('passport.token.refresh');
-Route::middleware('auth:api')->get('/oauth/tokens', '\Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController@forUser')->name('passport.tokens.index');
-Route::middleware('auth:api')->delete('/oauth/tokens/{token_id}', '\Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController@destroy')->name('passport.tokens.destroy');
+Route::group(['prefix' => 'v1'], function() {
+	Route::middleware('auth:api')->get('/user', function (Request $request) {
+	    return $request->user();
+	});
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+	Route::get('/user', function(Request $request) {
+		return ["success" => true, "data" => $request->user()];
+	})->middleware('auth:api');
+
+	Route::group(['prefix' => 'auth'], function() {
+		Route::post('/register', 'Auth\APIAuthController@register')->name('api.auth.register');
+		Route::post('/login', 'Auth\APIAuthController@login')->name('api.auth.login');
+	});
 });
+
+Route::any('{all}', function() {
+	return response()->json([
+		"success" => false,
+		"message" => "Page not Found.",
+	], 404);
+})->where('all', '.*')->fallback();
