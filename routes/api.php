@@ -25,6 +25,8 @@ Route::group(['prefix' => 'v1'], function() {
 	Route::group(['prefix' => 'auth'], function() {
 		Route::post('/register', 'Auth\APIAuthController@register')->name('api.auth.register');
 		Route::post('/login', 'Auth\APIAuthController@login')->name('api.auth.login');
+		Route::patch('/refresh', 'Auth\APIAuthController@refresh')->name('api.auth.refresh');
+		Route::delete('/logout', 'Auth\APIAuthController@logout')->name('api.auth.logout');
 	});
 });
 

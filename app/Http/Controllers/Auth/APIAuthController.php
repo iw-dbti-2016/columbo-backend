@@ -12,6 +12,11 @@ use TravelCompanion\User;
 
 class APIAuthController extends Controller
 {
+	function __construct()
+	{
+		$this->middleware('auth:api')->except(['register', 'login']);
+	}
+
 	public function register(Request $request)
 	{
 		$validator = Validator::make($request->all(), [
@@ -81,6 +86,32 @@ class APIAuthController extends Controller
 				"expires_in" => auth()->factory()->getTTL() * 60,
 				"user" => $request->user(),
 			]
+    	], 200);
+    }
+
+    public function refresh(Request $request)
+    {
+    	$token = auth()->refresh();
+
+    	return response()->json([
+    		"success" => true,
+    		"data" => [
+				"token" => $token,
+				"token_type" => 'bearer',
+				"expires_in" => auth()->factory()->getTTL() * 60,
+				"user" => $request->user(),
+			]
+    	], 200);
+    }
+
+    public function logout(Request $request)
+    {
+    	auth()->logout();
+
+    	return response()->json([
+    		"success" => true,
+    		"message" => "Logged out successfully",
+    		"data" => [],
     	], 200);
     }
 }

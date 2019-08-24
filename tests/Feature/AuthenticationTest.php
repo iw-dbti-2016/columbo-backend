@@ -134,8 +134,6 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function a_client_cannor_register_with_wrong_data()
     {
-        $this->withoutExceptionHandling();
-
         $responses = [];
 
         // First name wrong characters [A-Za-z-']{2,50}
@@ -425,8 +423,6 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function a_user_cannot_login_after_registration_without_email_verification()
     {
-        $this->withoutExceptionHandling();
-
         $response = $this->expectJSON()->post("/api/v1/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
@@ -591,34 +587,76 @@ class AuthenticationTest extends TestCase
 
     // REFRESH TOKEN
     /** @test */
-    public function authenticated_users_can_refresh_their_token()
+    public function authenticated_users_can_refresh_their_active_token()
     {
+        $user = factory(User::class)->create();
 
+        $response = $this->expectJSON()->actingAs($user)->patch("/api/v1/auth/refresh");
+
+        $response->assertStatus(200);
+        $response->assertJSONStructure([
+            "success",
+            "data" => [
+                "token",
+                "token_type",
+                "expires_in",
+                "user",
+            ],
+        ]);
+    }
+
+    /** @test */
+    public function authenticated_users_cannot_refresh_their_expired_token()
+    {
+        $this->expireTokens();
+
+        $user = factory(User::class)->create();
+        $response = $this->expectJSON()->actingAs($user)->patch("/api/v1/auth/refresh");
+
+        $response->assertStatus(401);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+        ]);
     }
 
     /** @test */
     public function unauthenticated_users_cannot_refresh_their_token()
     {
+        $response = $this->expectJSON()->patch("/api/v1/auth/refresh");
 
+        $response->assertStatus(401);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+        ]);
     }
 
     // LOGOUT
     /** @test */
     public function an_authenticated_user_can_logout()
     {
+        $user = factory(User::class)->create();
+        $response = $this->expectJSON()->actingAs($user)->delete("/api/v1/auth/logout");
 
-    }
-
-    /** @test */
-    public function a_user_cannot_receive_data_after_logout()
-    {
-
+        $response->assertStatus(200);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+            "data",
+        ]);
     }
 
     /** @test */
     public function an_unauthenticated_user_cannot_logout()
     {
+        $response = $this->expectJSON()->delete("/api/v1/auth/logout");
 
+        $response->assertStatus(401);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+        ]);
     }
 
     /** @test */

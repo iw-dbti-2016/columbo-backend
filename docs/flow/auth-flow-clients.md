@@ -41,12 +41,12 @@ When performing subsequent requests, include following content in the `Authoriza
 Store the token in a secure location (e.g. secure storage in Android) and do *not* modify it in any way. It is permitted to decode the token (first two parts are base64-encoded), but the original has to be sent back.
 
 ## Token refreshing
-1. Send data request and receive 401 (Unauthorized)
-2. Send request to /api/vx/auth/refresh
-3. a. If 401 received: remove all saved data and go to login screen, user is logged out\
-	b. Else token is returned, resend initial request with new token
+1. Keep track of the time to expiry of the token.
+2. Before expiry, send a PATCH request to /api/vx/auth/refresh
+3. a. If 200, use new received token and delete previous\
+	b. If 401:  remove all saved data and go to login screen, user is logged out
 
-*Note: Receiving a 403 (Forbidden) is no incentive to refresh the token. 403 indicates that the authenticated user is not authorized (not allowed by the owner or administrator) to view the requested data.*
+*Note: Receiving a 403 (Forbidden) is not necessarily incentive to refresh the token. 403 indicates that the authenticated user is not authorized (not allowed by the owner or administrator) to view the requested data.*
 
 ## Logout
 1. Send delete request to /api/vx/auth/logout
