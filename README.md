@@ -23,7 +23,7 @@ We plan to use following services at some point:
 
 * [OpenStreetMap](https://www.openstreetmap.org/)\
 	For showing maps in the reports.
-* [Pusher](https://pusher.com/)\
+* [Pusher](https://pusher.com/) or we might implement our own using [Node](https://nodejs.org/en/), [Redis](https://redis.io/) and [Socket.io](https://socket.io/)\
 	For pushing messages to clients and to the mobile app.
 * [Open Exchange Rates](https://openexchangerates.org/)\
 	To retreive the exchange rates for price conversion when payments are implemented and an overview of the cost must be generated.
@@ -49,15 +49,19 @@ The requirements to run this back-end are the following (they mostly follow from
 	* PDO PHP Extension
 	* Tokenizer PHP Extension
 	* XML PHP Extension
+
+	For testing (files) make sure that the GD2 PHP Extension is enabled.
 * MySQL >= 5.6\
 	With InnoDB 5.6.43 or higher. Starting at MySQL 5.7.4 InnoDB supports spatial indexes, which is something we'll definitely look into during development.
-* Redis, version t.b.d. chances are very high that redis will be used though.
+* Redis (v4.0.9 and up)
 * Composer (v1.9.* preferred)
 * npm (v6.\*)
 
 ## Setup
 
 Following are the steps for the project-setup (all commands are run from the root directory):
+
+First of all, make sure Composer, NPM, PHP (don't forget to enable the required extensions), MySQL and Redis are installed on your system. A Google search can help you, [this guide](https://redislabs.com/blog/redis-on-windows-10/) can help for Redis on windows 10.
 
 * Clone this repo onto you local machine and cd into it's directory.
 * Create a `.env` file in the root directory and configure the required keys for this application (pusher, redis queue, mysql credentials). The `.env.example` can be used as an example to fill in the required keys.
