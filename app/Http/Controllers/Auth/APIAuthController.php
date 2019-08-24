@@ -2,8 +2,10 @@
 
 namespace TravelCompanion\Http\Controllers\Auth;
 
+use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Http\Controllers\Controller;
 use TravelCompanion\User;
@@ -12,6 +14,27 @@ class APIAuthController extends Controller
 {
 	public function register(Request $request)
 	{
+		$validator = Validator::make($request->all(), [
+			"first_name" => "required|min:2|max:50|regex:/^[A-Za-z-']+$/",
+            "middle_name" => ["nullable", "max:100", "regex:/^((([A-Z]{1}\.)|([A-Za-z-']+)) ?)+$/"],
+            "last_name" => "required|min:2|max:50|regex:/^[A-Za-z-']+$/",
+            "username" => "required|min:4|max:40|regex:/^[A-Za-z0-9-.]+$/|unique:users",
+            "email" => "required|max:80|email|unique:users",
+            "home_location" => ["required", "regex:/^(-?([0-8][0-9]?\.[0-9]{1,8}|90\.[0]{1,8}) -?([0-9]{1,2}\.[0-9]{1,8}|1[0-7][0-9]\.[0-9]{1,8}|180\.[0]{1,8}))$/"],
+            "password" => "required|min:6|confirmed",
+		]);
+
+		if (! $validator->passes()) {
+			return response()->json([
+				"success" => false,
+				"message" => "Validation Failed",
+				"errors" => $validator->errors()->jsonSerialize(),
+			], 422);
+		}
+
+		$request["home_location"] = Point::fromString($request->home_location);
+		$request["password"] = Hash::make($request->password);
+
 		User::create($request->all());
 
 		return response()->json([
@@ -40,6 +63,13 @@ class APIAuthController extends Controller
     		return response()->json([
     			"success" => false,
     			"message" => "Credentials do not match with our records",
+    		], 401);
+    	}
+
+    	if (! $request->user()->email_verified_at) {
+    		return response()->json([
+    			"success" => false,
+    			"message" => "E-mail not verified",
     		], 401);
     	}
 
