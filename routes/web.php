@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cookie;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,10 +14,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('{all}', function() {
+	$browserCookie = Cookie::make('browser-validation', Hash::make("true"), 0, $path=null, $domain=null, $secure=false, $httpOnly=true, $raw=false, $sameSite='strict');
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+	return response()
+				->view('welcome')
+				->cookie($browserCookie);
+})->where('all', '.*');
