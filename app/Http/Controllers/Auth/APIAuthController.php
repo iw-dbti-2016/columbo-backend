@@ -142,6 +142,6 @@ class APIAuthController extends Controller
 
     private function isBrowserRequest(Request $request)
     {
-    	return Hash::check("true", $request->cookie('browser'));
+    	return Hash::check("true", $request->header('web'));
     }
 }

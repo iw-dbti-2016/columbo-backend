@@ -73,7 +73,8 @@ const router = new VueRouter({
 });
 
 const app = new Vue({
-    router,
+    //router,
+    el: "#app",
     props: ['action', 'source', 'image', 'alt'],
     data: {
     	form: 'login',
@@ -90,11 +91,26 @@ const app = new Vue({
     			source: "",
     			alt: "",
     		}
+    	},
+    	userData: {
+
     	}
     },
     methods: {
     	setForm: function(form) {
     		this.form = form;
+    	},
+    	getUserData: function() {
+    		axios.get('/api/v1/user')
+    			.then((response) => {
+    				this.userData = response.data.data;
+    			})
+    			.catch((error) => {
+    				if (error.response.status == 401) {
+    					document.getElementById('logout').submit();
+    				}
+  					console.log("error: " + error);
+    			});
     	}
     },
     computed: {
@@ -102,4 +118,4 @@ const app = new Vue({
     		return this.images[this.form];
     	},
     }
-}).$mount('#app');
+});//.$mount('#app');
