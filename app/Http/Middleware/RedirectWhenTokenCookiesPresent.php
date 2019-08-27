@@ -3,21 +3,20 @@
 namespace TravelCompanion\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
 
-class RedirectIfAuthenticated
+class RedirectWhenTokenCookiesPresent
 {
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  string|null  $guard
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = null)
+    public function handle($request, Closure $next)
     {
-        if (Auth::guard($guard)->check()) {
+        if ($request->cookie(config('api.jwt_sign_cookie_name')) &&
+            $request->cookie(config('api.jwt_payload_cookie_name'))) {
             return redirect()->route('app');
         }
 

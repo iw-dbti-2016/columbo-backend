@@ -64,7 +64,7 @@ class APIAuthController extends Controller
 			], 422);
 		}
 
-    	if (! $token = auth()->attempt(request(['email', 'password'])))
+    	if (! $token = auth('api')->attempt(request(['email', 'password'])))
     	{
     		return response()->json([
     			"success" => false,
@@ -72,7 +72,7 @@ class APIAuthController extends Controller
     		], 401);
     	}
 
-    	if (! $request->user()->email_verified_at) {
+    	if (! auth('api')->user()->email_verified_at) {
     		return response()->json([
     			"success" => false,
     			"message" => "E-mail not verified",
@@ -84,30 +84,30 @@ class APIAuthController extends Controller
     		"data" => [
 				"token" => $token,
 				"token_type" => 'bearer',
-				"expires_in" => auth()->factory()->getTTL() * 60,
-				"user" => $request->user(),
+				"expires_in" => auth('api')->factory()->getTTL() * 60,
+				"user" => auth('api')->user(),
 			]
     	], 200);
     }
 
     public function refresh(Request $request)
     {
-    	$token = auth()->refresh();
+    	$token = auth('api')->refresh();
 
     	return $this->constructResponse($request, [
     		"success" => true,
     		"data" => [
 				"token" => $token,
 				"token_type" => 'bearer',
-				"expires_in" => auth()->factory()->getTTL() * 60,
-				"user" => $request->user(),
+				"expires_in" => auth('api')->factory()->getTTL() * 60,
+				"user" => auth('api')->user(),
 			]
     	], 200);
     }
 
     public function logout(Request $request)
     {
-    	auth()->logout();
+    	auth('api')->logout();
 
 		$signCookie = Cookie::forget('jwt_sign');
 		$payloadCookie = Cookie::forget('jwt_payload');

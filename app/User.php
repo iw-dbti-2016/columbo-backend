@@ -13,7 +13,7 @@ use TravelCompanion\Section;
 use TravelCompanion\Trip;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
     use Notifiable;
     use SpatialTrait;

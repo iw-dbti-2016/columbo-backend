@@ -2,11 +2,12 @@
 
 namespace TravelCompanion\Http\Controllers\Auth;
 
-use TravelCompanion\User;
-use TravelCompanion\Http\Controllers\Controller;
+use Grimzy\LaravelMysqlSpatial\Types\Point;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use TravelCompanion\Http\Controllers\Controller;
+use TravelCompanion\User;
 
 class RegisterController extends Controller
 {
@@ -28,7 +29,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/app';
 
     /**
      * Create a new controller instance.
@@ -37,7 +38,8 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest');
+        $this->middleware(['guest', 'withoutTokenCookies']);
+        $this->redirectTo = route('verification.notice');
     }
 
     /**
@@ -49,9 +51,13 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            "first_name" => "required|min:2|max:50|regex:/^[A-Za-z-']+$/",
+            "middle_name" => ["nullable", "max:100", "regex:/^((([A-Z]{1}\.)|([A-Za-z-']+)) ?)+$/"],
+            "last_name" => "required|min:2|max:50|regex:/^[A-Za-z-']+$/",
+            "username" => "required|min:4|max:40|regex:/^[A-Za-z0-9-.]+$/|unique:users",
+            "email" => "required|max:80|email|unique:users",
+            "home_location" => ["required", "regex:/^(-?([0-8][0-9]?\.[0-9]{1,8}|90\.[0]{1,8}) -?([0-9]{1,2}\.[0-9]{1,8}|1[0-7][0-9]\.[0-9]{1,8}|180\.[0]{1,8}))$/"],
+            "password" => "required|min:6|confirmed",
         ]);
     }
 
@@ -64,8 +70,12 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
+            'first_name' => $data['first_name'],
+            'middle_name' => $data['middle_name'],
+            'last_name' => $data['last_name'],
+            'username' => $data['username'],
             'email' => $data['email'],
+            'home_location' => Point::fromString($data['home_location']),
             'password' => Hash::make($data['password']),
         ]);
     }
