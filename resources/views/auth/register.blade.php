@@ -20,15 +20,15 @@
                             <input class="shadow focus:shadow-lg mt-1 outline-none px-4 py-3 rounded-lg w-11/12" id="first_name" type="text" name="first_name" value="{{ old('first_name') }}" required autocomplete="first_name" autofocus>
 
                             @error('first_name')
-                                <span role="alert">{{ $message }}</span>
+                                <span class="text-red-600" role="alert">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="w-2/12">
                             <label for="middle_name">Middle</label>
-                            <input class="shadow focus:shadow-lg mt-1 outline-none px-4 py-3 rounded-lg w-10/12" id="middle_name" type="text" name="middle_name" value="{{ old('middle_name') }}" required autocomplete="middle_name" autofocus>
+                            <input class="shadow focus:shadow-lg mt-1 outline-none px-4 py-3 rounded-lg w-10/12" id="middle_name" type="text" name="middle_name" value="{{ old('middle_name') }}" autocomplete="middle_name" autofocus>
 
                             @error('middle_name')
-                                <span role="alert">{{ $message }}</span>
+                                <span class="text-red-600" role="alert">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="w-6/12">
@@ -36,7 +36,7 @@
                             <input class="shadow focus:shadow-lg mt-1 outline-none px-4 py-3 rounded-lg w-full" id="last_name" type="text" name="last_name" value="{{ old('last_name') }}" required autocomplete="last_name" autofocus>
 
                             @error('last_name')
-                                <span role="alert">{{ $message }}</span>
+                                <span class="text-red-600" role="alert">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                         <input class="shadow focus:shadow-lg mt-1 outline-none px-4 py-3 rounded-lg w-full" id="username" type="username" name="username" value="{{ old('username') }}" required autocomplete="username">
 
                         @error('username')
-                            <span role="alert">{{ $message }}</span>
+                            <span class="text-red-600" role="alert">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -61,7 +61,19 @@
                         <input class="shadow focus:shadow-lg mt-1 outline-none px-4 py-3 rounded-lg w-full" id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email">
 
                         @error('email')
-                            <span role="alert">{{ $message }}</span>
+                            <span class="text-red-600" role="alert">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <label for="home_location">Home Location*</label>
+
+                    <div>
+                        <input class="shadow focus:shadow-lg mt-1 outline-none px-4 py-3 rounded-lg w-full" id="home_location" type="text" name="home_location" value="{{ old('home_location') }}" required autocomplete="home_location">
+
+                        @error('home_location')
+                            <span class="text-red-600" role="alert">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -73,7 +85,7 @@
                         <input class="shadow focus:shadow-lg mt-1 outline-none px-4 py-3 rounded-lg w-full" id="password" type="password" name="password" required autocomplete="new-password">
 
                         @error('password')
-                            <span role="alert">{{ $message }}</span>
+                            <span class="text-red-600" role="alert">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -90,7 +102,7 @@
                     {{ __('Register') }}
                 </button>
                 <div class="text-right">
-                    <a class="inline-block mt-2 text-gray-600 hover:underline" href="{{ route('login') }}">Already signed up? Login</a>
+                    <a class="inline-block mt-2 text-gray-600 hover:underline" href="{{ url('auth/login') }}">Already signed up? Login</a>
                 </div>
             </form>
         </div>

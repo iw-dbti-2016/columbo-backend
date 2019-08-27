@@ -1,23 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Dashboard</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    You are logged in!
-                </div>
-            </div>
-        </div>
+    <div class="relative flex h-full">
+        <img class="max-w-6xl my-auto mx-auto" src="{{ asset('img/undraw/outer_space.png') }}" alt="Outer Space">
     </div>
-</div>
+    <h1 class="absolute w-full text-center top-0 mt-10 left-0 text-4xl">We're working here, check back later!</h1>
+    <div class="absolute top-0 right-0 container text-right px-4 py-2">
+        <a class="mr-4 font-semibold hover:underline" href="{{ route('login') }}">Login</a>
+        <a class="font-semibold hover:underline" href="{{ route('register') }}">Sign up for the <span class="text-blue-600">β</span></a>
+    </div>
 @endsection

@@ -1,24 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Verify Your Email Address') }}</div>
+    <div class="flex h-full max-w-md mx-auto mx-4 antialiased">
+        <div class="w-full my-auto bg-gray-100 text-gray-900 rounded-lg px-6 py-4 shadow-lg">
+            <div class="text-3xl font-semibold text-center">Verify Your Email Address</div>
 
-                <div class="card-body">
-                    @if (session('resent'))
-                        <div class="alert alert-success" role="alert">
-                            {{ __('A fresh verification link has been sent to your email address.') }}
-                        </div>
-                    @endif
+            <div>
+                @if (session('resent'))
+                    <div class="bg-green-200 text-center py-4 text-md rounded mt-4" role="alert">
+                        A fresh verification link has been sent to your email address.
+                    </div>
+                @endif
 
-                    {{ __('Before proceeding, please check your email for a verification link.') }}
-                    {{ __('If you did not receive the email') }}, <a href="{{ route('verification.resend') }}">{{ __('click here to request another') }}</a>.
-                </div>
+                <p class="mt-4">Before proceeding, please check your email for a verification link.</p>
+                <p class="mt-2">If you did not receive the email, <a class="underline" href="{{ route('verification.resend') }}">click here to request another</a>.</p>
             </div>
         </div>
     </div>
-</div>
 @endsection
