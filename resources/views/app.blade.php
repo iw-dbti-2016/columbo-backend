@@ -32,6 +32,7 @@
                     This is the home of <span class="font-semibold">{{ config('app.name', 'Laravel') }}</span>
                 </h1>
                 <a @click.prevent="getUserData" href="#">Get your data</a>
+                <a @click.prevent="refreshToken" href="#">Refresh token</a>
                 <div v-show="userData !== {}">
                     <ul>
                         <li v-for="(item,key) in userData">@{{ key }}: @{{ item }}</li>

@@ -17,7 +17,7 @@ Route::group(['prefix' => 'auth'], function() {
 
 Route::get('/', function() {
 	return view('home');
-})->middleware(['withoutTokenCookies']);
+})->middleware(['withoutTokenCookies'])->name('home');
 
 Route::get('/app/{all?}', function(Request $request) {
 	return response()->view('app');

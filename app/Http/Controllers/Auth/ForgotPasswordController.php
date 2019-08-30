@@ -3,7 +3,7 @@
 namespace TravelCompanion\Http\Controllers\Auth;
 
 use TravelCompanion\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use TravelCompanion\Traits\Auth\SendsPasswordResetEmailsWithToken;
 
 class ForgotPasswordController extends Controller
 {
@@ -18,7 +18,7 @@ class ForgotPasswordController extends Controller
     |
     */
 
-    use SendsPasswordResetEmails;
+    use SendsPasswordResetEmailsWithToken;
 
     /**
      * Create a new controller instance.

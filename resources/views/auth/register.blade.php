@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<a class="absolute left-0 top-0 text-gray-900 font-semibold py-2 px-4 hover:underline" href="{{ route('home') }}">To the homepage</a>
 <div class="flex h-full max-w-4xl mx-auto mx-4 antialiased">
     <div class="text-center my-auto hidden lg:block w-1/2">
         <h1 class="text-gray-900 text-2xl">Because <span class="text-6xl text-blue-600">β</span>ugs can happen</h1>

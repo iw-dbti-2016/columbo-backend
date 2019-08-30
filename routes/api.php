@@ -19,6 +19,9 @@ Route::group(['prefix' => 'v1'], function() {
 		Route::post('/login', 'Auth\API\LoginController@login')->name('api.auth.login');
 		Route::patch('/refresh', 'Auth\APIAuthController@refresh')->name('api.auth.refresh');
 		Route::delete('/logout', 'Auth\API\LoginController@logout')->name('api.auth.logout');
+
+		Route::post('/password/email', 'Auth\API\ForgotPasswordController@sendResetLinkEmail')->name('api.auth.forgot-password');
+		Route::post('/email/resend', 'Auth\API\VerificationController@resend')->name('api.auth.resend');
 	});
 
 	Route::group(['middleware' => 'verified'], function() {

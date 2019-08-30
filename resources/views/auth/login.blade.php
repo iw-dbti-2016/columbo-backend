@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<a class="absolute left-0 top-0 text-gray-900 font-semibold py-2 px-4 hover:underline" href="{{ route('home') }}">To the homepage</a>
 <div class="flex h-full max-w-4xl mx-auto mx-4 antialiased">
     <div class="my-auto hidden lg:block w-1/2">
         <h1 class="text-2xl text-center">Go Forward<br><span class="text-blue-600 font-semibold">Don't look back!</span></h1>
@@ -10,6 +11,12 @@
     <div class="my-auto lg:ml-8 bg-gray-100 text-gray-900 md:w-1/2 mx-auto rounded-lg px-6 py-4 shadow-lg">
         <h1 class="text-center font-semibold text-4xl">TravelCompanion</h1>
         <div class="mt-4 font-sans font-semibold text-lg">{{ __('Login') }}</div>
+
+        @if (session('verified'))
+            <div class="bg-green-200 text-center py-4 text-md rounded mt-4" role="alert">
+                Your email has been verified.<br>You can now proceed in the app or log in right here.
+            </div>
+        @endif
 
         <div class="mt-2">
             <form method="POST" action="{{ route('login') }}">
@@ -39,16 +46,8 @@
                     </div>
                 </div>
 
-                <div class="mt-2">
-                    <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                    <label for="remember">
-                        {{ __('Remember Me') }}
-                    </label>
-                </div>
-
                 <div>
-                    <button class="shadow block w-full mt-2 bg-blue-600 hover:bg-blue-500 focus:bg-blue-700 focus:outline-none text-white px-4 py-3 rounded-lg uppercase text-sm font-semibold tracking-wider" type="submit">
+                    <button class="shadow block w-full mt-4 bg-blue-600 hover:bg-blue-500 focus:bg-blue-700 focus:outline-none text-white px-4 py-3 rounded-lg uppercase text-sm font-semibold tracking-wider" type="submit">
                         {{ __('Login') }}
                     </button>
 

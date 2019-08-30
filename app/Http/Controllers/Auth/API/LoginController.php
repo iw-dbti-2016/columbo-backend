@@ -12,9 +12,15 @@ class LoginController extends Controller
 {
     use AuthenticatesUsersWithToken;
 
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
     function __construct()
     {
     	$this->middleware('auth:api')->except('login');
+    	$this->middleware('guest:api')->only('login');
     }
 
     protected function authenticated(Request $request, $user)

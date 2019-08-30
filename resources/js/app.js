@@ -106,12 +106,30 @@ const app = new Vue({
     				this.userData = response.data.data;
     			})
     			.catch((error) => {
+    				if (error.response.status == 500 || error.response.status == 403) {
+    					this.userData = error.response.data;
+    				}
     				if (error.response.status == 401) {
     					document.getElementById('logout').submit();
     				}
   					console.log("error: " + error);
     			});
-    	}
+    	},
+        refreshToken: function() {
+            axios.patch('/api/v1/auth/refresh')
+                .then((response) => {
+                    this.userData = response.data.data;
+                })
+                .catch((error) => {
+                    if (error.response.status == 500 || error.response.status == 403) {
+                        this.userData = error.response.data;
+                    }
+                    if (error.response.status == 401) {
+                        document.getElementById('logout').submit();
+                    }
+                    console.log("error: " + error);
+                });
+        }
     },
     computed: {
     	formImage: function() {

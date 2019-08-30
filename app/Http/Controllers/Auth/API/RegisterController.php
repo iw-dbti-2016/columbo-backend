@@ -14,6 +14,17 @@ class RegisterController extends Controller
 {
 	use RegistersUsersWithToken;
 
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    function __construct()
+    {
+        $this->middleware('auth:api')->except('register');
+        $this->middleware('guest:api')->only('login');
+    }
+
     protected function validator(array $data)
     {
         return Validator::make($data, [
@@ -40,7 +51,7 @@ class RegisterController extends Controller
 	{
 		return User::create([
             'first_name' => $data['first_name'],
-            'middle_name' => $data['middle_name'],
+            'middle_name' => isset($data['middle_name']) ? $data["middle_name"] : null,
             'last_name' => $data['last_name'],
             'username' => $data['username'],
             'email' => $data['email'],
@@ -53,7 +64,12 @@ class RegisterController extends Controller
     {
         return response()->json([
             "success" => true,
-            "data" => $user,
+            "data" => [
+                "token" => $this->token,
+                "token_type" => 'bearer',
+                "expires_in" => auth()->factory()->getTTL() * 60,
+                "user" => $user,
+            ],
         ], 201);
     }
 }
