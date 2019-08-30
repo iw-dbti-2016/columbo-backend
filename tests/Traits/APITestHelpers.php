@@ -6,7 +6,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-trait APIHelpers
+trait APITestHelpers
 {
 	/**
 	 * Adds the Accept header to the request.
@@ -30,7 +30,7 @@ trait APIHelpers
 	}
 
 	/**
-	 * Adds the required Authorization-header for make
+	 * Adds the required Authorization-header for running
 	 * 	a test as a specific user.
 	 * From: https://github.com/tymondesigns/jwt-auth/issues/1246#issuecomment-426705432
 	 */

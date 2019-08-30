@@ -14,19 +14,17 @@ use Illuminate\Http\Request;
 */
 
 Route::group(['prefix' => 'v1'], function() {
-	Route::middleware('auth:api')->get('/user', function (Request $request) {
-	    return $request->user();
+	Route::group(['prefix' => 'auth'], function() {
+		Route::post('/register', 'Auth\API\RegisterController@register')->name('api.auth.register');
+		Route::post('/login', 'Auth\API\LoginController@login')->name('api.auth.login');
+		Route::patch('/refresh', 'Auth\APIAuthController@refresh')->name('api.auth.refresh');
+		Route::delete('/logout', 'Auth\API\LoginController@logout')->name('api.auth.logout');
 	});
 
-	Route::get('/user', function(Request $request) {
-		return ["success" => true, "data" => $request->user()];
-	})->middleware('auth:api');
-
-	Route::group(['prefix' => 'auth'], function() {
-		Route::post('/register', 'Auth\APIAuthController@register')->name('api.auth.register');
-		Route::post('/login', 'Auth\APIAuthController@login')->name('api.auth.login');
-		Route::patch('/refresh', 'Auth\APIAuthController@refresh')->name('api.auth.refresh');
-		Route::delete('/logout', 'Auth\APIAuthController@logout')->name('api.auth.logout');
+	Route::group(['middleware' => 'verified'], function() {
+		Route::get('/user', function(Request $request) {
+			return ["success" => true, "data" => $request->user()];
+		})->middleware('auth:api');
 	});
 });
 

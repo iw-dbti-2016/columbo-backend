@@ -27,6 +27,6 @@ class ForgotPasswordController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['guest', 'withoutTokenCookies']);
+        $this->middleware(['withoutTokenCookies']);
     }
 }

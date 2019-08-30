@@ -35,6 +35,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \TravelCompanion\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            'cookieToken',
         ],
 
         'api' => [
@@ -61,7 +62,7 @@ class Kernel extends HttpKernel
         'guest' => \TravelCompanion\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'verified' => \TravelCompanion\Http\Middleware\EnsureEmailIsVerified::class,
         'withoutTokenCookies' => \TravelCompanion\Http\Middleware\RedirectWhenTokenCookiesPresent::class,
         'cookieToken' => \TravelCompanion\Http\Middleware\ConvertCookiesToAuthorizationHeader::class,
     ];
@@ -74,9 +75,10 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewarePriority = [
+        \TravelCompanion\Http\Middleware\EncryptCookies::class,
+        \TravelCompanion\Http\Middleware\ConvertCookiesToAuthorizationHeader::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        \TravelCompanion\Http\Middleware\ConvertCookiesToAuthorizationHeader::class,
         \TravelCompanion\Http\Middleware\Authenticate::class,
         \Illuminate\Session\Middleware\AuthenticateSession::class,
         \Illuminate\Routing\Middleware\SubstituteBindings::class,

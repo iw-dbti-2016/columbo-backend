@@ -4,8 +4,9 @@ namespace TravelCompanion\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
 
-class ConvertCookiesToAuthorizationHeader
+class ConvertCookiesToAuthorizationHeader extends Middleware
 {
     /**
      * Handle an incoming request.

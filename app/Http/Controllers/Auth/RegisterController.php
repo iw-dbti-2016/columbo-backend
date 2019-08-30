@@ -3,10 +3,12 @@
 namespace TravelCompanion\Http\Controllers\Auth;
 
 use Grimzy\LaravelMysqlSpatial\Types\Point;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Http\Controllers\Controller;
+use TravelCompanion\Traits\Auth\RegistersUsersWithToken;
 use TravelCompanion\User;
 
 class RegisterController extends Controller
@@ -22,7 +24,7 @@ class RegisterController extends Controller
     |
     */
 
-    use RegistersUsers;
+    use RegistersUsersWithToken;
 
     /**
      * Where to redirect users after registration.
@@ -38,7 +40,7 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['guest', 'withoutTokenCookies']);
+        $this->middleware(['withoutTokenCookies']);
         $this->redirectTo = route('verification.notice');
     }
 
@@ -78,5 +80,25 @@ class RegisterController extends Controller
             'home_location' => Point::fromString($data['home_location']),
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+    /**
+     * The user has been registered.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function registered(Request $request, $user)
+    {
+        // Create cookies
+        $token = explode(".", $this->token);
+
+        $signCookie = Cookie::make(config('api.jwt_sign_cookie_name'), $token[2], config('jwt.ttl'), $path=null, $domain=null, $secure=false, $httpOnly=true, $raw=false, $sameSite='strict');
+        $payloadCookie = Cookie::make(config('api.jwt_payload_cookie_name'), $token[0] . '.' . $token[1], config('jwt.ttl'), $path=null, $domain=null, $secure=false, $httpOnly=false, $raw=false, $sameSite='strict');
+
+        return redirect($this->redirectTo)
+                        ->cookie($signCookie)
+                        ->cookie($payloadCookie);
     }
 }

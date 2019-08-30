@@ -2,10 +2,10 @@
 
 namespace TravelCompanion\Http\Controllers\Auth;
 
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use TravelCompanion\Http\Controllers\Controller;
+use TravelCompanion\Traits\Auth\AuthenticatesUsersWithToken;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LoginController extends Controller
@@ -21,7 +21,7 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers;
+    use AuthenticatesUsersWithToken;
 
     /**
      * Where to redirect users after login.
@@ -44,17 +44,23 @@ class LoginController extends Controller
      * @param  mixed  $user
      * @return mixed
      */
+
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
     protected function authenticated(Request $request, $user)
     {
         // Create cookies
-        // $token = explode(".", JWTAuth::fromUser($user));
+        $token = explode(".", $this->token);
 
-        // $signCookie = Cookie::make(config('api.jwt_sign_cookie_name'), $token[2], config('jwt.ttl'), $path=null, $domain=null, $secure=false, $httpOnly=true, $raw=false, $sameSite='strict');
-        // $payloadCookie = Cookie::make(config('api.jwt_payload_cookie_name'), $token[0] . '.' . $token[1], 0, $path=null, $domain=null, $secure=false, $httpOnly=false, $raw=false, $sameSite='strict');
+        $signCookie = Cookie::make(config('api.jwt_sign_cookie_name'), $token[2], config('jwt.ttl'), $path=null, $domain=null, $secure=false, $httpOnly=true, $raw=false, $sameSite='strict');
+        $payloadCookie = Cookie::make(config('api.jwt_payload_cookie_name'), $token[0] . '.' . $token[1], config('jwt.ttl'), $path=null, $domain=null, $secure=false, $httpOnly=false, $raw=false, $sameSite='strict');
 
-        // return redirect($this->redirectTo)
-        //                 ->cookie($signCookie)
-        //                 ->cookie($payloadCookie);
+        return redirect($this->redirectTo)
+                        ->cookie($signCookie)
+                        ->cookie($payloadCookie);
     }
 
     /**
@@ -80,6 +86,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['guest', 'withoutTokenCookies'])->except('logout');
+        $this->middleware('withoutTokenCookies')->except('logout');
+        $this->middleware('auth:api')->only('logout');
     }
 }

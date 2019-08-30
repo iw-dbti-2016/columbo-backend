@@ -2,26 +2,21 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
-use Tests\Traits\APITestHelpers;
-use TravelCompanion\Currency;
+use Tests\Traits\TestHelpers;
 use TravelCompanion\User;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
-class AuthenticationTest extends TestCase
+class AuthenticationWebTest extends TestCase
 {
-    use RefreshDatabase, APITestHelpers;
+    use RefreshDatabase, TestHelpers;
 
     // REGISTER
     /** @test */
     public function a_client_can_register_with_basic_information()
     {
-        $response = $this->expectJSON()->post("/api/v1/auth/register", [
+        $response = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -32,11 +27,8 @@ class AuthenticationTest extends TestCase
             "password_confirmation" => "password",
         ]);
 
-        $response->assertStatus(201);
-        $response->assertJSONStructure([
-            "success",
-            "data",
-        ]);
+        $response->assertRedirect('/auth/email/verify');
+
         $this->assertDatabaseHas("users", [
             "first_name" => "John",
             "middle_name" => "R.",
@@ -51,7 +43,7 @@ class AuthenticationTest extends TestCase
     {
         $responses = [];
 
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "last_name" => "Doe",
             "username" => "johndoe",
             "email" => "john@example.com",
@@ -60,7 +52,7 @@ class AuthenticationTest extends TestCase
             "password_confirmation" => "password",
         ]);
 
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "username" => "johndoe",
             "email" => "john@example.com",
@@ -69,7 +61,7 @@ class AuthenticationTest extends TestCase
             "password_confirmation" => "password",
         ]);
 
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "last_name" => "Doe",
             "email" => "john@example.com",
@@ -78,7 +70,7 @@ class AuthenticationTest extends TestCase
             "password_confirmation" => "password",
         ]);
 
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "last_name" => "Doe",
             "username" => "johndoe",
@@ -87,7 +79,7 @@ class AuthenticationTest extends TestCase
             "password_confirmation" => "password",
         ]);
 
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "last_name" => "Doe",
             "username" => "johndoe",
@@ -96,7 +88,7 @@ class AuthenticationTest extends TestCase
             "password_confirmation" => "password",
         ]);
 
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "last_name" => "Doe",
             "username" => "johndoe",
@@ -105,7 +97,7 @@ class AuthenticationTest extends TestCase
             "password_confirmation" => "password",
         ]);
 
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "last_name" => "Doe",
             "username" => "johndoe",
@@ -115,29 +107,25 @@ class AuthenticationTest extends TestCase
         ]);
 
         foreach ($responses as $i => $response) {
-            $response->assertStatus(422);
-            $response->assertJSONStructure([
-                "success",
-                "message",
-                "errors",
-            ]);
-
-            $this->assertDatabaseMissing("users", [
-                "first_name" => "John",
-                "last_name" => "Doe",
-                "username" => "johndoe",
-                "email" => "john@example.com"
-            ]);
+            $response->assertStatus(302);
+            $response->assertSessionHasErrors();
         }
+
+        $this->assertDatabaseMissing("users", [
+            "first_name" => "John",
+            "last_name" => "Doe",
+            "username" => "johndoe",
+            "email" => "john@example.com"
+        ]);
     }
 
     /** @test */
-    public function a_client_cannor_register_with_wrong_data()
+    public function a_client_cannot_register_with_wrong_data()
     {
         $responses = [];
 
         // First name wrong characters [A-Za-z-']{2,50}
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "Johnnythebest!!",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -149,7 +137,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // First name too long
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "JohnDoeTheBestWithAnExtremelyUnneccesaryLongNameWantsToRegisterForThisApplicationTooPleaseLetMeInIAmSoHypedRightNow",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -161,7 +149,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // First name too short
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "J",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -173,7 +161,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Middle name wrong characters [A-Za-z-'. ]{0,100} (little more complicated regex: points only after word group etc)
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "#R.",
             "last_name" => "Doe",
@@ -185,7 +173,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Middle name too long
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert",
             "last_name" => "Doe",
@@ -197,7 +185,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // First name wrong characters [A-Za-z-']{2,50}
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe45",
@@ -209,7 +197,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Last name too short
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "D",
@@ -221,7 +209,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Last name too long
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "DoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoe",
@@ -233,7 +221,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Username wrong characters [A-Za-z0-9-.]{4,40}
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -245,7 +233,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Username too short
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -257,7 +245,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Username too long
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -269,7 +257,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Invalid email
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -281,7 +269,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Invalid email
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -293,7 +281,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Email too long (max 80)
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -305,7 +293,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Wrong location format
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -317,7 +305,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Location wrong characters
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -329,7 +317,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Password too short .*{}
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -341,7 +329,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         // Password confirmation not matching
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -353,27 +341,24 @@ class AuthenticationTest extends TestCase
         ]);
 
         foreach ($responses as $i => $response) {
-            $response->assertStatus(422);
-            $response->assertJSONStructure([
-                "success",
-                "message",
-                "errors",
-            ]);
-
-            $this->assertDatabaseMissing("users", [
-                "first_name" => "John",
-                "last_name" => "Doe",
-            ]);
-            $this->assertDatabaseMissing("users", [
-                "username" => "johndoe" . $i,
-            ]);
+            $response->assertStatus(302);
+            $response->assertSessionHasErrors();
         }
+
+        $this->assertDatabaseMissing("users", [
+            "first_name" => "John",
+            "last_name" => "Doe",
+        ]);
+
+        $this->assertDatabaseMissing("users", [
+            "username" => "johndoe" . $i,
+        ]);
     }
 
     /** @test */
     public function additional_field_are_ignored_on_registration()
     {
-        $response = $this->expectJSON()->post("/api/v1/auth/register", [
+        $response = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -382,18 +367,20 @@ class AuthenticationTest extends TestCase
             "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
+            "birth_date" => "2019-01-01",
             "grandfather_last_name" => "Doeoe",
             "grandmother_favorite_color" => "brown, but not brown brown, rather brown-red-ish",
         ]);
 
-        $response->assertStatus(201);
-        $response->assertJSONStructure([
-            "success",
-            "data",
-        ]);
+        $response->assertRedirect("/auth/email/verify");
+        $response->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas("users", [
             "username" => "johndoe",
+        ]);
+
+        $this->assertDatabaseMissing("users", [
+            "birth_date" => "2019-01-01",
         ]);
     }
 
@@ -403,27 +390,21 @@ class AuthenticationTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->post("/api/v1/auth/login", [
+        $response = $this->post("/auth/login", [
             "email" => $user->email,
             "password" => "password",
         ]);
 
-        $response->assertStatus(200);
-        $response->assertJSONStructure([
-            "success",
-            "data" => [
-                "token",
-                "token_type",
-                "expires_in",
-                "user",
-            ],
-        ]);
+        $response->assertRedirect("/app");
+
+        $response->assertCookie(config("api.jwt_payload_cookie_name"));
+        $response->assertCookie(config("api.jwt_sign_cookie_name"));
     }
 
     /** @test */
     public function a_user_cannot_login_after_registration_without_email_verification()
     {
-        $response = $this->expectJSON()->post("/api/v1/auth/register", [
+        $response = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -434,26 +415,20 @@ class AuthenticationTest extends TestCase
             "password_confirmation" => "password",
         ]);
 
-        $response->assertStatus(201);
-        $response->assertJSONStructure([
-            "success",
-            "data",
-        ]);
+        $response->assertRedirect("/auth/email/verify");
+        $response->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas("users", [
             "username" => "johndoe",
         ]);
 
-        $response = $this->post("/api/v1/auth/login", [
+        $response = $this->followingRedirects()->post("/auth/login", [
             "email" => "john@example.com",
             "password" => "password",
         ]);
 
-        $response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
+        $response->assertSessionHasNoErrors();
+        $response->assertViewIs("auth.verify");
     }
 
     /** @test */
@@ -461,27 +436,21 @@ class AuthenticationTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->post("/api/v1/auth/login", [
+        $response = $this->post("/auth/login", [
             "email" => $user->email,
             "password" => "pwd",
         ]);
 
-        $response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors();
 
-        $response = $this->post("/api/v1/auth/login", [
+        $response = $this->post("/auth/login", [
             "email" => "abc@donttryme.com",
             "password" => "password",
         ]);
 
-        $response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors();
     }
 
     /** @test */
@@ -489,31 +458,19 @@ class AuthenticationTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->expectJSON()->post("/api/v1/auth/login", [
+        $response = $this->post("/auth/login", [
             "password" => "password",
         ]);
 
-        $response->assertStatus(422);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-            "errors" => [
-                "email",
-            ],
-        ]);
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors();
 
-        $response = $this->expectJSON()->post("/api/v1/auth/login", [
+        $response = $this->post("/auth/login", [
             "email" => $user->email,
         ]);
 
-        $response->assertStatus(422);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-            "errors" => [
-                "password",
-            ],
-        ]);
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors();
     }
 
     /** @test */
@@ -521,69 +478,19 @@ class AuthenticationTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->expectJSON()->post("/api/v1/auth/login", [
+        $response = $this->post("/auth/login", [
             "email" => $user->email,
             "password" => "password",
+            "birth_date" => "2019-01-01",
             "additional_resource" => "Recipe for chocolate chip cookies :)",
        ]);
 
-        $response->assertStatus(200);
-        $response->assertJSONStructure([
-            "success",
-            "data" => [
-                "token",
-                "token_type",
-                "expires_in",
-                "user",
-            ],
-        ]);
+        $response->assertRedirect("/app");
+        $response->assertCookie(config("api.jwt_payload_cookie_name"));
+        $response->assertCookie(config("api.jwt_sign_cookie_name"));
     }
 
-    /** @test */
-    public function an_user_with_expired_token_cannot_retreive_their_data()
-    {
-        $this->expireTokens();
-
-        $user = factory(User::class)->create();
-
-        $response = $this->actingAs($user)
-                        ->expectJSON()
-                        ->get("/api/v1/user");
-
-        $response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message"
-        ]);
-    }
-
-    /** @test */
-    public function an_unauthenticated_user_cannot_retreive_their_data()
-    {
-        $user = factory(User::class)->create();
-
-        $response = $this->expectJSON()->get("/api/v1/user");
-
-        $response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
-    }
-
-    /** @test */
-    public function a_user_with_valid_token_can_retreive_their_data()
-    {
-        $user = factory(User::class)->create();
-
-        $response = $this->actingAs($user)->expectJSON()->get("/api/v1/user");
-
-        $response->assertStatus(200);
-        $response->assertJSONStructure([
-            "success",
-            "data",
-        ]);
-    }
+    // UNTIL HERE MODIFIED FOR WEB ^
 
     // REFRESH TOKEN
     /** @test */
@@ -602,33 +509,6 @@ class AuthenticationTest extends TestCase
                 "expires_in",
                 "user",
             ],
-        ]);
-    }
-
-    /** @test */
-    public function authenticated_users_cannot_refresh_their_expired_token()
-    {
-        $this->expireTokens();
-
-        $user = factory(User::class)->create();
-        $response = $this->expectJSON()->actingAs($user)->patch("/api/v1/auth/refresh");
-
-        $response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
-    }
-
-    /** @test */
-    public function unauthenticated_users_cannot_refresh_their_token()
-    {
-        $response = $this->expectJSON()->patch("/api/v1/auth/refresh");
-
-        $response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
         ]);
     }
 
@@ -662,12 +542,8 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function any_request_to_inexisting_page_returns_a_404()
     {
-        $response = $this->expectJSON()->post("/api/v1/404");
+        $response = $this->post("/404");
 
         $response->assertStatus(404);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
     }
 }
