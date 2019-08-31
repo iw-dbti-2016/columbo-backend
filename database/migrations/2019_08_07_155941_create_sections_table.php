@@ -15,11 +15,12 @@ class CreateSectionsTable extends Migration
     {
         Schema::create('sections', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('report_id')->unsigned()->index();
+            $table->bigInteger('report_id')->unsigned()->nullable()->index();
             // Owner
             $table->bigInteger('user_id')->unsigned()->index();
 
             /* DATA */
+            $table->boolean('is_draft')->default(true);
             $table->text('content')->nullable();
 
             /* VISIBILITY */
