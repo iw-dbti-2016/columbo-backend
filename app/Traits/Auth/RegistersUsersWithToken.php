@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 // This trait has been copied and modified from the
 // 	default Laravel make:auth scaffolding.
@@ -43,7 +44,7 @@ trait RegistersUsersWithToken
 
         event(new Registered($user = $this->create($request->all())));
 
-        $this->token = $this->guard()->login($user);
+        $this->token = JWTAuth::fromUser($user);
 
         return $this->registered($request, $user)
                         ?: redirect($this->redirectPath());

@@ -402,7 +402,7 @@ class AuthenticationWebTest extends TestCase
     }
 
     /** @test */
-    public function a_user_cannot_login_after_registration_without_email_verification()
+    public function a_user_cannot_access_app_after_registration_without_email_verification()
     {
         $response = $this->post("/auth/register", [
             "first_name" => "John",
@@ -492,15 +492,68 @@ class AuthenticationWebTest extends TestCase
 
     // UNTIL HERE MODIFIED FOR WEB ^
 
-    // REFRESH TOKEN
+    // FORGOT PASSWORD
     /** @test */
-    public function authenticated_users_can_refresh_their_active_token()
+    public function an_authenticated_user_cannot_send_a_password_reset_link()
     {
         $user = factory(User::class)->create();
 
-        $response = $this->expectJSON()->actingAs($user)->patch("/api/v1/auth/refresh");
+        $response = $this->actingAs($user)
+                            ->followingRedirects()
+                            ->post("/auth/password/email", [
+                                "email" => $user->email,
+                            ]);
 
-        $response->assertStatus(200);
+        $response->assertViewIs("app");
+    }
+
+    /** @test */
+    public function an_unauthenticated_user_can_send_a_password_reset_link()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->post("/auth/password/email", [
+                        "email" => $user->email,
+                    ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHas('status');
+    }
+
+    /** @test */
+    public function an_unexisting_account_cannot_receive_a_password_reset_link()
+    {
+        $response = $this->post("/api/v1/auth/password/email", [
+                        "email" => "hello@inexisting.example.com",
+                    ]);
+
+        $response->assertStatus(422);
+        $response->assertJSONStructure([
+            "success",
+            "errors" => [
+                "email",
+            ],
+        ]);
+    }
+
+    // RESET PASSWORD
+
+    // RESEND EMAIL VALIDATION
+    /** @test */
+    public function an_authorized_user_without_validated_email_can_resend_a_verification_email()
+    {
+        $response = $this->post("/api/v1/auth/register", [
+            "first_name" => "John",
+            "middle_name" => "R.",
+            "last_name" => "Doe",
+            "username" => "johndoe",
+            "email" => "john@example.com",
+            "home_location" => "50.8550625 4.3053505",
+            "password" => "password",
+            "password_confirmation" => "password",
+        ]);
+
+        $response->assertStatus(201);
         $response->assertJSONStructure([
             "success",
             "data" => [
@@ -510,27 +563,40 @@ class AuthenticationWebTest extends TestCase
                 "user",
             ],
         ]);
-    }
 
-    // LOGOUT
-    /** @test */
-    public function an_authenticated_user_can_logout()
-    {
-        $user = factory(User::class)->create();
-        $response = $this->expectJSON()->actingAs($user)->delete("/api/v1/auth/logout");
+        $this->assertDatabaseHas("users", [
+            "username" => "johndoe",
+        ]);
+
+        $response = $this->actingAs(User::where('username', 'johndoe')->first())
+                            ->post("/api/v1/auth/email/resend");
 
         $response->assertStatus(200);
         $response->assertJSONStructure([
             "success",
             "message",
-            "data",
         ]);
     }
 
     /** @test */
-    public function an_unauthenticated_user_cannot_logout()
+    public function an_authorized_user_with_validated_email_cannot_resend_a_verification_email_but_receives_a_confirmation_af_validation()
     {
-        $response = $this->expectJSON()->delete("/api/v1/auth/logout");
+        $user = factory(User::class)->create();
+
+        $response = $this->actingAs($user)
+                            ->post("/api/v1/auth/email/resend");
+
+        $response->assertStatus(200);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+        ]);
+    }
+
+    /** @test */
+    public function an_unauthorized_user_cannot_resend_a_verification_email()
+    {
+        $response = $this->post("/api/v1/auth/email/resend");
 
         $response->assertStatus(401);
         $response->assertJSONStructure([
@@ -539,6 +605,7 @@ class AuthenticationWebTest extends TestCase
         ]);
     }
 
+    // 404, actually does not belong in this file
     /** @test */
     public function any_request_to_inexisting_page_returns_a_404()
     {

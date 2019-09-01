@@ -25,13 +25,6 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        if (! auth()->user()->email_verified_at) {
-            return response()->json([
-                "success" => false,
-                "message" => "E-mail not verified",
-            ], 401);
-        }
-
         return $this->constructResponse($request, [
             "success" => true,
             "data" => [

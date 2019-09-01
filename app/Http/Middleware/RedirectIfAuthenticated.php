@@ -18,7 +18,12 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            return redirect()->route('app');
+            return $request->expectsJSON()
+                    ? response()->json([
+                        "success" => false,
+                        "message" => "You cannot be logged in to make this request.",
+                    ], 403)
+                    : redirect()->route('app');
         }
 
         return $next($request);

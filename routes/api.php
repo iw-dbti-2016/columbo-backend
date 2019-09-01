@@ -24,10 +24,10 @@ Route::group(['prefix' => 'v1'], function() {
 		Route::post('/email/resend', 'Auth\API\VerificationController@resend')->name('api.auth.resend');
 	});
 
-	Route::group(['middleware' => 'verified'], function() {
+	Route::group(['middleware' => ['auth:api', 'verified']], function() {
 		Route::get('/user', function(Request $request) {
 			return ["success" => true, "data" => $request->user()];
-		})->middleware('auth:api');
+		});
 	});
 });
 

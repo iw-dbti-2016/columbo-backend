@@ -132,7 +132,7 @@ class AuthenticationTest extends TestCase
     }
 
     /** @test */
-    public function a_client_cannor_register_with_wrong_data()
+    public function a_client_cannot_register_with_wrong_data()
     {
         $responses = [];
 
@@ -382,8 +382,9 @@ class AuthenticationTest extends TestCase
             "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
-            "grandfather_last_name" => "Doeoe",
-            "grandmother_favorite_color" => "brown, but not brown brown, rather brown-red-ish",
+            "birth_date" => "2019-01-01",
+            "grandfather_last_name" => "Doedoe",
+            "grandmother_favorite_color" => "yellow, but not yellow yellow, rather yellow-red-ish",
         ]);
 
         $response->assertStatus(201);
@@ -395,6 +396,10 @@ class AuthenticationTest extends TestCase
         $this->assertDatabaseHas("users", [
             "username" => "johndoe",
         ]);
+
+        $this->assertDatabaseMissing("users", [
+            "birth_date" => "2019-01-01",
+        ]);
     }
 
     // LOGIN
@@ -403,7 +408,7 @@ class AuthenticationTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->post("/api/v1/auth/login", [
+        $response = $this->expectJSON()->post("/api/v1/auth/login", [
             "email" => $user->email,
             "password" => "password",
         ]);
@@ -421,7 +426,7 @@ class AuthenticationTest extends TestCase
     }
 
     /** @test */
-    public function a_user_cannot_login_after_registration_without_email_verification()
+    public function a_user_cannot_get_data_after_registration_without_email_verification()
     {
         $response = $this->expectJSON()->post("/api/v1/auth/register", [
             "first_name" => "John",
@@ -437,19 +442,33 @@ class AuthenticationTest extends TestCase
         $response->assertStatus(201);
         $response->assertJSONStructure([
             "success",
-            "data",
+            "data" => [
+                "token",
+                "token_type",
+                "expires_in",
+                "user",
+            ],
         ]);
 
         $this->assertDatabaseHas("users", [
             "username" => "johndoe",
         ]);
 
-        $response = $this->post("/api/v1/auth/login", [
-            "email" => "john@example.com",
-            "password" => "password",
-        ]);
+        // Unauthenticated
+        $response = $this->expectJSON()->get("/api/v1/user");
 
         $response->assertStatus(401);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+        ]);
+
+        // Email not verified, authenticated
+        $response = $this->expectJSON()
+                            ->actingAs(User::where('username', 'johndoe')->first())
+                            ->get("/api/v1/user");
+
+        $response->assertStatus(403);
         $response->assertJSONStructure([
             "success",
             "message",
@@ -461,7 +480,7 @@ class AuthenticationTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->post("/api/v1/auth/login", [
+        $response = $this->expectJSON()->post("/api/v1/auth/login", [
             "email" => $user->email,
             "password" => "pwd",
         ]);
@@ -472,7 +491,7 @@ class AuthenticationTest extends TestCase
             "message",
         ]);
 
-        $response = $this->post("/api/v1/auth/login", [
+        $response = $this->expectJSON()->post("/api/v1/auth/login", [
             "email" => "abc@donttryme.com",
             "password" => "password",
         ]);
@@ -524,6 +543,7 @@ class AuthenticationTest extends TestCase
         $response = $this->expectJSON()->post("/api/v1/auth/login", [
             "email" => $user->email,
             "password" => "password",
+            "birth_date" => "2019-01-01",
             "additional_resource" => "Recipe for chocolate chip cookies :)",
        ]);
 
@@ -659,6 +679,129 @@ class AuthenticationTest extends TestCase
         ]);
     }
 
+    // FORGOT PASSWORD
+    /** @test */
+    public function an_authenticated_user_cannot_send_a_password_reset_link()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->expectJSON()
+                            ->actingAs($user)
+                            ->post("/api/v1/auth/password/email", [
+                                "email" => $user->email,
+                            ]);
+
+        $response->assertStatus(403);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+        ]);
+    }
+
+    /** @test */
+    public function an_unauthenticated_user_can_send_a_password_reset_link()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->expectJSON()
+                            ->post("/api/v1/auth/password/email", [
+                                "email" => $user->email,
+                            ]);
+
+        $response->assertStatus(200);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+        ]);
+    }
+
+    /** @test */
+    public function an_unexisting_account_cannot_receive_a_password_reset_link()
+    {
+        $response = $this->expectJSON()
+                            ->post("/api/v1/auth/password/email", [
+                                "email" => "hello@inexisting.example.com",
+                            ]);
+
+        $response->assertStatus(422);
+        $response->assertJSONStructure([
+            "success",
+            "errors" => [
+                "email",
+            ],
+        ]);
+    }
+
+    // RESEND EMAIL VALIDATION
+    /** @test */
+    public function an_authorized_user_without_validated_email_can_resend_a_verification_email()
+    {
+        $response = $this->expectJSON()->post("/api/v1/auth/register", [
+            "first_name" => "John",
+            "middle_name" => "R.",
+            "last_name" => "Doe",
+            "username" => "johndoe",
+            "email" => "john@example.com",
+            "home_location" => "50.8550625 4.3053505",
+            "password" => "password",
+            "password_confirmation" => "password",
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertJSONStructure([
+            "success",
+            "data" => [
+                "token",
+                "token_type",
+                "expires_in",
+                "user",
+            ],
+        ]);
+
+        $this->assertDatabaseHas("users", [
+            "username" => "johndoe",
+        ]);
+
+        $response = $this->expectJSON()
+                            ->actingAs(User::where('username', 'johndoe')->first())
+                            ->post("/api/v1/auth/email/resend");
+
+        $response->assertStatus(200);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+        ]);
+    }
+
+    /** @test */
+    public function an_authorized_user_with_validated_email_cannot_resend_a_verification_email_but_receives_a_confirmation_af_validation()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->expectJSON()
+                            ->actingAs($user)
+                            ->post("/api/v1/auth/email/resend");
+
+        $response->assertStatus(200);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+        ]);
+    }
+
+    /** @test */
+    public function an_unauthorized_user_cannot_resend_a_verification_email()
+    {
+        $response = $this->expectJSON()->post("/api/v1/auth/email/resend");
+
+        $response->assertStatus(401);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+        ]);
+    }
+
+    // 404, actually does not belong in this file
     /** @test */
     public function any_request_to_inexisting_page_returns_a_404()
     {
