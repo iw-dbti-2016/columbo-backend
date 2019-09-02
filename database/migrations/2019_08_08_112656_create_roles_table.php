@@ -15,6 +15,7 @@ class CreateRolesTable extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('trip_id')->unsigned()->nullable()->index();
 
             /* DATA */
             $table->string('name', 100)->unique();   // Name used in application
@@ -22,6 +23,10 @@ class CreateRolesTable extends Migration
             $table->text('description')->nullable();
 
             $table->timestamps();
+
+            $table->foreign('trip_id')
+                    ->references('id')
+                    ->on('trips');
         });
     }
 

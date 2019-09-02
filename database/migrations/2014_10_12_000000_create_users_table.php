@@ -44,7 +44,6 @@ class CreateUsersTable extends Migration
                     ->references('id')
                     ->on('currencies');
 
-            // Spatial index is impossible on the currently targeted server
             $table->spatialIndex('home_location');
         });
     }

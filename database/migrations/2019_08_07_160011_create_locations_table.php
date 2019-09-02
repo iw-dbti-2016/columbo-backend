@@ -15,8 +15,11 @@ class CreateLocationsTable extends Migration
     {
         Schema::create('locations', function (Blueprint $table) {
             $table->bigIncrements('id');
+            // Owner
+            $table->bigInteger('user_id')->unsigned()->index();
 
             /* DATA */
+            $table->boolean('is_draft')->default(true);
             $table->point('coordinates');
             $table->string('name', 100)->nullable();
             $table->text('info')->nullable();
@@ -29,7 +32,10 @@ class CreateLocationsTable extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            // Spatial index is impossible on the currently targeted server
+            $table->foreign('user_id')
+                    ->references('id')
+                    ->on('users');
+
             $table->spatialIndex('coordinates');
         });
     }
