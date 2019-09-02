@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use Tests\Traits\TestHelpers;
 use TravelCompanion\User;
@@ -490,7 +492,18 @@ class AuthenticationWebTest extends TestCase
         $response->assertCookie(config("api.jwt_sign_cookie_name"));
     }
 
-    // UNTIL HERE MODIFIED FOR WEB ^
+    // REFRESH TOKEN
+    /** @test */
+    public function an_authenticated_user_can_refresh_the_valid_token()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->callAsUser($user, "PATCH", "/api/v1/auth/refresh");
+
+        $response->assertStatus(200);
+        $response->assertCookie(config("api.jwt_sign_cookie_name"));
+        $response->assertCookie(config("api.jwt_payload_cookie_name"));
+    }
 
     // FORGOT PASSWORD
     /** @test */
@@ -498,13 +511,11 @@ class AuthenticationWebTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->actingAs($user)
-                            ->followingRedirects()
-                            ->post("/auth/password/email", [
+        $response = $this->callAsUser($user, "POST", "/auth/password/email", [
                                 "email" => $user->email,
                             ]);
 
-        $response->assertViewIs("app");
+        $response->assertRedirect("/app");
     }
 
     /** @test */
@@ -523,26 +534,103 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function an_unexisting_account_cannot_receive_a_password_reset_link()
     {
-        $response = $this->post("/api/v1/auth/password/email", [
+        $response = $this->post("/auth/password/email", [
                         "email" => "hello@inexisting.example.com",
                     ]);
 
-        $response->assertStatus(422);
-        $response->assertJSONStructure([
-            "success",
-            "errors" => [
-                "email",
-            ],
-        ]);
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors();
     }
 
     // RESET PASSWORD
+    /** @test */
+    public function an_authenticated_user_cannot_see_reset_password_form()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->callAsUser($user, "GET", "/auth/password/reset/token");
+
+        $response->assertRedirect("/app");
+    }
+
+    /** @test */
+    public function an_authenticated_user_cannot_reset_password()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->callAsUser($user, "POST", "/auth/password/reset", [
+                        "token" => "abcdef",
+                        "email" => $user->email,
+                        "password" => "password2",
+                        "password_confirmation" => "password2",
+                    ]);
+
+        $response->assertRedirect("/app");
+        $this->assertFalse(Hash::check("password2", User::first()->password));
+    }
+
+    /** @test */
+    public function unauthenticated_user_can_see_password_reset_form()
+    {
+        $response = $this->get("/auth/password/reset/token");
+
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function unauthenticated_user_cannot_reset_password_with_invalid_token()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->post("/auth/password/reset", [
+                        "token" => "abc",
+                        "email" => $user->email,
+                        "password" => "password2",
+                        "password_confirmation" => "password2",
+                    ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors();
+
+        $this->assertFalse(Hash::check("password2", User::first()->password));
+    }
+
+    /** @test */
+    public function unauthenticated_user_with_valid_token_can_reset_password()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->post("/auth/password/email", [
+            'email' => $user->email,
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHas('status');
+
+        $this->assertDatabaseHas('password_resets', [
+            'email' => $user->email,
+        ]);
+
+        DB::update('update password_resets set token = ? where email = ?', [Hash::make("abc"), $user->email]);
+
+        $response = $this->post("/auth/password/reset", [
+                        "token" => "abc",
+                        "email" => $user->email,
+                        "password" => "password2",
+                        "password_confirmation" => "password2",
+                    ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHas('status');
+
+        $this->assertTrue(Hash::check("password2", User::where('email', $user->email)->first()->password));
+    }
 
     // RESEND EMAIL VALIDATION
     /** @test */
     public function an_authorized_user_without_validated_email_can_resend_a_verification_email()
     {
-        $response = $this->post("/api/v1/auth/register", [
+        $response = $this->post("/auth/register", [
             "first_name" => "John",
             "middle_name" => "R.",
             "last_name" => "Doe",
@@ -553,29 +641,16 @@ class AuthenticationWebTest extends TestCase
             "password_confirmation" => "password",
         ]);
 
-        $response->assertStatus(201);
-        $response->assertJSONStructure([
-            "success",
-            "data" => [
-                "token",
-                "token_type",
-                "expires_in",
-                "user",
-            ],
-        ]);
+        $response->assertRedirect("/auth/email/verify");
 
         $this->assertDatabaseHas("users", [
             "username" => "johndoe",
         ]);
 
-        $response = $this->actingAs(User::where('username', 'johndoe')->first())
-                            ->post("/api/v1/auth/email/resend");
+        $response = $this->callAsUser(User::where('username', 'johndoe')->first(), "GET", "/auth/email/resend");
 
-        $response->assertStatus(200);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
+        $response->assertStatus(302);
+        $response->assertSessionHas('resent');
     }
 
     /** @test */
@@ -583,26 +658,18 @@ class AuthenticationWebTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->actingAs($user)
-                            ->post("/api/v1/auth/email/resend");
+        $response = $this->callAsUser($user, "GET", "/auth/email/resend");
 
-        $response->assertStatus(200);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
+        $response->assertStatus(302);
+        $response->assertSessionHas("verified");
     }
 
     /** @test */
     public function an_unauthorized_user_cannot_resend_a_verification_email()
     {
-        $response = $this->post("/api/v1/auth/email/resend");
+        $response = $this->get("/auth/email/resend");
 
-        $response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
+        $response->assertRedirect("/auth/login");
     }
 
     // 404, actually does not belong in this file
