@@ -388,6 +388,24 @@ class AuthenticationWebTest extends TestCase
 
     // LOGIN
     /** @test */
+    public function an_unauthenticated_user_can_see_login_page()
+    {
+        $response = $this->get("/auth/login");
+
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function an_authenticated_user_cannot_see_login_page()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->callAsUser($user, "GET", "/auth/login");
+
+        $response->assertRedirect("/app");
+    }
+
+    /** @test */
     public function a_user_can_log_in()
     {
         $user = factory(User::class)->create();
@@ -490,6 +508,28 @@ class AuthenticationWebTest extends TestCase
         $response->assertRedirect("/app");
         $response->assertCookie(config("api.jwt_payload_cookie_name"));
         $response->assertCookie(config("api.jwt_sign_cookie_name"));
+    }
+
+
+    // LOGOUT
+    /** @test */
+    public function an_authenticated_user_can_log_out()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->callAsUser($user, "POST", "/auth/logout");
+
+        $response->assertRedirect("/auth/login");
+        $response->assertCookieExpired(config("api.jwt_sign_cookie_name"));
+        $response->assertCookieExpired(config("api.jwt_payload_cookie_name"));
+    }
+
+    /** @test */
+    public function an_unauthenticated_user_cannot_log_out()
+    {
+        $response = $this->post("/auth/logout");
+
+        $response->assertRedirect("/auth/login");
     }
 
     // REFRESH TOKEN

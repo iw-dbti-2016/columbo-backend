@@ -10,6 +10,16 @@ use TravelCompanion\User;
 
 class Trip extends Model
 {
+    protected $fillable = [
+        "name",
+        "synopsis",
+        "description",
+        "start_date",
+        "end_date",
+        "visibility",
+        "published_at",
+    ];
+
     public function owner()
     {
     	return $this->belongsTo(User::class, 'user_id');

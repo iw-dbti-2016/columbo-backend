@@ -50,8 +50,8 @@ The requirements to run this back-end are the following (they mostly follow from
 	* Tokenizer PHP Extension
 	* XML PHP Extension
 
-	For testing (files) make sure that the GD2 PHP Extension is enabled.
-	For making code coverage reports make shure that the Xdebug PHP Extension is installed and enabled (Get instructions [here](https://xdebug.org/wizard.php))
+	For testing (files) make sure that the GD2 PHP Extension is enabled.\
+	For making code coverage reports make sure that the Xdebug PHP Extension is installed and enabled (Get instructions [here](https://xdebug.org/wizard.php))
 * MySQL >= 5.6\
 	With InnoDB 5.6.43 or higher. Starting at MySQL 5.7.4 InnoDB supports spatial indexes, which is something we'll definitely look into during development.
 * Redis (v4.0.9 and up)

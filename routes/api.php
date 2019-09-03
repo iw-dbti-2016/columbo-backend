@@ -24,9 +24,17 @@ Route::group(['prefix' => 'v1'], function() {
 		Route::post('/email/resend', 'Auth\API\VerificationController@resend')->name('api.auth.resend');
 	});
 
-	Route::group(['middleware' => ['auth:api', 'verified']], function() {
+	Route::group(['middleware' => ['auth:api']], function() {
 		Route::get('/user', function(Request $request) {
 			return ["success" => true, "data" => $request->user()];
+		})->middleware('verified');
+
+		Route::group(['prefix' => 'trips'], function() {
+			Route::get('/{trip}', 'tripController@get');
+			Route::post('/create', 'tripController@store');
+			Route::put('/{trip}', 'tripController@update');
+			Route::patch('/{trip}', 'tripController@update');
+			Route::delete('/{trip}', 'tripController@destroy');
 		});
 	});
 });

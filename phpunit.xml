@@ -22,11 +22,10 @@
             <directory suffix=".php">./app</directory>
         </whitelist>
     </filter>
-    <logging>
-        <log type="coverage-html" target="./coverage" charset="UTF-8"
-            yui="true" highlight="true"
+    <!-- <logging>
+        <log type="coverage-html" target="./coverage"
             lowUpperBound="50" highLowerBound="80" />
-    </logging>
+    </logging> -->
     <php>
         <server name="APP_ENV" value="testing"/>
         <server name="BCRYPT_ROUNDS" value="4"/>
