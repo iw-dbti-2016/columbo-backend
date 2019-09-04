@@ -14,7 +14,7 @@ $factory->define(Trip::class, function (Faker $faker) {
         'start_date' => $faker->dateTimeBetween('now', '+ 1 year')->format('Y-m-d'),
         'end_date' => $faker->dateTimeBetween('+1 year', '+ 2 years')->format('Y-m-d'),
 
-    	'visibility' => $faker->numberBetween(0, 255),
+    	'visibility' => $faker->randomElement(["public", "authenticated", "friends", "visitors", "members", "private", ]),
     	'published_at' => now(),
     ];
 });

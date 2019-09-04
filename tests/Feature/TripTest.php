@@ -24,7 +24,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "friends",
                                 "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
                             ]);
 
@@ -48,7 +48,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "private",
                                 "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
                             ]);
 
@@ -66,7 +66,7 @@ class TripTest extends TestCase
             "description" => "Blablablabla description blablabla",
             "start_date" => Carbon::now()->format("Y-m-d"),
             "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-            "visibility" => 1,
+            "visibility" => config("mapping.visibility")["private"],
         ]);
     }
 
@@ -87,7 +87,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "members",
                                 "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
                             ]);
 
@@ -100,7 +100,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "public",
                                 "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
                             ]);
 
@@ -113,7 +113,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("d/m/Y"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("d/m/Y"),
-                                "visibility" => 1,
+                                "visibility" => "authenticated",
                                 "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
                             ]);
 
@@ -126,7 +126,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => -50,
+                                "visibility" => "random",
                                 "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
                             ]);
 
@@ -139,7 +139,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "public",
                                 "published_at" => Carbon::now()->format("Y-m-d"),
                             ]);
 
@@ -172,7 +172,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "public",
                                 "published_at" => Carbon::now()->format("Y-m-d"),
                             ]);
 
@@ -184,7 +184,7 @@ class TripTest extends TestCase
                                 "synopsis" => "Chillin' in the Bahamas, duration: 1 month!",
                                 "description" => "Blablablabla description blablabla",
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "public",
                                 "published_at" => Carbon::now()->format("Y-m-d"),
                             ]);
 
@@ -196,7 +196,7 @@ class TripTest extends TestCase
                                 "synopsis" => "Chillin' in the Bahamas, duration: 1 month!",
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "public",
                                 "published_at" => Carbon::now()->format("Y-m-d"),
                             ]);
 
@@ -221,7 +221,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "public",
                             ]);
 
 
@@ -330,7 +330,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "members",
                                 "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
                             ]);
 
@@ -343,7 +343,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "public",
                                 "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
                             ]);
 
@@ -356,7 +356,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("d/m/Y"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("d/m/Y"),
-                                "visibility" => 1,
+                                "visibility" => "authenticated",
                                 "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
                             ]);
 
@@ -369,7 +369,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => -50,
+                                "visibility" => "random",
                                 "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
                             ]);
 
@@ -382,7 +382,7 @@ class TripTest extends TestCase
                                 "description" => "Blablablabla description blablabla",
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => 1,
+                                "visibility" => "public",
                                 "published_at" => Carbon::now()->format("Y-m-d"),
                             ]);
 

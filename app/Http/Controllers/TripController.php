@@ -4,6 +4,7 @@ namespace TravelCompanion\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use TravelCompanion\Rules\Visibility;
 use TravelCompanion\Trip;
 
 class TripController extends Controller
@@ -29,7 +30,7 @@ class TripController extends Controller
             "description" => "nullable",
             "start_date" => "required|date_format:Y-m-d",
             "end_date" => "required|date_format:Y-m-d",
-            "visibility" => "required|integer|min:0",
+            "visibility" => ["required", new Visibility],
             "published_at" => "required|date_format:Y-m-d H:i:s",
         ]);
 
@@ -72,7 +73,7 @@ class TripController extends Controller
             "description" => "nullable",
             "start_date" => "required|date_format:Y-m-d",
             "end_date" => "required|date_format:Y-m-d",
-            "visibility" => "required|integer|min:0",
+            "visibility" => ["required", new Visibility],
             "published_at" => "required|date_format:Y-m-d H:i:s",
         ]);
 

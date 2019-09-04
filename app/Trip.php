@@ -3,13 +3,17 @@
 namespace TravelCompanion;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use TravelCompanion\Action;
 use TravelCompanion\Report;
 use TravelCompanion\Section;
+use TravelCompanion\Traits\Visibility;
 use TravelCompanion\User;
 
 class Trip extends Model
 {
+    use SoftDeletes, Visibility;
+
     protected $fillable = [
         "name",
         "synopsis",
