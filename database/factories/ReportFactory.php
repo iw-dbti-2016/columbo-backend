@@ -11,7 +11,7 @@ $factory->define(Report::class, function (Faker $faker) {
         'date' => $faker->dateTimeBetween('now', '+2 years')->format('Y-m-d'),
         'description' => $faker->text(500),
 
-        'visibility' => $faker->numberBetween(0, 255),
+        'visibility' => $faker->randomElement(array_keys(config("mapping.visibility"))),
         'published_at' => now(),
     ];
 });

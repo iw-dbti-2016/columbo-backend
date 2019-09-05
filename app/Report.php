@@ -5,11 +5,22 @@ namespace TravelCompanion;
 use Illuminate\Database\Eloquent\Model;
 use TravelCompanion\Action;
 use TravelCompanion\Section;
+use TravelCompanion\Traits\Visibility;
 use TravelCompanion\Trip;
 use TravelCompanion\User;
 
 class Report extends Model
 {
+    use Visibility;
+
+    protected $fillable = [
+        "title",
+        "date",
+        "description",
+        "visibility",
+        "published_at",
+    ];
+
     public function owner()
     {
     	return $this->belongsTo(User::class, 'user_id');
