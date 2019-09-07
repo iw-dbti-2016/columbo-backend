@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use TravelCompanion\Action;
 use TravelCompanion\Currency;
+use TravelCompanion\Location;
 use TravelCompanion\Report;
 use TravelCompanion\Section;
 use TravelCompanion\Trip;
@@ -103,5 +104,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function actions()
     {
         return $this->morphMany(Action::class, 'actionable');
+    }
+
+    public function locations()
+    {
+        return $this->hasMany(Location::class);
     }
 }

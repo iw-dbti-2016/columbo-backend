@@ -57,7 +57,7 @@ class SectionTest extends TestCase
         $section->report()->associate($report);
         $section->save();
 
-        $location = factory(Location::class)->create();
+        $location = $user->locations()->save(factory(Location::class)->make());
         $location->sections()->attach($section);
         $location->save();
 

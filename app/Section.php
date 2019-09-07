@@ -6,11 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 use TravelCompanion\Action;
 use TravelCompanion\Location;
 use TravelCompanion\Report;
+use TravelCompanion\Traits\Visibility;
 use TravelCompanion\Trip;
 use TravelCompanion\User;
 
 class Section extends Model
 {
+    use Visibility;
+
+    protected $fillable = [
+        "content",
+        "visibility",
+        "published_at",
+    ];
+
     public function owner()
     {
     	return $this->belongsTo(User::class, 'user_id');

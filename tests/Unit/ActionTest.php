@@ -104,7 +104,7 @@ class ActionTest extends TestCase
     public function an_action_can_have_a_location()
     {
         $user = factory(User::class)->create();
-        $location = factory(Location::class)->create();
+        $location = $user->locations()->save(factory(Location::class)->make());
 
         $action = factory(Action::class)->make();
         $action->user()->associate($user);
