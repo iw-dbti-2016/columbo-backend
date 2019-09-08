@@ -15,6 +15,7 @@ class CreateActionsTable extends Migration
     {
         Schema::create('actions', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->uuid('uuid')->unique();
             // User executing action
             $table->bigInteger('user_id')->unsigned()->index();
 
@@ -26,8 +27,9 @@ class CreateActionsTable extends Migration
 
             $table->foreign('user_id')
                     ->references('id')
-                    ->on('users')
-                    ->onDelete('cascade');
+                    ->on('users');
+
+            $table->index(['actionable_id', 'actionable_type']);
         });
     }
 

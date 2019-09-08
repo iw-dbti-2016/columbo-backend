@@ -27,7 +27,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe",
             "email" => "john@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -55,41 +54,12 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe",
             "email" => "john@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
 
         $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
             "first_name" => "John",
-            "username" => "johndoe",
-            "email" => "john@example.com",
-            "home_location" => "50.8550625 4.3053505",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
-
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "last_name" => "Doe",
-            "email" => "john@example.com",
-            "home_location" => "50.8550625 4.3053505",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
-
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "last_name" => "Doe",
-            "username" => "johndoe",
-            "home_location" => "50.8550625 4.3053505",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
-
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "last_name" => "Doe",
             "username" => "johndoe",
             "email" => "john@example.com",
             "password" => "password",
@@ -99,9 +69,16 @@ class AuthenticationTest extends TestCase
         $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
             "first_name" => "John",
             "last_name" => "Doe",
-            "username" => "johndoe",
             "email" => "john@example.com",
-            "home_location" => "50.8550625 4.3053505",
+            "password" => "password",
+            "password_confirmation" => "password",
+        ]);
+
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+            "first_name" => "John",
+            "last_name" => "Doe",
+            "username" => "johndoe",
+            "password" => "password",
             "password_confirmation" => "password",
         ]);
 
@@ -110,7 +87,14 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe",
             "email" => "john@example.com",
-            "home_location" => "50.8550625 4.3053505",
+            "password_confirmation" => "password",
+        ]);
+
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+            "first_name" => "John",
+            "last_name" => "Doe",
+            "username" => "johndoe",
+            "email" => "john@example.com",
             "password" => "password",
         ]);
 
@@ -143,7 +127,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe1",
             "email" => "john1@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -155,7 +138,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe2",
             "email" => "john2@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -167,7 +149,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe3",
             "email" => "john3@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -179,7 +160,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe4",
             "email" => "john4@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -191,7 +171,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe5",
             "email" => "john5@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -203,7 +182,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe45",
             "username" => "johndoe",
             "email" => "john6@example6.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -215,7 +193,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "D",
             "username" => "johndoe7",
             "email" => "john7@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -227,7 +204,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "DoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoe",
             "username" => "johndoe8",
             "email" => "john8@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -239,7 +215,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe9 :)",
             "email" => "john9@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -251,7 +226,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "jd",
             "email" => "john10@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -263,7 +237,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoejohndoejohndoejohndoejohndoejohndoe11",
             "email" => "john11@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -275,7 +248,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe12",
             "email" => "john12example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -287,7 +259,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe13",
             "email" => "john13@example@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -299,31 +270,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe14",
             "email" => "johnjohnjohnjohnjohnjohn14@examplexamplexamplexamplexamplexamplexample.comcomcomcom",
-            "home_location" => "50.8550625 4.3053505",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
-
-        // Wrong location format
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe15",
-            "email" => "john15@example.com",
-            "home_location" => "-99 5454.3053505",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
-
-        // Location wrong characters
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe16",
-            "email" => "john16@example.com",
-            "home_location" => "(50,8550625;4,3053505)",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -335,7 +281,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe17",
             "email" => "john17@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "pw",
             "password_confirmation" => "pw",
         ]);
@@ -347,7 +292,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe18",
             "email" => "john18@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "pass",
         ]);
@@ -379,7 +323,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe",
             "email" => "john@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
             "birth_date" => "2019-01-01",
@@ -434,7 +377,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe",
             "email" => "john@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);
@@ -742,7 +684,6 @@ class AuthenticationTest extends TestCase
             "last_name" => "Doe",
             "username" => "johndoe",
             "email" => "john@example.com",
-            "home_location" => "50.8550625 4.3053505",
             "password" => "password",
             "password_confirmation" => "password",
         ]);

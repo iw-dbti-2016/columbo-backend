@@ -15,6 +15,7 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->uuid('uuid')->unique();
             $table->bigInteger('trip_id')->unsigned()->index();
             // section_id == null => payment for trip, not for specific section
             $table->bigInteger('section_id')->unsigned()->nullable()->index();
@@ -25,6 +26,7 @@ class CreatePaymentsTable extends Migration
             $table->string('name', 100)->nullable();
             $table->string('benificiary', 100);
             $table->datetime('date');
+            $table->text('comments')->nullable();
             $table->integer('total_amount')->unsigned();            // Amount with tax
             $table->string('currency', 4);
             $table->float('tax_percentage')->default(0.0);          // Tax percentage? Need tax amount or not needed at all?
@@ -35,8 +37,7 @@ class CreatePaymentsTable extends Migration
 
             $table->foreign('trip_id')
                     ->references('id')
-                    ->on('trips')
-                    ->onDelete('cascade');
+                    ->on('trips');
 
             $table->foreign('section_id')
                     ->references('id')

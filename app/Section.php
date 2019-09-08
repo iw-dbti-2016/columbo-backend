@@ -32,7 +32,11 @@ class Section extends Model
 
     public function locations()
     {
-    	return $this->belongsToMany(Location::class);
+    	return $this->morphedByMany(
+                        Location::class,
+                        'locationable',
+                        'section_locationables'
+                    );
     }
 
     public function actions()

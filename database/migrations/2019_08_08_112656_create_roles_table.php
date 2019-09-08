@@ -26,7 +26,8 @@ class CreateRolesTable extends Migration
 
             $table->foreign('trip_id')
                     ->references('id')
-                    ->on('trips');
+                    ->on('trips')
+                    ->onDelete('set null');
         });
     }
 

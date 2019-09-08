@@ -27,7 +27,6 @@ $factory->define(User::class, function (Faker $faker) {
 
         'telephone' => $faker->phoneNumber,
         'image' => $faker->slug,
-        'home_location' => new Point($faker->latitude(-90,90), $faker->longitude(-180,180)),
         'birth_date' => $faker->date(),
         'description' => $faker->text(500),
 

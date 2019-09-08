@@ -2,12 +2,14 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use TravelCompanion\Payment;
 use Faker\Generator as Faker;
+use Illuminate\Support\Str;
+use TravelCompanion\Payment;
 
 $factory->define(Payment::class, function (Faker $faker) {
     return [
         'name' => $faker->text(100),
+        'uuid' => Str::uuid(),
         'benificiary' => $faker->text(100),
 
         'date' => $faker->dateTimeBetween('now', '+ 2 years')->format('Y-m-d'),

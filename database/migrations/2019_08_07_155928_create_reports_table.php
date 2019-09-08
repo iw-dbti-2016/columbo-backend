@@ -34,13 +34,12 @@ class CreateReportsTable extends Migration
 
             $table->foreign('trip_id')
                     ->references('id')
-                    ->on('trips')
-                    ->onDelete('cascade');
+                    ->on('trips');
 
             $table->foreign('plan_id')
                     ->references('id')
                     ->on('plans')
-                    ->onDelete('cascade');
+                    ->onDelete('set null');
 
             $table->foreign('user_id')
                     ->references('id')

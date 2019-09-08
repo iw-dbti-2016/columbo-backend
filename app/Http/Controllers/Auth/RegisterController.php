@@ -58,7 +58,6 @@ class RegisterController extends Controller
             "last_name" => "required|min:2|max:50|regex:/^[A-Za-z-']+$/",
             "username" => "required|min:4|max:40|regex:/^[A-Za-z0-9-.]+$/|unique:users",
             "email" => "required|max:80|email|unique:users",
-            "home_location" => ["required", "regex:/^(-?([0-8][0-9]?\.[0-9]{1,8}|90\.[0]{1,8}) -?([0-9]{1,2}\.[0-9]{1,8}|1[0-7][0-9]\.[0-9]{1,8}|180\.[0]{1,8}))$/"],
             "password" => "required|min:6|confirmed",
         ]);
     }
@@ -77,7 +76,6 @@ class RegisterController extends Controller
             'last_name' => $data['last_name'],
             'username' => $data['username'],
             'email' => $data['email'],
-            'home_location' => Point::fromString($data['home_location']),
             'password' => Hash::make($data['password']),
         ]);
     }

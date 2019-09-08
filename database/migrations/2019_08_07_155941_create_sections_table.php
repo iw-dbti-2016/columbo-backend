@@ -33,7 +33,7 @@ class CreateSectionsTable extends Migration
             $table->foreign('report_id')
                     ->references('id')
                     ->on('reports')
-                    ->onDelete('cascade');
+                    ->onDelete('set null');
 
             $table->foreign('user_id')
                     ->references('id')

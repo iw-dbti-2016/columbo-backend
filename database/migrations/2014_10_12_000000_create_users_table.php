@@ -25,7 +25,7 @@ class CreateUsersTable extends Migration
             /* OPTIONAL DATA */
             $table->string('telephone', 40)->nullable();
             $table->string('image', 100)->nullable();
-            $table->point('home_location'); // NOT nullable for possible spatial index
+            $table->bigInteger('place_id')->unsigned()->nullable()->index();
             $table->date('birth_date')->nullable();
             $table->text('description')->nullable();
 
@@ -44,7 +44,9 @@ class CreateUsersTable extends Migration
                     ->references('id')
                     ->on('currencies');
 
-            $table->spatialIndex('home_location');
+            $table->foreign('place_id')
+                    ->references('id')
+                    ->on('places');
         });
     }
 

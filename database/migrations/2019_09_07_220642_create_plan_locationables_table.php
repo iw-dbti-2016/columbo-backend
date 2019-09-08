@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLocationPlanTable extends Migration
+class CreatePlanLocationablesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateLocationPlanTable extends Migration
      */
     public function up()
     {
-        Schema::create('location_plan', function (Blueprint $table) {
-            $table->bigInteger('location_id')->unsigned()->index();
+        Schema::create('plan_locationables', function (Blueprint $table) {
             $table->bigInteger('plan_id')->unsigned()->index();
+            $table->morphs('locationable');
 
             /* DATA */
             $table->text('description')->nullable();
@@ -24,17 +24,13 @@ class CreateLocationPlanTable extends Migration
 
             $table->timestamps();
 
-            $table->foreign('location_id')
-                    ->references('id')
-                    ->on('locations')
-                    ->onDelete('cascade');
-
             $table->foreign('plan_id')
                     ->references('id')
                     ->on('plans')
                     ->onDelete('cascade');
 
-            $table->primary(['location_id', 'plan_id']);
+            $table->primary(['locationable_id', 'locationable_type', 'plan_id'], 'location_plan_locationable_plan_id_primary');
+            $table->index(['locationable_id', 'locationable_type']);
         });
     }
 
@@ -45,6 +41,6 @@ class CreateLocationPlanTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('location_plan');
+        Schema::dropIfExists('plan_locationables');
     }
 }
