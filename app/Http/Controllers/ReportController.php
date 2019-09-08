@@ -6,10 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Report;
 use TravelCompanion\Rules\Visibility;
+use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Trip;
 
 class ReportController extends Controller
 {
+    use APIResponses;
+
     /**
      * Display a listing of the resource.
      *
@@ -18,16 +21,10 @@ class ReportController extends Controller
     public function get(Trip $trip, Report $report)
     {
         if ($report->trip_id != $trip->id) {
-            return response()->json([
-                "success" => true,
-                "message" => "Report not found.",
-            ], 404);
+            return $this->resourceNotFoundResponse();
         }
 
-        return response()->json([
-            "success" => true,
-            "data" => $report,
-        ], 200);
+        return $this->okResponse(null, $report);
     }
 
     /**
@@ -39,26 +36,13 @@ class ReportController extends Controller
     public function store(Trip $trip, Request $request)
     {
         if ($trip->user_id != $request->user()->id) {
-            return response()->json([
-                "success" => false,
-                "message" => "Unauthorized.",
-            ], 403);
+            return $this->unauthorizedResponse();
         }
 
-        $validator = Validator::make($request->all(), [
-            "title" => "required|max:100",
-            "date" => "nullable|date_format:Y-m-d",
-            "description" => "nullable|max:5000",
-            "visibility" => ["required", new Visibility()],
-            "published_at" => "required|date_format:Y-m-d H:i:s",
-        ]);
+        $validator = $this->validateData($request->all());
 
         if ($validator->fails()) {
-            return response()->json([
-                "success" => false,
-                "message" => "Validation Failed.",
-                "errors" => $validator->errors(),
-            ], 422);
+            return $this->validationFailedResponse($validator);
         }
 
         $report = new Report($request->all());
@@ -68,11 +52,7 @@ class ReportController extends Controller
 
         $report->save();
 
-        return response()->json([
-            "success" => true,
-            "message" => "Report added.",
-            "data" => $report->toArray(),
-        ], 201);
+        return $this->okResponse("Report added.", $report->toArray(), 201);
     }
 
     /**
@@ -85,42 +65,22 @@ class ReportController extends Controller
     public function update(Request $request, Trip $trip, Report $report)
     {
         if ($report->trip_id != $trip->id) {
-            return response()->json([
-                "success" => true,
-                "message" => "Report not found.",
-            ], 404);
+            return $this->resourceNotFoundResponse();
         }
 
         if ($trip->user_id != $request->user()->id) {
-            return response()->json([
-                "success" => false,
-                "message" => "Unauthorized.",
-            ], 403);
+            return $this->unauthorizedResponse();
         }
 
-        $validator = Validator::make($request->all(), [
-            "title" => "required|max:100",
-            "date" => "nullable|date_format:Y-m-d",
-            "description" => "nullable|max:5000",
-            "visibility" => ["required", new Visibility()],
-            "published_at" => "required|date_format:Y-m-d H:i:s",
-        ]);
+        $validator = $this->validateData($request->all());
 
         if ($validator->fails()) {
-            return response()->json([
-                "success" => false,
-                "message" => "Validation Failed.",
-                "errors" => $validator->errors(),
-            ], 422);
+            return $this->validationFailedResponse($validator);
         }
 
         $report = $report->update($request->all());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Report was updated.",
-            "data" => $report,
-        ], 200);
+        return $this->okResponse("Report was updated.", $report);
     }
 
     /**
@@ -132,24 +92,26 @@ class ReportController extends Controller
     public function destroy(Request $request, Trip $trip, Report $report)
     {
         if ($report->trip_id != $trip->id) {
-            return response()->json([
-                "success" => true,
-                "message" => "Report not found.",
-            ], 404);
+            return $this->resourceNotFoundResponse();
         }
 
         if ($trip->user_id != $request->user()->id) {
-            return response()->json([
-                "success" => false,
-                "message" => "Unauthorized.",
-            ], 403);
+            return $this->unauthorizedResponse();
         }
 
         $report->delete();
 
-        return response()->json([
-            "success" => true,
-            "message" => "Report was deleted.",
-        ], 200);
+        return $this->okResponse("Report was deleted.");
+    }
+
+    private function validateData($data)
+    {
+        return Validator::make($data, [
+            "title" => "required|max:100",
+            "date" => "nullable|date_format:Y-m-d",
+            "description" => "nullable|max:5000",
+            "visibility" => ["required", new Visibility()],
+            "published_at" => "required|date_format:Y-m-d H:i:s",
+        ]);
     }
 }

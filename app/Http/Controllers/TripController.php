@@ -5,17 +5,18 @@ namespace TravelCompanion\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Rules\Visibility;
+use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Trip;
 
 class TripController extends Controller
 {
+    use APIResponses;
+
     public function get(Trip $trip)
     {
-        return response()->json([
-            "success" => true,
-            "data" => $trip->toArray(),
-        ]);
+        return $this->okResponse(null, $trip->toArray());
     }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -24,31 +25,15 @@ class TripController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            "name" => "required|max:100",
-            "synopsis" => "nullable|max:100",
-            "description" => "nullable",
-            "start_date" => "required|date_format:Y-m-d",
-            "end_date" => "required|date_format:Y-m-d",
-            "visibility" => ["required", new Visibility],
-            "published_at" => "required|date_format:Y-m-d H:i:s",
-        ]);
+        $validator = $this->validateData($request->all());
 
         if ($validator->fails()) {
-            return response()->json([
-                "success" => false,
-                "message" => "Validation failed.",
-                "errors" => $validator->errors(),
-            ], 422);
+            return $this->validationFailedResponse($validator);
         }
 
         $trip = $request->user()->tripsOwner()->create($request->all());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Trip successfully created.",
-            "data" => $trip,
-        ], 201);
+        return $this->okResponse("Trip successfully created.", $trip, 201);
     }
 
     /**
@@ -61,37 +46,18 @@ class TripController extends Controller
     public function update(Request $request, Trip $trip)
     {
         if ($trip->user_id != $request->user()->id) {
-            return response()->json([
-                "success" => false,
-                "message" => "Unauthorized.",
-            ], 403);
+            return $this->unauthorizedResponse();
         }
 
-        $validator = Validator::make($request->all(), [
-            "name" => "required|max:100",
-            "synopsis" => "nullable|max:100",
-            "description" => "nullable",
-            "start_date" => "required|date_format:Y-m-d",
-            "end_date" => "required|date_format:Y-m-d",
-            "visibility" => ["required", new Visibility],
-            "published_at" => "required|date_format:Y-m-d H:i:s",
-        ]);
+        $validator = $this->validateData($request->all());
 
         if ($validator->fails()) {
-            return response()->json([
-                "success" => false,
-                "message" => "Validation failed.",
-                "errors" => $validator->errors(),
-            ], 422);
+            return $this->validationFailedResponse($validator);
         }
 
         $trip->update($request->all());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Trip succesfully updated",
-            "data" => [],
-        ], 200);
+        return $this->okResponse("Trip succesfully updated");
     }
 
     /**
@@ -103,17 +69,24 @@ class TripController extends Controller
     public function destroy(Request $request, Trip $trip)
     {
         if ($trip->user_id != $request->user()->id) {
-            return response()->json([
-                "success" => false,
-                "message" => "Unauthorized.",
-            ], 403);
+            return $this->unauthorizedResponse();
         }
 
         $trip->delete();
 
-        return response()->json([
-            "success" => true,
-            "message" => "Trip successfully removed.",
-        ], 200);
+        return $this->okResponse("Trip successfully removed.");
+    }
+
+    private function validateData($data)
+    {
+        return Validator::make($data, [
+            "name" => "required|max:100",
+            "synopsis" => "nullable|max:100",
+            "description" => "nullable",
+            "start_date" => "required|date_format:Y-m-d",
+            "end_date" => "required|date_format:Y-m-d",
+            "visibility" => ["required", new Visibility],
+            "published_at" => "required|date_format:Y-m-d H:i:s",
+        ]);
     }
 }

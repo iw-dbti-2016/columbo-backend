@@ -7,10 +7,13 @@ use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Report;
 use TravelCompanion\Rules\Visibility;
 use TravelCompanion\Section;
+use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Trip;
 
 class SectionController extends Controller
 {
+    use APIResponses;
+
     /**
      * Display a listing of the resource.
      *
@@ -19,16 +22,10 @@ class SectionController extends Controller
     public function get(Request $request, Trip $trip, Report $report, Section $section)
     {
         if ($section->report_id != $report->id || $report->trip_id != $trip->id) {
-            return response()->json([
-                "success" => false,
-                "message" => "Section not found.",
-            ], 404);
+            return $this->resourceNotFoundResponse();
         }
 
-        return response()->json([
-            "success" => true,
-            "data" => $section,
-        ], 200);
+        return $this->okResponse(null, $section);
     }
 
     /**
@@ -40,24 +37,13 @@ class SectionController extends Controller
     public function store(Request $request, Trip $trip, Report $report)
     {
         if ($report->trip_id != $trip->id) {
-            return response()->json([
-                "success" => false,
-                "message" => "Page not found.",
-            ], 404);
+            return $this->resourceNotFoundResponse();
         }
 
-        $validator = Validator::make($request->all(), [
-            "content" => "nullable",
-            "visibility" => ["required", new Visibility()],
-            "published_at" => "required|date_format:Y-m-d H:i:s",
-        ]);
+        $validator = $this->validateData($request->all());
 
         if ($validator->fails()) {
-            return response()->json([
-                "success" => false,
-                "message" => "Validation Failed.",
-                "errors" => $validator->errors(),
-            ], 422);
+            return $this->validationFailedResponse($validator);
         }
 
         $section = new Section($request->all());
@@ -67,11 +53,7 @@ class SectionController extends Controller
 
         $section->save();
 
-        return response()->json([
-            "success" => true,
-            "message" => "Section created successfully.",
-            "data" => $section,
-        ], 201);
+        return $this->okResponse("Section created successfully.", $section, 201);
     }
 
     /**
@@ -84,40 +66,22 @@ class SectionController extends Controller
     public function update(Request $request, Trip $trip, Report $report, Section $section)
     {
         if ($section->report_id != $report->id || $report->trip_id != $trip->id) {
-            return response()->json([
-                "success" => false,
-                "message" => "Section not found.",
-            ], 404);
+            return $this->resourceNotFoundResponse();
         }
 
         if ($section->user_id != $request->user()->id) {
-            return response()->json([
-                "success" => false,
-                "message" => "Unauthorized.",
-            ], 403);
+            return $this->unauthorizedResponse();
         }
 
-        $validator = Validator::make($request->all(), [
-            "content" => "nullable",
-            "visibility" => ["required", new Visibility()],
-            "published_at" => "required|date_format:Y-m-d H:i:s",
-        ]);
+        $validator = $this->validateData($request->all());
 
         if ($validator->fails()) {
-            return response()->json([
-                "success" => false,
-                "message" => "Validation Failed.",
-                "errors" => $validator->errors(),
-            ], 422);
+            return $this->validationFailedResponse($validator);
         }
 
         $section->update($request->all());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Section successfully updated.",
-            "data" => $section,
-        ]);
+        return $this->okResponse("Section successfully updated.", $section);
     }
 
     /**
@@ -129,24 +93,24 @@ class SectionController extends Controller
     public function destroy(Request $request, Trip $trip, Report $report, Section $section)
     {
         if ($section->report_id != $report->id || $report->trip_id != $trip->id) {
-            return response()->json([
-                "success" => false,
-                "message" => "Section not found.",
-            ], 404);
+            return $this->resourceNotFoundResponse();
         }
 
         if ($section->user_id != $request->user()->id) {
-            return response()->json([
-                "success" => false,
-                "message" => "Unauthorized.",
-            ], 403);
+            return $this->unauthorizedResponse();
         }
 
         $section->delete();
 
-        return response()->json([
-            "success" => true,
-            "message" => "Section removed successfully.",
-        ], 200);
+        return $this->okResponse("Section removed successfully.");
+    }
+
+    private function validateData($data)
+    {
+        return Validator::make($data, [
+            "content" => "nullable",
+            "visibility" => ["required", new Visibility()],
+            "published_at" => "required|date_format:Y-m-d H:i:s",
+        ]);
     }
 }
