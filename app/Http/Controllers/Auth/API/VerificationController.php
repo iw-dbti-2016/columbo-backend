@@ -3,6 +3,7 @@
 namespace TravelCompanion\Http\Controllers\Auth\API;
 
 use TravelCompanion\Http\Controllers\Controller;
+use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Traits\Auth\VerifiesEmailsWithToken;
 
 class VerificationController extends Controller
@@ -18,7 +19,7 @@ class VerificationController extends Controller
     |
     */
 
-    use VerifiesEmailsWithToken;
+    use VerifiesEmailsWithToken, APIResponses;
 
     /**
      * Where to redirect users after verification.
@@ -41,33 +42,11 @@ class VerificationController extends Controller
 
     protected function alreadyVerifiedResponse()
     {
-        return response()->json([
-            "success" => true,
-            "message" => "Your email is already verified.",
-        ], 200);
-    }
-
-    protected function OKResponse()
-    {
-        return response()->json([
-            "success" => true,
-            "message" => "Your email has been verified.",
-        ], 200);
+        return $this->okResponse("Your email is already verified.");
     }
 
     protected function OKResendResponse()
     {
-        return response()->json([
-            "success" => true,
-            "message" => "The email has been re-sent.",
-        ], 200);
-    }
-
-    protected function failedVerificationResponse()
-    {
-        return response()->json([
-            "success" => true,
-            "message" => "This link is invalid.",
-        ], 403);
+        return $this->okResponse("The email has been re-sent.");
     }
 }

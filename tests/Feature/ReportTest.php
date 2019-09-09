@@ -76,8 +76,6 @@ class ReportTest extends TestCase
     /** @test */
     public function authenticated_users_can_make_reports_in_their_trips()
     {
-        $this->withoutExceptionHandling();
-
         $user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
 
@@ -136,8 +134,6 @@ class ReportTest extends TestCase
     /** @test */
     public function users_cannot_make_reports_with_invalid_data()
     {
-        $this->withoutExceptionHandling();
-
         $user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
 
@@ -205,8 +201,6 @@ class ReportTest extends TestCase
     /** @test */
     public function users_cannot_make_reports_without_all_required_data()
     {
-        $this->withoutExceptionHandling();
-
         $user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
 

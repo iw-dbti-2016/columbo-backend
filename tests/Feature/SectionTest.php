@@ -19,8 +19,6 @@ class SectionTest extends TestCase
     /** @test */
     public function authenticated_user_can_create_sections()
     {
-    	$this->withoutExceptionHandling();
-
     	$user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
         $report = factory(Report::class)->make();
@@ -54,8 +52,6 @@ class SectionTest extends TestCase
     /** @test */
     public function authenticated_user_cannot_create_section_if_trip_is_wrong()
     {
-    	$this->withoutExceptionHandling();
-
     	$user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
         $trip2 = $user->tripsOwner()->save(factory(Trip::class)->make());
@@ -120,8 +116,6 @@ class SectionTest extends TestCase
     /** @test */
     public function section_cannot_be_created_with_invalid_data()
     {
-    	$this->withoutExceptionHandling();
-
     	$user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
         $report = factory(Report::class)->make();

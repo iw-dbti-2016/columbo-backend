@@ -2,12 +2,17 @@
 
 namespace TravelCompanion\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use TravelCompanion\Exceptions\AuthorizationException;
+use TravelCompanion\Exceptions\ResourceNotFoundException;
+use TravelCompanion\Exceptions\ValidationException;
 use TravelCompanion\Report;
 use TravelCompanion\Rules\Visibility;
 use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Trip;
+use TravelCompanion\User;
 
 class ReportController extends Controller
 {
@@ -20,9 +25,7 @@ class ReportController extends Controller
      */
     public function get(Trip $trip, Report $report)
     {
-        if ($report->trip_id != $trip->id) {
-            return $this->resourceNotFoundResponse();
-        }
+        $this->ensureUrlCorrectnessOrFail($trip, $report);
 
         return $this->okResponse(null, $report);
     }
@@ -35,15 +38,8 @@ class ReportController extends Controller
      */
     public function store(Trip $trip, Request $request)
     {
-        if ($trip->user_id != $request->user()->id) {
-            return $this->unauthorizedResponse();
-        }
-
-        $validator = $this->validateData($request->all());
-
-        if ($validator->fails()) {
-            return $this->validationFailedResponse($validator);
-        }
+        $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
+        $this->validateDataOrFail($request->all());
 
         $report = new Report($request->all());
 
@@ -64,19 +60,9 @@ class ReportController extends Controller
      */
     public function update(Request $request, Trip $trip, Report $report)
     {
-        if ($report->trip_id != $trip->id) {
-            return $this->resourceNotFoundResponse();
-        }
-
-        if ($trip->user_id != $request->user()->id) {
-            return $this->unauthorizedResponse();
-        }
-
-        $validator = $this->validateData($request->all());
-
-        if ($validator->fails()) {
-            return $this->validationFailedResponse($validator);
-        }
+        $this->ensureUrlCorrectnessOrFail($trip, $report);
+        $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
+        $this->validateDataOrFail($request->all());
 
         $report = $report->update($request->all());
 
@@ -91,27 +77,40 @@ class ReportController extends Controller
      */
     public function destroy(Request $request, Trip $trip, Report $report)
     {
-        if ($report->trip_id != $trip->id) {
-            return $this->resourceNotFoundResponse();
-        }
-
-        if ($trip->user_id != $request->user()->id) {
-            return $this->unauthorizedResponse();
-        }
+        $this->ensureUrlCorrectnessOrFail($trip, $report);
+        $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
 
         $report->delete();
 
         return $this->okResponse("Report was deleted.");
     }
 
-    private function validateData($data)
+    private function validateDataOrFail($data)
     {
-        return Validator::make($data, [
+        $validator = Validator::make($data, [
             "title" => "required|max:100",
             "date" => "nullable|date_format:Y-m-d",
             "description" => "nullable|max:5000",
             "visibility" => ["required", new Visibility()],
             "published_at" => "required|date_format:Y-m-d H:i:s",
         ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    private function ensureUrlCorrectnessOrFail(Trip $trip, Report $report)
+    {
+        if ($report->trip_id != $trip->id) {
+            throw new ResourceNotFoundException();
+        }
+    }
+
+    private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
+    {
+        if ($resource->user_id != $user->id) {
+            throw new AuthorizationException();
+        }
     }
 }

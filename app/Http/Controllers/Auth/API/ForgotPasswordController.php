@@ -5,6 +5,7 @@ namespace TravelCompanion\Http\Controllers\Auth\API;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Validator;
 use TravelCompanion\Http\Controllers\Controller;
+use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Traits\Auth\SendsPasswordResetEmailsWithToken;
 
 class ForgotPasswordController extends Controller
@@ -20,7 +21,7 @@ class ForgotPasswordController extends Controller
     |
     */
 
-    use SendsPasswordResetEmailsWithToken;
+    use SendsPasswordResetEmailsWithToken, APIResponses;
 
     /**
      * Create a new controller instance.
@@ -40,11 +41,7 @@ class ForgotPasswordController extends Controller
      */
     protected function sendValidationFailedResponse(Validator $validator)
     {
-        return response()->json([
-        	"success" => false,
-        	"message" => "Validation Failed",
-        	"errors" => $validator->errors()->jsonSerialize(),
-        ], 422);
+        return $this->validationFailedResponse($validator);
     }
 
     /**
@@ -56,10 +53,7 @@ class ForgotPasswordController extends Controller
      */
     protected function sendResetLinkResponse(Request $request, $response)
     {
-        return response()->json([
-        	"success" => true,
-        	"message" => trans($response),
-        ], 200);
+        return $this->okResponse(trans($response));
     }
 
     /**
@@ -71,12 +65,8 @@ class ForgotPasswordController extends Controller
      */
     protected function sendResetLinkFailedResponse(Request $request, $response)
     {
-        return response()->json([
-        	"success" => false,
-        	"message" => "Validation Failed",
-        	"errors" => [
-        		"email" => trans($response),
-        	],
-        ], 422);
+        return $this->validationFailedManualResponse([
+                            "email" => trans($response),
+                        ]);
     }
 }

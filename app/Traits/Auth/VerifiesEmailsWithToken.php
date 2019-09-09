@@ -52,7 +52,7 @@ trait VerifiesEmailsWithToken
             event(new Verified($user));
         }
 
-        return $this->OKResponse();
+        return $this->correctResponse();
     }
 
     /**
@@ -74,10 +74,10 @@ trait VerifiesEmailsWithToken
 
     protected function alreadyVerifiedResponse()
     {
-        return $this->OKResponse();
+        return $this->correctResponse();
     }
 
-    protected function OKResponse()
+    protected function correctResponse()
     {
         return redirect($this->redirectPath())->with('verified', true);
     }

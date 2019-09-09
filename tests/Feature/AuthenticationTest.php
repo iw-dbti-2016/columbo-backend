@@ -658,6 +658,24 @@ class AuthenticationTest extends TestCase
     }
 
     /** @test */
+    public function a_password_reset_link_can_only_be_requested_with_valid_data()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->expectJSON()
+                            ->post("/api/v1/auth/password/email", [
+                                "email" => "jane.doe",
+                            ]);
+
+        $response->assertStatus(422);
+        $response->assertJSONStructure([
+            "success",
+            "message",
+            "errors",
+        ]);
+    }
+
+    /** @test */
     public function an_unexisting_account_cannot_receive_a_password_reset_link()
     {
         $response = $this->expectJSON()
@@ -717,6 +735,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function an_authorized_user_with_validated_email_cannot_resend_a_verification_email_but_receives_a_confirmation_af_validation()
     {
+        $this->withoutExceptionHandling();
         $user = factory(User::class)->create();
 
         $response = $this->expectJSON()

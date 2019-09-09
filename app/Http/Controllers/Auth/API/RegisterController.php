@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Http\Controllers\Controller;
+use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Traits\Auth\RegistersUsersWithToken;
 use TravelCompanion\User;
 
 class RegisterController extends Controller
 {
-	use RegistersUsersWithToken;
+	use RegistersUsersWithToken, APIResponses;
 
     /**
      * Create a new controller instance.
@@ -39,11 +40,7 @@ class RegisterController extends Controller
 
     protected function validationFailed(\Illuminate\Validation\Validator $validator)
     {
-        return response()->json([
-            "success" => false,
-            "message" => "Validation Failed",
-            "errors" => $validator->errors()->jsonSerialize(),
-        ], 422);
+        return $this->validationFailedResponse($validator);
     }
 
 	protected function create(array $data)
@@ -60,14 +57,11 @@ class RegisterController extends Controller
 
     protected function registered(Request $request, $user)
     {
-        return response()->json([
-            "success" => true,
-            "data" => [
-                "token" => $this->token,
-                "token_type" => 'bearer',
-                "expires_in" => auth()->factory()->getTTL() * 60,
-                "user" => $user,
-            ],
+        return $this->okResponse(null, [
+            "token" => $this->token,
+            "token_type" => 'bearer',
+            "expires_in" => auth()->factory()->getTTL() * 60,
+            "user" => $user,
         ], 201);
     }
 }

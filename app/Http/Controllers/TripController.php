@@ -2,11 +2,15 @@
 
 namespace TravelCompanion\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use TravelCompanion\Exceptions\AuthorizationException;
+use TravelCompanion\Exceptions\ValidationException;
 use TravelCompanion\Rules\Visibility;
 use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Trip;
+use TravelCompanion\User;
 
 class TripController extends Controller
 {
@@ -25,11 +29,7 @@ class TripController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = $this->validateData($request->all());
-
-        if ($validator->fails()) {
-            return $this->validationFailedResponse($validator);
-        }
+        $this->validateData($request->all());
 
         $trip = $request->user()->tripsOwner()->create($request->all());
 
@@ -45,15 +45,8 @@ class TripController extends Controller
      */
     public function update(Request $request, Trip $trip)
     {
-        if ($trip->user_id != $request->user()->id) {
-            return $this->unauthorizedResponse();
-        }
-
-        $validator = $this->validateData($request->all());
-
-        if ($validator->fails()) {
-            return $this->validationFailedResponse($validator);
-        }
+        $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
+        $this->validateData($request->all());
 
         $trip->update($request->all());
 
@@ -68,9 +61,7 @@ class TripController extends Controller
      */
     public function destroy(Request $request, Trip $trip)
     {
-        if ($trip->user_id != $request->user()->id) {
-            return $this->unauthorizedResponse();
-        }
+        $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
 
         $trip->delete();
 
@@ -79,7 +70,7 @@ class TripController extends Controller
 
     private function validateData($data)
     {
-        return Validator::make($data, [
+        $validator = Validator::make($data, [
             "name" => "required|max:100",
             "synopsis" => "nullable|max:100",
             "description" => "nullable",
@@ -88,5 +79,16 @@ class TripController extends Controller
             "visibility" => ["required", new Visibility],
             "published_at" => "required|date_format:Y-m-d H:i:s",
         ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
+    {
+        if ($resource->user_id != $user->id) {
+            throw new AuthorizationException();
+        }
     }
 }

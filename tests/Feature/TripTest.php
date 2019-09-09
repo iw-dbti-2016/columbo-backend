@@ -73,7 +73,6 @@ class TripTest extends TestCase
     /** @test */
     public function a_user_cannot_make_a_trip_with_invalid_data()
     {
-        $this->withoutExceptionHandling();
         $user = factory(User::class)->create();
 
         $responses = [];
@@ -242,8 +241,6 @@ class TripTest extends TestCase
     /** @test */
     public function users_can_update_trips_they_own()
     {
-        $this->withoutExceptionHandling();
-
         $user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
 
@@ -278,8 +275,6 @@ class TripTest extends TestCase
     /** @test */
     public function users_cannot_update_trips_they_do_not_own()
     {
-        $this->withoutExceptionHandling();
-
         $user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
         $user2 = factory(User::class)->create();
@@ -314,8 +309,6 @@ class TripTest extends TestCase
     /** @test */
     public function users_cannot_update_trips_with_invalid_data()
     {
-        $this->withoutExceptionHandling();
-
         $user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
 
@@ -403,8 +396,6 @@ class TripTest extends TestCase
     /** @test */
     public function a_trip_owner_can_delete_that_trip()
     {
-        $this->withoutExceptionHandling();
-
         $user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
 
@@ -422,8 +413,6 @@ class TripTest extends TestCase
     /** @test */
     public function a_trip_not_owner_cannot_delete_that_trip()
     {
-        $this->withoutExceptionHandling();
-
         $user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
         $user2 = factory(User::class)->create();

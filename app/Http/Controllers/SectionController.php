@@ -2,13 +2,18 @@
 
 namespace TravelCompanion\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use TravelCompanion\Exceptions\AuthorizationException;
+use TravelCompanion\Exceptions\ResourceNotFoundException;
+use TravelCompanion\Exceptions\ValidationException;
 use TravelCompanion\Report;
 use TravelCompanion\Rules\Visibility;
 use TravelCompanion\Section;
 use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Trip;
+use TravelCompanion\User;
 
 class SectionController extends Controller
 {
@@ -21,9 +26,7 @@ class SectionController extends Controller
      */
     public function get(Request $request, Trip $trip, Report $report, Section $section)
     {
-        if ($section->report_id != $report->id || $report->trip_id != $trip->id) {
-            return $this->resourceNotFoundResponse();
-        }
+        $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
 
         return $this->okResponse(null, $section);
     }
@@ -36,15 +39,8 @@ class SectionController extends Controller
      */
     public function store(Request $request, Trip $trip, Report $report)
     {
-        if ($report->trip_id != $trip->id) {
-            return $this->resourceNotFoundResponse();
-        }
-
-        $validator = $this->validateData($request->all());
-
-        if ($validator->fails()) {
-            return $this->validationFailedResponse($validator);
-        }
+        $this->ensureUrlCorrectnessOrFail($trip, $report);
+        $this->validateData($request->all());
 
         $section = new Section($request->all());
 
@@ -65,19 +61,10 @@ class SectionController extends Controller
      */
     public function update(Request $request, Trip $trip, Report $report, Section $section)
     {
-        if ($section->report_id != $report->id || $report->trip_id != $trip->id) {
-            return $this->resourceNotFoundResponse();
-        }
+        $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
+        $this->ensureUserOwnsResourceOrFail($request->user(), $section);
 
-        if ($section->user_id != $request->user()->id) {
-            return $this->unauthorizedResponse();
-        }
-
-        $validator = $this->validateData($request->all());
-
-        if ($validator->fails()) {
-            return $this->validationFailedResponse($validator);
-        }
+        $this->validateData($request->all());
 
         $section->update($request->all());
 
@@ -92,13 +79,8 @@ class SectionController extends Controller
      */
     public function destroy(Request $request, Trip $trip, Report $report, Section $section)
     {
-        if ($section->report_id != $report->id || $report->trip_id != $trip->id) {
-            return $this->resourceNotFoundResponse();
-        }
-
-        if ($section->user_id != $request->user()->id) {
-            return $this->unauthorizedResponse();
-        }
+        $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
+        $this->ensureUserOwnsResourceOrFail($request->user(), $section);
 
         $section->delete();
 
@@ -107,10 +89,28 @@ class SectionController extends Controller
 
     private function validateData($data)
     {
-        return Validator::make($data, [
+        $validator = Validator::make($data, [
             "content" => "nullable",
             "visibility" => ["required", new Visibility()],
             "published_at" => "required|date_format:Y-m-d H:i:s",
         ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    private function ensureUrlCorrectnessOrFail(Trip $trip, Report $report, Section $section=null)
+    {
+        if ($report->trip_id != $trip->id || ($section != null && $section->report_id != $report->id) ) {
+            throw new ResourceNotFoundException();
+        }
+    }
+
+    private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
+    {
+        if ($resource->user_id != $user->id) {
+            throw new AuthorizationException();
+        }
     }
 }
