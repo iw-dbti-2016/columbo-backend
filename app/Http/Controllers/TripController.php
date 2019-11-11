@@ -4,6 +4,7 @@ namespace TravelCompanion\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Exceptions\AuthorizationException;
 use TravelCompanion\Exceptions\ValidationException;
@@ -30,6 +31,8 @@ class TripController extends Controller
     public function store(Request $request)
     {
         $this->validateData($request->all());
+
+        $request['published_at'] = Carbon::now()->format("Y-m-d H:i:s");
 
         $trip = $request->user()->tripsOwner()->create($request->all());
 
@@ -77,7 +80,7 @@ class TripController extends Controller
             "start_date" => "required|date_format:Y-m-d",
             "end_date" => "required|date_format:Y-m-d",
             "visibility" => ["required", new Visibility],
-            "published_at" => "required|date_format:Y-m-d H:i:s",
+            "published_at" => "nullable|date_format:Y-m-d H:i:s",
         ]);
 
         if ($validator->fails()) {

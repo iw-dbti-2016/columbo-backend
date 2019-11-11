@@ -13,16 +13,18 @@
 					We will visit following states: CA, NV, (AZ), UT, ID, OR.
 				</p> <!-- DESCRIPTION -->
 			</div>
-			<div class="mt-12 bg-gray-100 px-6 py-4 rounded-lg shadow-md w-1/3">
-				<span class="block text-xl">Members</span> <!-- MEMBERS -->
-				<ul class="text-gray-700 text-sm">
-					<li class="mt-2"><a class="hover:underline" href="#">Stan Kelchtermans</a></li>
-					<li class="mt-1"><a class="hover:underline" href="#">Maikel Both</a></li>
-					<li class="mt-1"><a class="hover:underline" href="#">Devin Pelckmans</a></li>
-					<li class="mt-1"><a class="hover:underline" href="#">Vik Vanderlinden</a></li>
-				</ul>
-				<span class="block mt-3 text-xl">Visitors</span> <!-- VISITORS -->
-				<span class="block mt-2 text-gray-700 text-sm">No visitors on this trip.</span>
+			<div class="mt-12 w-1/3">
+				<div class="bg-gray-100 px-6 py-4 rounded-lg shadow-md">
+					<span class="block text-xl">Members</span> <!-- MEMBERS -->
+					<ul class="text-gray-700 text-sm">
+						<li class="mt-2"><a class="hover:underline" href="#">Stan Kelchtermans</a></li>
+						<li class="mt-1"><a class="hover:underline" href="#">Maikel Both</a></li>
+						<li class="mt-1"><a class="hover:underline" href="#">Devin Pelckmans</a></li>
+						<li class="mt-1"><a class="hover:underline" href="#">Vik Vanderlinden</a></li>
+					</ul>
+					<span class="block mt-3 text-xl">Visitors</span> <!-- VISITORS -->
+					<span class="block mt-2 text-gray-700 text-sm">No visitors on this trip.</span>
+				</div>
 			</div>
 		</div>
 		<div class="mt-8 flex flex-row justify-between">
