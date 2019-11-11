@@ -68,18 +68,6 @@
                 </div>
 
                 <div class="mt-2">
-                    <label for="home_location">Home Location*</label>
-
-                    <div>
-                        <input class="shadow focus:shadow-lg mt-1 outline-none px-4 py-3 rounded-lg w-full" id="home_location" type="text" name="home_location" value="{{ old('home_location') }}" required autocomplete="home_location">
-
-                        @error('home_location')
-                            <span class="text-red-600" role="alert">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="mt-2">
                     <label for="password">{{ __('Password') }}*</label>
 
                     <div>
