@@ -1,6 +1,7 @@
 <template>
-	<div class="m-auto max-w-4xl my-8 py-10 rounded-lg w-full relative">
-		<a @click.prevent="$router.go(-1)" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" href="#"><font-awesome-icon :icon="['fas', 'times']" /></a>
+	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
+		<a @click.prevent="$router.push('/app')" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" href="/app" title="Close this trip"><font-awesome-icon :icon="['fas', 'times']" /></a>
+		<a @click.prevent="$router.push('/app/trips/1/edit')" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-12 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" href="/app/trips/1/edit" title="Edit this trip"><font-awesome-icon :icon="['fas', 'edit']" /></a>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3">
 				<h1 class="text-6xl tracking-wide uppercase">USA 2020</h1> <!-- NAME -->
@@ -25,13 +26,20 @@
 			</div>
 		</div>
 		<div class="mt-8 flex flex-row justify-between">
-			<div class="flex-grow w-1/2"> <!-- REPORTS -->
+			<div class="flex-grow mr-4 w-1/2"> <!-- REPORTS -->
 				<span class="block text-2xl">Reports</span>
-				<span class="block mt-2 text-gray-700">No reports written yet.</span>
+				<a @click.prevent="$router.push('/app/reports/create')" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white" href="/app/reports/create">Create a new report</a>
+				<!-- <span class="block mt-2 text-gray-700">No reports written yet.</span> -->
+				<div class="bg-gray-100 mt-2 rounded-lg shadow-md">
+					<div @click.prevent="$router.push('/app/reports/1')" class="border-b border-gray-400 last:border-b-0 px-5 py-4 text-md cursor-pointer">Takeoff</div>
+					<div @click.prevent="$router.push('/app/reports/2')" class="border-b border-gray-400 last:border-b-0 px-5 py-4 text-md cursor-pointer">LA Area</div>
+					<div @click.prevent="$router.push('/app/reports/3')" class="border-b border-gray-400 last:border-b-0 px-5 py-4 text-md cursor-pointer">Vegas</div>
+				</div>
 			</div>
 			<div class="flex-grow w-1/2"> <!-- PLANS -->
 				<span class="block text-2xl">Planning</span>
 				<span class="block mt-2 text-gray-700">No planning determined yet.</span>
+				<span class="block mt-2 text-gray-700">Planning is not supported yet!</span>
 			</div>
 		</div>
 	</div>

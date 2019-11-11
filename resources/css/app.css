@@ -70,3 +70,10 @@
 .component-fade-enter, .component-fade-leave-to {
 	opacity: 0;
 }
+
+@responsive {
+	.rotate-270 {
+		transform-origin: right;
+		transform: translateX(-100%) rotate(270deg);
+	}
+}
