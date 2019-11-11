@@ -61,7 +61,7 @@ class ReportController extends Controller
     public function update(Request $request, Trip $trip, Report $report)
     {
         $this->ensureUrlCorrectnessOrFail($trip, $report);
-        $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
+        $this->ensureUserOwnsResourceOrFail($request->user(), $report);
         $this->validateDataOrFail($request->all());
 
         $report = $report->update($request->all());
@@ -78,7 +78,7 @@ class ReportController extends Controller
     public function destroy(Request $request, Trip $trip, Report $report)
     {
         $this->ensureUrlCorrectnessOrFail($trip, $report);
-        $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
+        $this->ensureUserOwnsResourceOrFail($request->user(), $report);
 
         $report->delete();
 

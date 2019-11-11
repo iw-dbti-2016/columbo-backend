@@ -408,6 +408,11 @@ class TripTest extends TestCase
             "success",
             "message",
         ]);
+
+        $this->assertDatabaseHas("trips", [
+            "id" => $trip->id,
+            "deleted_at" => Carbon::now()->format("Y-m-d H:i:s"),
+        ]);
     }
 
     /** @test */
@@ -426,6 +431,15 @@ class TripTest extends TestCase
             "success",
             "message",
         ]);
+
+        $this->assertDatabaseHas("trips", [
+            "id" => $trip->id,
+        ]);
+
+        $this->assertDatabaseMissing("trips", [
+            "id" => $trip->id,
+            "deleted_at" => Carbon::now()->format("Y-m-d H:i:s"),
+        ]);
     }
 
     /** @test */
@@ -437,6 +451,23 @@ class TripTest extends TestCase
         $response = $this->expectJSON()
                             ->actingAs($user)
                             ->get("/api/v1/trips/" . $trip->id);
+
+        $response->assertStatus(200);
+        $response->assertJSONStructure([
+            "success",
+            "data",
+        ]);
+    }
+
+    /** @test */
+    public function users_can_get_trip_list()
+    {
+        $user = factory(User::class)->create();
+        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+
+        $response = $this->expectJSON()
+                            ->actingAs($user)
+                            ->get("/api/v1/user/trips");// . $user->username . "/trips");
 
         $response->assertStatus(200);
         $response->assertJSONStructure([

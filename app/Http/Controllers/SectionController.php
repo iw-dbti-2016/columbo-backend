@@ -40,6 +40,7 @@ class SectionController extends Controller
     public function store(Request $request, Trip $trip, Report $report)
     {
         $this->ensureUrlCorrectnessOrFail($trip, $report);
+        $this->ensureUserOwnsResourceOrFail($request->user(), $report);
         $this->validateData($request->all());
 
         $section = new Section($request->all());

@@ -18,6 +18,7 @@ class CreateTripUserVisitorsTable extends Migration
             $table->bigInteger('user_id')->unsigned()->index();
 
             /* DATA */
+            $table->boolean('invitation_accepted')->default(false);
             $table->date('visit_start_date');
             $table->date('visit_end_date');
 

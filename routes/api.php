@@ -29,6 +29,10 @@ Route::group(['prefix' => 'v1'], function() {
 			return ["success" => true, "data" => $request->user()];
 		})->middleware('verified');
 
+		Route::group(['prefix' => 'user'], function() {
+			Route::get('/trips', 'UserController@listTrips');
+		});
+
 		Route::group(['prefix' => 'trips'], function() {
 			Route::get('/{trip}', 'tripController@get');
 			Route::post('/create', 'tripController@store');

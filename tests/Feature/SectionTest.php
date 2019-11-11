@@ -564,8 +564,9 @@ class SectionTest extends TestCase
     		"message",
         ]);
 
-        $this->assertDatabaseMissing("sections", [
-        	"id" => $section->id,
+        $this->assertDatabaseHas("sections", [
+            "id" => $section->id,
+            "deleted_at" => Carbon::now()->format("Y-m-d H:i:s"),
         ]);
 	}
 
@@ -600,6 +601,11 @@ class SectionTest extends TestCase
 
         $this->assertDatabaseHas("sections", [
         	"id" => $section->id,
+        ]);
+
+        $this->assertDatabaseMissing("sections", [
+            "id" => $section->id,
+            "deleted_at" => Carbon::now()->format("Y-m-d H:i:s"),
         ]);
 	}
 

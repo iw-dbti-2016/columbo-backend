@@ -386,8 +386,9 @@ class ReportTest extends TestCase
             "message",
         ]);
 
-        $this->assertDatabaseMissing("reports", [
+        $this->assertDatabaseHas("reports", [
             "id" => $report->id,
+            "deleted_at" => Carbon::now()->format("Y-m-d H:i:s"),
         ]);
     }
 
@@ -416,6 +417,11 @@ class ReportTest extends TestCase
 
         $this->assertDatabaseHas("reports", [
             "id" => $report->id,
+        ]);
+
+        $this->assertDatabaseMissing("reports", [
+            "id" => $report->id,
+            "deleted_at" => Carbon::now()->format("Y-m-d H:i:s"),
         ]);
     }
 }

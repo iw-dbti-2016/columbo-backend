@@ -16,9 +16,10 @@ class CreateTripUserMembersTable extends Migration
         Schema::create('trip_user_role_members', function (Blueprint $table) {
             $table->bigInteger('trip_id')->unsigned()->index();
             $table->bigInteger('user_id')->unsigned()->index();
-            $table->bigInteger('role_id')->unsigned()->nullable()->index(); // NOT NULLABLE!
+            $table->bigInteger('role_id')->unsigned()->nullable()->index(); // NOT NULLABLE WHEN FINISHED
 
             /* DATA */
+            $table->boolean('invitation_accepted')->default(false);
             $table->date('join_date')->nullable();
             $table->date('leave_date')->nullable();
 
