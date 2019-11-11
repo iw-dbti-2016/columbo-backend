@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600&display=swap');
+
 /**
  * This injects Tailwind's base styles, which is a combination of
  * Normalize.css and some additional base styles.
@@ -60,3 +62,11 @@
  * @import "utilities/background-patterns";
  * @import "utilities/skew-transforms";
  */
+
+.component-fade-enter-active, .component-fade-leave-active {
+	transition: opacity .25s ease;
+}
+
+.component-fade-enter, .component-fade-leave-to {
+	opacity: 0;
+}

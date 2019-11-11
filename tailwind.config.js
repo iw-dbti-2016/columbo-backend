@@ -1,7 +1,12 @@
 module.exports = {
-  theme: {
-    extend: {}
-  },
-  variants: {},
-  plugins: []
+	theme: {
+		extend: {},
+		fontFamily: {
+			'sans': 'Montserrat,Helvetica,Arial,sans-serif',
+		}
+	},
+	variants: {
+		borderWidth: ['last'],
+	},
+	plugins: []
 }

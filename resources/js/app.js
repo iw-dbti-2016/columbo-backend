@@ -5,10 +5,12 @@
  */
 
 require('./bootstrap');
+require('./font-awesome');
 
-window.Vue = require('vue');
+import Vue from 'vue'
 import VueRouter from 'vue-router';
 
+window.Vue = require('vue');
 Vue.use(VueRouter);
 
 var baseUrl = document.head.querySelector('meta[name="base-url"]').content;
@@ -25,11 +27,7 @@ let csrf = document.head.querySelector('meta[name="csrf-token"]').content;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-Vue.component('auth-image', require('./components/auth/AuthImage.vue').default);
-Vue.component('login-form', require('./components/auth/LoginForm.vue').default);
-Vue.component('register-form', require('./components/auth/RegisterForm.vue').default);
-// Vue.component('forgot-password-form', require('./components/auth/ForgotPasswordForm.vue').default);
+// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -37,34 +35,46 @@ Vue.component('register-form', require('./components/auth/RegisterForm.vue').def
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 const routes = [
-	{
-		path: '/auth/login',
-		component: require('./components/auth/LoginForm.vue').default,
-		props: {
-			action: baseUrl + '/login',
-			image: 'travelers.png',
-			alt: 'Travelers',
-			csrf: csrf,
-		},
+    {
+		path: '/app/',
+		component: require('./components/HomeComponent.vue').default,
+    },
+    {
+        path: '/app/trips/create',
+        component: require('./components/trips/CreateTripComponent.vue').default,
 	},
-	{
-		path: '/auth/register',
-		component: require('./components/auth/RegisterForm.vue').default,
-		props: {
-			action: baseUrl + '/register',
-			image: 'destination.png',
-			alt: 'Destination',
-			csrf: csrf,
-		},
-	},
-	{
-		path: '/auth/forgot-password',
-		component: require('./components/auth/ForgotPasswordForm.vue').default,
-		props: {
-			action: baseUrl + '/password/email',
-			csrf: csrf,
-		},
-	}
+    {
+        path: '/app/trips/:id/edit',
+        component: require('./components/trips/EditTripComponent.vue').default,
+    },
+    {
+        path: '/app/trips/:id',
+        component: require('./components/trips/ShowTripComponent.vue').default,
+    },
+    {
+        path: '/app/reports/create',
+        component: require('./components/reports/CreateReportComponent.vue').default,
+    },
+    {
+        path: '/app/reports/:id/edit',
+        component: require('./components/reports/EditReportComponent.vue').default,
+    },
+    {
+        path: '/app/reports/:id',
+        component: require('./components/reports/ShowReportComponent.vue').default,
+    },
+    {
+        path: '/app/sections/create',
+        component: require('./components/sections/CreateSectionComponent.vue').default,
+    },
+    {
+        path: '/app/sections/:id/edit',
+        component: require('./components/sections/EditSectionComponent.vue').default,
+    },
+    {
+        path: '/app/sections/:id',
+        component: require('./components/sections/ShowSectionComponent.vue').default,
+    }
 ]
 
 const router = new VueRouter({
@@ -73,67 +83,6 @@ const router = new VueRouter({
 });
 
 const app = new Vue({
-    //router,
+    router: router,
     el: "#app",
-    props: ['action', 'source', 'image', 'alt'],
-    data: {
-    	form: 'login',
-    	images: {
-    		login: {
-    			source: "travelers.png",
-    			alt: "Travelers",
-    		},
-    		register: {
-    			source: "destination.png",
-    			alt: "Destinations",
-    		},
-    		forgotPassword: {
-    			source: "",
-    			alt: "",
-    		}
-    	},
-    	userData: {
-
-    	}
-    },
-    methods: {
-    	setForm: function(form) {
-    		this.form = form;
-    	},
-    	getUserData: function() {
-    		axios.get('/api/v1/user')
-    			.then((response) => {
-    				this.userData = response.data.data;
-    			})
-    			.catch((error) => {
-    				if (error.response.status == 500 || error.response.status == 403) {
-    					this.userData = error.response.data;
-    				}
-    				if (error.response.status == 401) {
-    					document.getElementById('logout').submit();
-    				}
-  					console.log("error: " + error);
-    			});
-    	},
-        refreshToken: function() {
-            axios.patch('/api/v1/auth/refresh')
-                .then((response) => {
-                    this.userData = response.data.data;
-                })
-                .catch((error) => {
-                    if (error.response.status == 500 || error.response.status == 403) {
-                        this.userData = error.response.data;
-                    }
-                    if (error.response.status == 401) {
-                        document.getElementById('logout').submit();
-                    }
-                    console.log("error: " + error);
-                });
-        }
-    },
-    computed: {
-    	formImage: function() {
-    		return this.images[this.form];
-    	},
-    }
 });//.$mount('#app');

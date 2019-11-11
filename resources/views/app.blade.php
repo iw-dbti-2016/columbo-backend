@@ -14,7 +14,7 @@
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 </head>
-<body class="bg-gray-100 h-screen antialiased leading-none">
+<body class="h-screen antialiased leading-none font-sans">
 <div class="flex flex-col">
     @if(Route::has('login'))
         <div class="absolute top-0 right-0 mt-2 mr-6">
@@ -24,22 +24,10 @@
             </form>
         </div>
     @endif
-
-    <div class="min-h-screen flex items-center justify-center">
-        <div class="flex flex-col justify-around h-full">
-            <div id="app">
-                <h1 class="text-gray-600 text-center font-light tracking-wider text-5xl mb-6">
-                    This is the home of <span class="font-semibold">{{ config('app.name', 'Laravel') }}</span>
-                </h1>
-                <a @click.prevent="getUserData" href="#">Get your data</a>
-                <a @click.prevent="refreshToken" href="#">Refresh token</a>
-                <div v-show="userData !== {}">
-                    <ul>
-                        <li v-for="(item,key) in userData">@{{ key }}: @{{ item }}</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <div id="app">
+        <transition name="component-fade" mode="out-in">
+            <router-view></router-view>
+        </transition>
     </div>
 </div>
 </body>
