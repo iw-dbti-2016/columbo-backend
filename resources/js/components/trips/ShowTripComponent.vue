@@ -30,7 +30,7 @@
 		<div class="mt-8 flex flex-row justify-between">
 			<div class="flex-grow mr-4 w-1/2"> <!-- REPORTS -->
 				<span class="block text-2xl">Reports</span>
-				<a @click.prevent="$router.push('/app/reports/create')" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white" href="/app/reports/create">Create a new report</a>
+				<a @click.prevent="$router.push('/app/trips/1/reports/create')" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white" href="/app/reports/create">Create a new report</a>
 				<!-- <span class="block mt-2 text-gray-700">No reports written yet.</span> -->
 				<div class="bg-gray-100 mt-2 rounded-lg shadow-md">
 					<div @click.prevent="$router.push('/app/reports/1')" class="border-b border-gray-400 last:border-b-0 px-5 py-4 text-md cursor-pointer">Takeoff</div>

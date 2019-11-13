@@ -52,7 +52,7 @@ const routes = [
         component: require('./components/trips/ShowTripComponent.vue').default,
     },
     {
-        path: '/app/reports/create',
+        path: '/app/trips/:tripId/reports/create',
         component: require('./components/reports/CreateReportComponent.vue').default,
     },
     {
@@ -64,7 +64,7 @@ const routes = [
         component: require('./components/reports/ShowReportComponent.vue').default,
     },
     {
-        path: '/app/sections/create',
+        path: '/app/report/:reportId/sections/create',
         component: require('./components/sections/CreateSectionComponent.vue').default,
     },
     {

@@ -4,6 +4,7 @@ namespace TravelCompanion\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Exceptions\AuthorizationException;
 use TravelCompanion\Exceptions\ResourceNotFoundException;
@@ -40,6 +41,8 @@ class ReportController extends Controller
     {
         $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
         $this->validateDataOrFail($request->all());
+
+        $request['published_at'] = Carbon::now()->format("Y-m-d H:i:s");
 
         $report = new Report($request->all());
 
@@ -92,7 +95,7 @@ class ReportController extends Controller
             "date" => "nullable|date_format:Y-m-d",
             "description" => "nullable|max:5000",
             "visibility" => ["required", new Visibility()],
-            "published_at" => "required|date_format:Y-m-d H:i:s",
+            "published_at" => "nullable|date_format:Y-m-d H:i:s",
         ]);
 
         if ($validator->fails()) {
