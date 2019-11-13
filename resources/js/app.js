@@ -64,7 +64,7 @@ const routes = [
         component: require('./components/reports/ShowReportComponent.vue').default,
     },
     {
-        path: '/app/report/:reportId/sections/create',
+        path: '/app/reports/:reportId/sections/create',
         component: require('./components/sections/CreateSectionComponent.vue').default,
     },
     {
