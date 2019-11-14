@@ -25,7 +25,7 @@ class CreateDocumentsTable extends Migration
 
             /* VISIBILITY */
             $table->tinyInteger('visibility')->unsigned()->index();
-            $table->timestamp('published_at');
+            $table->timestamp('published_at')->useCurrent();
 
             $table->softDeletes();
             $table->timestamps();

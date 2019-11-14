@@ -32,8 +32,6 @@ class TripController extends Controller
     {
         $this->validateData($request->all());
 
-        $request['published_at'] = Carbon::now()->format("Y-m-d H:i:s");
-
         $trip = $request->user()->tripsOwner()->create($request->all());
 
         return $this->okResponse("Trip successfully created.", $trip, 201);

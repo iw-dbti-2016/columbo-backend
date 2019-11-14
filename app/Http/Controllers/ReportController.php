@@ -42,8 +42,6 @@ class ReportController extends Controller
         $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
         $this->validateDataOrFail($request->all());
 
-        $request['published_at'] = Carbon::now()->format("Y-m-d H:i:s");
-
         $report = new Report($request->all());
 
         $report->trip()->associate($trip);

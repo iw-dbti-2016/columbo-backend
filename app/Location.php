@@ -5,6 +5,7 @@ namespace TravelCompanion;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Illuminate\Database\Eloquent\Model;
 use TravelCompanion\Action;
+use TravelCompanion\Plan;
 use TravelCompanion\Section;
 
 class Location extends Model
@@ -17,11 +18,7 @@ class Location extends Model
 
     public function sections()
     {
-        return $this->morphToMany(
-                        Section::class,
-                        'locationable',
-                        'section_locationables'
-                    );
+        return $this->morphMany(Section::class, 'locationable');
     }
 
     public function actions()

@@ -31,13 +31,9 @@ class Section extends Model
     	return $this->belongsTo(Report::class);
     }
 
-    public function locations()
+    public function location()
     {
-    	return $this->morphedByMany(
-                        Location::class,
-                        'locationable',
-                        'section_locationables'
-                    );
+    	return $this->morphTo('locationable');
     }
 
     public function actions()

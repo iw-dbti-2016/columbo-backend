@@ -58,10 +58,10 @@ class SectionTest extends TestCase
         $section->save();
 
         $location = $user->locations()->save(factory(Location::class)->make());
-        $location->sections()->attach($section);
-        $location->save();
+        $section->location()->associate($location);
+        $section->save();
 
         $this->assertDatabaseHas('locations', ['id' => $location->id]);
-        $this->assertCount(1, $section->locations()->get());
+        $this->assertCount(1, $section->location()->get());
     }
 }

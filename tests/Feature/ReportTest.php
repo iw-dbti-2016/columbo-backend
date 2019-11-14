@@ -226,15 +226,15 @@ class ReportTest extends TestCase
                                 "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
                             ]);
 
-        // Published at
-        $responses[] = $this->expectJSON()
+        // Published at (NOT REQUIRED, DEFAULT NOW())
+        /*$responses[] = $this->expectJSON()
                             ->actingAs($user)
                             ->post("/api/v1/trips/" . $trip->id . "/reports/create", [
                                 "title" => "New report",
                                 "date" => "2019-01-01",
                                 "description" => "Blabla",
                                 "visibility" => "private",
-                            ]);
+                            ]);*/
 
         foreach ($responses as $response) {
             $response->assertStatus(422);

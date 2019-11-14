@@ -16,6 +16,7 @@ class CreateSectionsTable extends Migration
         Schema::create('sections', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('report_id')->unsigned()->nullable()->index();
+            $table->nullableMorphs('locationable');
             // Owner
             $table->bigInteger('user_id')->unsigned()->index();
 
@@ -23,9 +24,13 @@ class CreateSectionsTable extends Migration
             $table->boolean('is_draft')->default(true);
             $table->text('content')->nullable();
 
+            $table->string('image', 100)->nullable();
+            $table->time('time')->nullable();
+            $table->integer('duration_minutes')->nullable();
+
             /* VISIBILITY */
             $table->tinyInteger('visibility')->unsigned()->index();
-            $table->timestamp('published_at');
+            $table->timestamp('published_at')->useCurrent();
 
             $table->softDeletes();
             $table->timestamps();

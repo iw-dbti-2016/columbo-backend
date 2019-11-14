@@ -32,7 +32,7 @@ class CreatePlansTable extends Migration
 
             /* VISIBILITY */
             $table->tinyInteger('visibility')->unsigned()->index(); // public,hidden,vistors,members,private
-            $table->timestamp('published_at');
+            $table->timestamp('published_at')->useCurrent();
 
             $table->softDeletes();
             $table->timestamps();

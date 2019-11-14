@@ -211,8 +211,8 @@ class TripTest extends TestCase
                                 "published_at" => Carbon::now()->format("Y-m-d"),
                             ]);
 
-        // No published at
-        $responses[] = $this->expectJSON()
+        // No published at (NOT REQUIRED, DEFAULT NOW())
+        /*$responses[] = $this->expectJSON()
                             ->actingAs($user)
                             ->post("/api/v1/trips/create", [
                                 "name" => "Cool trip",
@@ -221,7 +221,7 @@ class TripTest extends TestCase
                                 "start_date" => Carbon::now()->format("Y-m-d"),
                                 "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
                                 "visibility" => "public",
-                            ]);
+                            ]);*/
 
 
         foreach ($responses as $response) {
