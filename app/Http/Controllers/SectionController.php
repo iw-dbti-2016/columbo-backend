@@ -92,8 +92,11 @@ class SectionController extends Controller
     {
         $validator = Validator::make($data, [
             "content" => "nullable",
+            "image" => "nullable",
+            "time" => "nullable|date_format:H:i",
+            "duration_minutes" => "nullable|integer",
             "visibility" => ["required", new Visibility()],
-            "published_at" => "required|date_format:Y-m-d H:i:s",
+            "published_at" => "nullable|date_format:Y-m-d H:i:s",
         ]);
 
         if ($validator->fails()) {

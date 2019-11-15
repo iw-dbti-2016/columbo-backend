@@ -17,6 +17,10 @@ class Section extends Model
 
     protected $fillable = [
         "content",
+        "image",
+        "time",
+        "duration_minutes",
+        "is_draft",
         "visibility",
         "published_at",
     ];

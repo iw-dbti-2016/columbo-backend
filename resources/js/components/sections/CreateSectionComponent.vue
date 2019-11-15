@@ -6,19 +6,39 @@
 				<h1 class="text-4xl tracking-wide">Create a new section</h1>
 
 				<div class="w-full mt-4">
+					<span class="mt-2 text-lg font-bold align-baseline">06/07/2020 <span class="text-xs font-light">(from report)</span></span>
+					<div class="mt-2 w-full flex flex-row justify-between">
+						<div class="flex-grow w-1/2 mr-4">
+							<label class="text-gray-700 mt-3 block" for="">Start time</label>
+							<input v-model="startTime" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" type="time">
+							<div>
+								<span></span>
+								<span></span>
+							</div>
+						</div>
+						<div class="flex-grow w-1/2">
+							<label class="text-gray-700 mt-3 block" for="">End time</label>
+							<input v-model="endTime" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" type="time">
+							<div>
+								<span></span>
+								<span></span>
+							</div>
+						</div>
+					</div>
+					<span class="">Duration: {{ duration }}</span>
 					<div>
-						<label class="text-gray-700 mt-3 block" for="draft">
-							<input v-model="draft" name="draft" id="draft" class="inline-block mt-2 px-4 py-3" type="checkbox">
-							<span>This is a draft</span>
-						</label>
+						<label class="text-gray-700 mt-3 block" for="content">Content</label>
+						<textarea v-model="content" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" name="" id="" cols="30" rows="10"></textarea>
 						<div>
 							<span></span>
 							<span></span>
 						</div>
 					</div>
 					<div>
-						<label class="text-gray-700 mt-3 block" for="content">Content</label>
-						<textarea v-model="description" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" name="" id="" cols="30" rows="10"></textarea>
+						<label class="text-gray-700 mt-3 block" for="draft">
+							<input v-model="draft" name="draft" id="draft" class="inline-block mt-2 px-4 py-3" type="checkbox">
+							<span>This is a draft</span>
+						</label>
 						<div>
 							<span></span>
 							<span></span>
@@ -47,35 +67,70 @@
 	export default {
 		data() {
 			return {
-				draft: true,
+				startTime: "",
+				endTime: "",
 				content: "",
-				description: "",
+				draft: true,
 
 				submitText: "Store this report!",
+				duration: "--",
 			};
 		},
 		methods: {
-			submitReport: function() {
-				axios.post('/api/v1/trips/1/reports/create', {
-					title: this.title,
-					date: this.date,
-					description: this.description,
+			submitSection: function() {
+				axios.post('/api/v1/trips/1/reports/1/sections/create', {
+					time: this.startTime,
+					duration_minutes: this.calculateDuration(),
+					content: this.content,
+					is_draft: this.draft,
 					visibility: "friends", // TODO
 					//published_at for postponed publication
 				})
 					.then((response) => {
 						console.log(response);
-						this.$router.push('/app/reports/' + response.data.data.id);
+						this.$router.push('/app/sections/' + response.data.data.id);
 					})
 					.catch((error) => {
 						console.log("error: " + error);
 						console.log(error.response.data);
 					});
 			},
+			calculateDuration: function() {
+				let start = this.startTime.split(":");
+				let end = this.endTime.split(":");
+
+				if (start.length != 2 || end.length != 2) {
+					return 0;
+				}
+
+				return (end[0] - start[0]) * 60 + (end[1] - start[1]);
+			}
 		},
 		watch: {
 			draft: function(val) {
 				this.submitText = val ? 'Store this report!' : 'Create this report!';
+			},
+			startTime: function(val) {
+				let start = val.split(":");
+				let end = this.endTime.split(":");
+
+				if (start.length != 2 || end.length != 2) {
+					this.duration = "--";
+					return;
+				}
+
+				this.duration = (end[0] - start[0]) * 60 + (end[1] - start[1]);
+			},
+			endTime: function(val) {
+				let start = this.startTime.split(":");
+				let end = val.split(":");
+
+				if (start.length != 2 || end.length != 2) {
+					this.duration = "--";
+					return;
+				}
+
+				this.duration = (end[0] - start[0]) * 60 + (end[1] - start[1]);
 			}
 		}
 	}
