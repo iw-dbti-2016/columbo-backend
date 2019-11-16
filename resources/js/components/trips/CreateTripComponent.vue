@@ -94,6 +94,7 @@
                 })
                     .then((response) => {
                         console.log(response);
+                        this.$store.commit('addTrip', response.data);
                         this.$router.push('/app/trips/' + response.data.data.id);
                     })
                     .catch((error) => {

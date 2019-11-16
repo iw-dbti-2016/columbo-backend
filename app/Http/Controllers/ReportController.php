@@ -19,6 +19,11 @@ class ReportController extends Controller
 {
     use APIResponses;
 
+    public function list(Trip $trip)
+    {
+        return $this->okResponse(null, $trip->reports()->get());
+    }
+
     /**
      * Display a listing of the resource.
      *

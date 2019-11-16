@@ -42,6 +42,7 @@ Route::group(['prefix' => 'v1'], function() {
 		});
 
 		Route::group(['prefix' => 'trips/{trip}/reports'], function() {
+			Route::get('/', 'reportController@list');
 			Route::get('/{report}', 'reportController@get');
 			Route::post('/create', 'reportController@store');
 			Route::put('/{report}', 'reportController@update');

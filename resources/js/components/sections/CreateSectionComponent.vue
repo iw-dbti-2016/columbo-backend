@@ -55,7 +55,7 @@
 						<li class="mt-2">No location or POI yet</li>
 						<li class="mt-1 text-blue-600"><a class="hover:underline" href="#">Add a location</a></li>
 						<li class="mt-1 text-blue-600"><a class="hover:underline" href="#">Add a POI</a></li>
-						<li class="mt-4 font-bold">You must add a location or POI</li>
+						<li class="mt-4 font-bold">You can only add one location or one POI</li>
 					</ul>
 				</div>
 			</div>

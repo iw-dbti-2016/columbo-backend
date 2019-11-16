@@ -5,7 +5,7 @@
             <a @click.prevent="createNewTrip" href="#"><font-awesome-icon :icon="['fab', 'font-awesome']" /> Create new trip</a>
             <div class="mb-8 bg-white rounded-lg shadow-md">
                 <div class="my-4" v-if="trips.length != 0">
-                    <div @click="redirect" class="block px-8 py-6 border-b border-gray-400 last:border-b-0 cursor-pointer" v-for="trip in trips">{{ trip.name }}</div>
+                    <div @click="redirect(trip)" class="block px-8 py-6 border-b border-gray-400 last:border-b-0 cursor-pointer" v-for="trip in trips">{{ trip.name }}</div>
                 </div>
                 <div class="my-4 px-8 py-6" v-else>No trips found...</div>
             </div>
@@ -36,10 +36,16 @@
         },
         methods: {
             getTrips: function() {
+                if (this.$store.getters.hasTrips) {
+                    this.trips = this.$store.getters.getTrips;
+                    return;
+                }
+
                 axios.get('/api/v1/user/trips')
                     .then((response) => {
                         console.log(response);
                         this.trips = response.data.data;
+                        this.$store.commit('setTrips', response.data.data);
                     })
                     .catch((error) => {
                         if (error.response.status == 500 || error.response.status == 403) {
@@ -81,8 +87,8 @@
                         console.log("error: " + error);
                     });
             },
-            redirect: function() {
-                this.$router.push({path: "/app/trips/1"})
+            redirect: function(trip) {
+                this.$router.push({path: "/app/trips/" + trip.id});
             },
             createNewTrip: function() {
                 this.$router.push({path: "/app/trips/create"});
