@@ -8,15 +8,15 @@ The API reference is particularly handy to lookup the available endpoints and th
 
 All content in the wiki is listed here:
 
-* [Home](./Home)
+* [Home](https://github.com/iw-dbti-2016/travel-companion-web/wiki/Home)
 * Getting Started
-  * [Functionalities](./Functionalities)
-  * [Requirements](./Requirements)
-  * [Setup](./Setup)
+  * [Functionalities](https://github.com/iw-dbti-2016/travel-companion-web/wiki/Functionalities)
+  * [Requirements](https://github.com/iw-dbti-2016/travel-companion-web/wiki/Requirements)
+  * [Setup](https://github.com/iw-dbti-2016/travel-companion-web/wiki/Setup)
 * Flow
-  * [Authentication Flow](./AuthFlow)
-  * [Authentication Flow Clients](./AuthFlowClients)
+  * [Authentication Flow](https://github.com/iw-dbti-2016/travel-companion-web/wiki/AuthFlow)
+  * [Authentication Flow Clients](https://github.com/iw-dbti-2016/travel-companion-web/wiki/AuthFlowClients)
 * Specifications
-  * [API Response Format](./APIResponseFormat)
-  * [Terminology](./Terminology)
-* [API Reference](./APIReference)
+  * [API Response Format](https://github.com/iw-dbti-2016/travel-companion-web/wiki/APIResponseFormat)
+  * [Terminology](https://github.com/iw-dbti-2016/travel-companion-web/wiki/Terminology)
+* [API Reference](https://github.com/iw-dbti-2016/travel-companion-web/wiki/APIReference)
