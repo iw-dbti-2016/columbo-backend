@@ -100,6 +100,12 @@ const store = new Vuex.Store({
 		addTrip: (state, payload) => {
 			state.trips.push(payload.data);
 		},
+		setReports(state, payload) {
+			state.reports = payload;
+		},
+		addReport: (state, payload) => {
+			state.reports.push(payload.data);
+		}
 	},
 	getters: {
 		getTripById: (state) => (id) => {
@@ -113,7 +119,22 @@ const store = new Vuex.Store({
 		},
 		hasTrips: (state, getters) => {
 			return Object.keys(getters.getTrips).length !== 0;
-		}
+		},
+		getReportsForTrip: (state) => (tripId) => {
+			return state.reports.filter(report => report.trip_id == tripId);
+		},
+		getReportById: (state) => (id) => {
+			return state.reports.filter(report => report.id == id);
+		},
+		hasReportWithId: (state, getters) => (id) => {
+			return getters.getReportById(id).length;
+		},
+		getReports: (state) => {
+			return state.reports;
+		},
+		hasReports: (state, getters) => {
+			return Object.keys(getters.getReports).length !== 0;
+		},
 	}
 });
 

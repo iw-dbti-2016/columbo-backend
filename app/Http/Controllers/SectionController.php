@@ -19,6 +19,13 @@ class SectionController extends Controller
 {
     use APIResponses;
 
+    public function list(Trip $trip, Report $report)
+    {
+        $this->ensureUrlCorrectnessOrFail($trip, $report);
+
+        return $this->okResponse(null, $report->sections()->noDraft()->published()->orderRecent()->get());
+    }
+
     /**
      * Display a listing of the resource.
      *
