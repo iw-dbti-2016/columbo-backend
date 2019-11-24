@@ -26,8 +26,27 @@ class Section extends Model
         "published_at",
     ];
 
+    protected $visible = [
+        "id",
+        "is_draft",
+        "content",
+        "image",
+        "time",
+        "duration_minutes",
+        "visibility", // Sometimes???
+        "published_at",
+        "deleted_at",
+        "created_at",
+        "updated_at",
+        "published_at_diff",
+        "duration_formatted",
+        "locationable",
+        "owner",
+    ];
+
     protected $casts = [
-        "published_at" => "datetime:d/m/Y H:i:s",
+        "published_at" => "datetime:d/m/Y H:i",
+        "is_draft" => "boolean",
     ];
 
     protected $appends = [
@@ -65,9 +84,11 @@ class Section extends Model
             }
 
             if ($min != 0) {
-                $formatted_duration .= $min;
+                $formatted_duration .= ($min < 10 ? "0" : "") . $min;
 
                 if ($hr == 0) $formatted_duration .= "m";
+            } else {
+                $formatted_duration .= "00";
             }
 
             return $formatted_duration;
