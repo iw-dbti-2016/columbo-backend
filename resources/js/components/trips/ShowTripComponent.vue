@@ -1,7 +1,7 @@
 <template>
 	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<a @click.prevent="$router.push('/app')" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" href="/app" title="Close this trip"><font-awesome-icon :icon="['fas', 'times']" /></a>
-		<a @click.prevent="$router.push('/app/trips/1/edit')" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-12 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" href="/app/trips/1/edit" title="Edit this trip"><font-awesome-icon :icon="['fas', 'edit']" /></a>
+		<router-link :to="{name: 'home'}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Close this trip"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
+		<router-link :to="{name: 'editTrip', params: {'tripId': $route.params.tripId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-12 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Edit this trip"><font-awesome-icon :icon="['fas', 'edit']" /></router-link>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3">
 				<h1 class="text-6xl tracking-wide uppercase">{{ trip.name }}</h1> <!-- NAME -->
@@ -27,11 +27,11 @@
 		<div class="mt-8 flex flex-row justify-between">
 			<div class="flex-grow mr-4 w-1/2"> <!-- REPORTS -->
 				<span class="block text-2xl">Reports</span>
-				<a @click.prevent="$router.push('/app/trips/1/reports/create')" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white" href="/app/reports/create">Create a new report</a>
+				<router-link :to="{name: 'createReport', params: {tripId: $route.params.tripId}}" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white">Create a new report</router-link>
 				<span v-if="loading" class="block mt-2 text-gray-700">Loading reports...</span>
 				<span v-else-if="reports.length == 0" class="block mt-2 text-gray-700">No reports written yet.</span>
 				<div v-else class="bg-gray-100 mt-2 rounded-lg shadow-md">
-					<div v-for="report in reports" @click.prevent="$router.push('/app/reports/' + report.id)" class="border-b border-gray-400 last:border-b-0 px-5 py-4 text-md cursor-pointer">{{ report.title }}</div>
+					<div v-for="report in reports" @click.prevent="$router.push({name: 'showReport', params: {tripId: $route.params.tripId, reportId: report.id}})" class="border-b border-gray-400 last:border-b-0 px-5 py-4 text-md cursor-pointer">{{ report.title }}</div>
 				</div>
 			</div>
 			<div class="flex-grow w-1/2"> <!-- PLANS -->
@@ -61,14 +61,14 @@
         },
         methods: {
             getTrip: function() {
-            	let tripId = this.$route.params.id;
+            	let tripId = this.$route.params.tripId;
 
             	if (this.$store.getters.hasTripWithId(tripId)) {
             		this.trip = this.$store.getters.getTripById(tripId)[0];
             		return;
             	}
 
-                axios.get('/api/v1/trips/' + tripId)
+                axios.get(`/api/v1/trips/${tripId}`)
                     .then((response) => {
                     	this.$store.commit('addTrip', response.data);
                         this.trip = response.data.data;
@@ -84,7 +84,7 @@
                     });
             },
             getReports: function() {
-            	axios.get('/api/v1/trips/' + this.$route.params.id + '/reports')
+            	axios.get(`/api/v1/trips/${this.$route.params.tripId}/reports`)
                     .then((response) => {
                     	this.loading = false;
                         this.reports = response.data.data;

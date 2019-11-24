@@ -1,7 +1,7 @@
 <template>
 	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<a @click.prevent="$router.push('/app/trips/1')" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" href="/app/trip/1" title="Close this report"><font-awesome-icon :icon="['fas', 'times']" /></a>
-		<a @click.prevent="$router.push('/app/reports/1/edit')" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-12 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" href="/app/reports/1/edit" title="Edit this report"><font-awesome-icon :icon="['fas', 'edit']" /></a>
+		<router-link :to="{name: 'showTrip', params: {tripId: $route.params.tripId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Close this report"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
+		<router-link :to="{name: 'editReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-12 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Edit this report"><font-awesome-icon :icon="['fas', 'edit']" /></router-link>
 		<div>
 			<h1 class="text-6xl tracking-wide uppercase">{{ report.title }}</h1> <!-- TITLE -->
 			<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
@@ -14,12 +14,12 @@
 				<div class="-ml-20 h-0 rotate-270 sticky text-6xl text-right top-0 uppercase">
 					<span class="pr-8">{{ report.title }}</span>
 				</div>
-				<a @click.prevent="$router.push('/app/reports/1/sections/create')" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white" href="/app/reports/1/sections/create">Add a section</a>
+				<router-link :to="{name: 'createSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white">Add a section</router-link>
 				<div class="bg-gray-100 mt-2 rounded-lg" v-if="sections.length > 0">
 					<div class="border-b-8 border-white last:border-0 px-5 py-4 relative" @mouseover="mouseOverSection(index)" :key="section.id" v-for="(section, index) in sections">
 						<span class="text-gray-500 text-sm uppercase" :title="section.published_at">{{ section.published_at_diff }}</span>
 						<span class="block mt-1 text-gray-500 text-xs uppercase">by <a class="cursor-pointer hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span>
-						<a @click.prevent="$router.push('/app/sections/' + section.id)" class="absolute capitalize hover:underline mr-5 mt-4 right-0 text-blue-600 text-sm top-0 cursor-pointer" :href="'/app/sections/' + section.id">details</a>
+						<router-link :to="{name: 'showSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: section.id}}" class="absolute capitalize hover:underline mr-5 mt-4 right-0 text-blue-600 text-sm top-0 cursor-pointer">details</router-link>
 						<p class="leading-snug mt-4 text-justify">{{ section.content }}</p>
 					</div>
 				</div>
@@ -71,14 +71,15 @@
         },
         methods: {
             getReport: function() {
-            	let reportId = this.$route.params.id;
+            	let tripId = this.$route.params.tripId;
+            	let reportId = this.$route.params.reportId;
 
             	if (this.$store.getters.hasReportWithId(reportId)) {
             		this.report = this.$store.getters.getReportById(reportId)[0];
             		return;
             	}
 
-                axios.get('/api/v1/trips/1/reports/' + reportId)
+                axios.get(`/api/v1/trips/${tripId}/reports/${reportId}`)
                     .then((response) => {
                     	this.$store.commit('addReport', response.data);
                         this.report = response.data.data;
@@ -94,7 +95,7 @@
                     });
             },
             getSections: function() {
-            	axios.get('/api/v1/trips/1/reports/' + this.$route.params.id + '/sections')
+            	axios.get(`/api/v1/trips/${this.$route.params.tripId}/reports/${this.$route.params.reportId}/sections`)
                     .then((response) => {
                     	console.log(response);
                     	this.loading = false;

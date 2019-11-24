@@ -58,7 +58,9 @@
 		},
 		methods: {
 			submitReport: function() {
-				axios.post('/api/v1/trips/1/reports/create', {
+				let tripId = this.$route.params.tripId;
+
+				axios.post(`/api/v1/trips/${tripId}/reports/create`, {
 					title: this.title,
 					date: this.date,
 					description: this.description,
@@ -67,7 +69,7 @@
 				})
 					.then((response) => {
 						console.log(response);
-						this.$router.push('/app/reports/' + response.data.data.id);
+						this.$router.push(`/app/trips/${tripId}/reports/${response.data.data.id}`);
 					})
 					.catch((error) => {
 						console.log("error: " + error);

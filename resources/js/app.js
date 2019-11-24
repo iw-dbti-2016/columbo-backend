@@ -39,44 +39,63 @@ let csrf = document.head.querySelector('meta[name="csrf-token"]').content;
  */
 const routes = [
 	{
-		path: '/app/',
+		path: '/app',
+		name: 'home',
 		component: require('./components/HomeComponent.vue').default,
 	},
 	{
 		path: '/app/trips/create',
+		name: 'createTrip',
 		component: require('./components/trips/CreateTripComponent.vue').default,
 	},
 	{
-		path: '/app/trips/:id/edit',
+		path: '/app/trips/:tripId/edit',
+		name: 'editTrip',
 		component: require('./components/trips/EditTripComponent.vue').default,
 	},
 	{
-		path: '/app/trips/:id',
+		path: '/app/trips/:tripId',
+		name: 'showTrip',
 		component: require('./components/trips/ShowTripComponent.vue').default,
 	},
 	{
 		path: '/app/trips/:tripId/reports/create',
+		name: 'createReport',
 		component: require('./components/reports/CreateReportComponent.vue').default,
 	},
 	{
-		path: '/app/reports/:id/edit',
+		path: '/app/trips/:tripId/reports/:reportId/edit',
+		name: 'editReport',
 		component: require('./components/reports/EditReportComponent.vue').default,
 	},
 	{
-		path: '/app/reports/:id',
+		path: '/app/trips/:tripId/reports/:reportId',
+		name: 'showReport',
 		component: require('./components/reports/ShowReportComponent.vue').default,
 	},
 	{
-		path: '/app/reports/:reportId/sections/create',
+		path: '/app/trips/:tripId/reports/:reportId/sections/create',
+		name: 'createSection',
 		component: require('./components/sections/CreateSectionComponent.vue').default,
 	},
 	{
-		path: '/app/sections/:id/edit',
+		path: '/app/trips/:tripId/reports/:reportId/sections/:sectionId/edit',
+		name: 'editSection',
 		component: require('./components/sections/EditSectionComponent.vue').default,
 	},
 	{
-		path: '/app/sections/:id',
+		path: '/app/trips/:tripId/reports/:reportId/sections/:sectionId',
+		name: 'showSection',
 		component: require('./components/sections/ShowSectionComponent.vue').default,
+	},
+	{
+		path: '/app/404',
+		name: '404',
+		redirect: '*',
+	},
+	{
+		path: '*',
+		component: require('./components/errors/404.vue').default,
 	}
 ];
 

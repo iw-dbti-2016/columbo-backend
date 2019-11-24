@@ -1,6 +1,6 @@
 <template>
 	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<a @click.prevent="$router.push('/app/reports/1')" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" href="/app/reports/1" title="Cancel"><font-awesome-icon :icon="['fas', 'times']" /></a>
+		<router-link :to="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Cancel"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
 				<h1 class="text-4xl tracking-wide">Create a new section</h1>
@@ -45,7 +45,7 @@
 						</div>
 					</div>
 					<input @click.prevent="submitSection" class="inline-block mt-4 px-4 py-3 bg-green-500 rounded text-white cursor-pointer focus:outline-none hover:bg-green-600 focus:bg-green-600 focus:shadow-lg" type="submit" :value="submitText">
-					<a @click.prevent="$router.push('/app/reports/1')" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-gray-100 rounded shadow focus:outline-none hover:bg-gray-200 focus:bg-gray-200 focus:shadow-md" href="/app/reports/1">Cancel</a>
+					<router-link :to="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-gray-100 rounded shadow focus:outline-none hover:bg-gray-200 focus:bg-gray-200 focus:shadow-md">Cancel</router-link>
 				</div>
 			</div>
 			<div class="mt-12 w-1/3">
@@ -78,7 +78,10 @@
 		},
 		methods: {
 			submitSection: function() {
-				axios.post('/api/v1/trips/1/reports/1/sections/create', {
+				let tripId = this.$route.params.tripId;
+				let reportId = this.$route.params.reportId;
+
+				axios.post(`/api/v1/trips/${tripId}/reports/${reportId}/sections/create`, {
 					time: this.startTime,
 					duration_minutes: this.calculateDuration(),
 					content: this.content,
@@ -88,7 +91,7 @@
 				})
 					.then((response) => {
 						console.log(response);
-						this.$router.push('/app/sections/' + response.data.data.id);
+						this.$router.push({name: 'showSection', params: {tripId: tripId, reportId: reportId, sectionId: response.data.data.id}});
 					})
 					.catch((error) => {
 						console.log("error: " + error);
