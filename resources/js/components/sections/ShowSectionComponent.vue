@@ -5,16 +5,16 @@
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow mr-8 w-2/3">
 				<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span>
-				<span class="block ml-2 mt-4 text-2xl">45 seconds ago</span>
-				<p class="leading-normal ml-2 mt-2 text-justify text-md">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Placeat facilis dolorem totam alias, tempora quos perferendis aperiam expedita provident eligendi. Eaque alias maxime sunt qui accusantium nesciunt expedita aliquam dolore ratione nulla possimus doloremque assumenda earum tenetur nostrum, perspiciatis necessitatibus quaerat enim dicta tempore doloribus officia molestias. Ipsam voluptate, architecto harum, ab veniam est error repellendus reprehenderit suscipit, nemo culpa nulla. Ipsum voluptas veniam iure amet ducimus ipsam et, consectetur deserunt deleniti temporibus optio inventore rerum quia. Consectetur, hic dignissimos.</p> <!-- DESCRIPTION -->
+				<span class="block ml-2 mt-4 text-2xl">{{ section.published_at_diff }}</span>
+				<p class="leading-normal ml-2 mt-2 text-justify text-md">{{ section.content }}</p> <!-- DESCRIPTION -->
 			</div>
 			<div class="flex-grow w-1/3">
 				<div class="mt-16 bg-gray-100 rounded-lg shadow-lg overflow-hidden">
 					<div class="px-6 py-4 relative">
-						<span class="text-4xl">14:40</span>
-						<span class="absolute top-0 right-0 mt-4 mr-5 text-4xl">3h40</span>
+						<span class="text-4xl">{{ section.time }}</span>
+						<span class="absolute top-0 right-0 mt-4 mr-5 text-4xl">{{ section.duration_formatted }}</span>
 					</div>
-					<div class="relative">
+					<div class="relative" v-if="section.locationable != null">
 						<img src="/img/example-map.png" alt="#">
 						<div class="absolute bg-gray-100 flex flex-col items-center mr-2 mt-2 px-1 px-2 py-3 right-0 rounded-full text-2xl text-xl top-0">
 							<font-awesome-icon class="cursor-default" :icon="['fas', 'map-marker-alt']" />
@@ -24,19 +24,12 @@
 				</div>
 			</div>
 		</div>
-		<div class="mt-8 ">
-			<span class="block text-2xl">Lake Mead</span>
+		<div class="mt-8" v-if="section.locationable != null">
+			<span class="block text-2xl">{{ section.locationable.name }}</span>
 			<!-- <a @click.prevent="$router.push('/app/reports/create')" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white" href="/app/reports/create">Create a new report</a> -->
 			<!-- <span class="block mt-2 text-gray-700">No reports written yet.</span> -->
 			<div class="bg-gray-100 mt-2 rounded-lg flex flex-row overflow-hidden shadow-md">
-				<div class="flex-grow w-2/3 px-5 py-4 relative">
-					<p class="leading-snug mt-4 text-justify">
-						Lorem ipsum dolor sit amet, consectetur adipisicing elit. Obcaecati facere distinctio explicabo aut similique quaerat dolorum, illo dolor fugiat rem iste cupiditate pariatur, tempore dicta adipisci asperiores dolore nobis. Debitis eveniet expedita quia suscipit dolores, corporis, harum placeat a, facilis, nobis dignissimos accusamus recusandae. Laborum non omnis, molestias iure totam eius, culpa dolorum sit odio eaque esse quidem, inventore eos similique autem illo architecto! Nulla, voluptatem, alias. Beatae, facere earum nihil, itaque, vero repudiandae architecto sit sequi vel animi deleniti.
-					</p>
-					<p class="leading-snug mt-4 text-justify">
-						Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit amet aperiam obcaecati ipsum voluptatibus nam saepe quibusdam quas recusandae ut natus sit ratione earum quidem ipsa veniam fugit, reprehenderit nesciunt nostrum praesentium. Nesciunt neque quae, animi tempora itaque porro? Expedita dicta ipsam deserunt. Eaque quaerat hic ut alias error dignissimos explicabo tempora voluptatum facere assumenda omnis consequuntur incidunt cumque, inventore sint vero fugiat dolorem corporis eius. Autem quia, officiis ratione totam. Repudiandae explicabo dignissimos aliquid numquam minus, culpa perferendis, non deleniti ratione cum facere commodi aperiam ab error voluptatibus. Accusamus, quidem recusandae sit placeat quod suscipit possimus atque necessitatibus modi impedit molestias alias, deserunt ipsam, debitis nemo in dolores fuga mollitia delectus praesentium esse voluptates harum! Placeat distinctio, est quidem!
-					</p>
-				</div>
+				<div class="flex-grow w-2/3 px-5 py-4 relative">{{ section.locationable.info }}</div>
 				<div class="flex flex-col flex-grow items-center justify-around w-1/3">
 					<img class="bg-white flex-grow-0 p-2 rounded" src="/img/example-map.png" alt="#">
 				</div>
@@ -47,6 +40,44 @@
 
 <script>
 	export default {
+		mounted() {
 
-	}
+        },
+        data() {
+            return {
+            	loading: true,
+                section: {},
+            };
+        },
+        created() {
+        	this.getSection();
+        },
+        methods: {
+            getSection: function() {
+            	let sectionId = this.$route.params.id;
+
+            	if (this.$store.getters.hasSectionWithId(sectionId)) {
+            		this.section = this.$store.getters.getSectionById(sectionId)[0];
+            		this.loading = false;
+            		return;
+            	}
+
+                axios.get('/api/v1/trips/1/reports/1/sections/' + sectionId)
+                    .then((response) => {
+                    	this.$store.commit('addSection', response.data);
+                        this.section = response.data.data;
+                        this.loading = false;
+                    })
+                    .catch((error) => {
+                        if (error.response.status == 500 || error.response.status == 403) {
+                            this.userData = error.response.data;
+                        }
+                        if (error.response.status == 401) {
+                            document.getElementById('logout').submit();
+                        }
+                        console.log("error: " + error);
+                    });
+            },
+        },
+    }
 </script>

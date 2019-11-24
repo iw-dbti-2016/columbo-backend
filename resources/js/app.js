@@ -105,6 +105,12 @@ const store = new Vuex.Store({
 		},
 		addReport: (state, payload) => {
 			state.reports.push(payload.data);
+		},
+		setSections(state, payload) {
+			state.sections = payload;
+		},
+		addSection: (state, payload) => {
+			state.sections.push(payload.data);
 		}
 	},
 	getters: {
@@ -133,7 +139,19 @@ const store = new Vuex.Store({
 			return state.reports;
 		},
 		hasReports: (state, getters) => {
-			return Object.keys(getters.getReports).length !== 0;
+			return Object.keys(getters.getSections).length !== 0;
+		},
+		getSectionById: (state) => (id) => {
+			return state.sections.filter(section => section.id == id);
+		},
+		hasSectionWithId: (state, getters) => (id) => {
+			return getters.getSectionById(id).length;
+		},
+		getSections: (state) => {
+			return state.sections;
+		},
+		hasSections: (state, getters) => {
+			return Object.keys(getters.getSections).length !== 0;
 		},
 	}
 });

@@ -19,7 +19,7 @@
 					<div class="border-b-8 border-white last:border-0 px-5 py-4 relative" @mouseover="mouseOverSection(index)" :key="section.id" v-for="(section, index) in sections">
 						<span class="text-gray-500 text-sm uppercase" :title="section.published_at">{{ section.published_at_diff }}</span>
 						<span class="block mt-1 text-gray-500 text-xs uppercase">by <a class="cursor-pointer hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span>
-						<a @click.prevent="$router.push('/app/sections/1')" class="absolute capitalize hover:underline mr-5 mt-4 right-0 text-blue-600 text-sm top-0 cursor-pointer" href="/app/sections/1">details</a>
+						<a @click.prevent="$router.push('/app/sections/' + section.id)" class="absolute capitalize hover:underline mr-5 mt-4 right-0 text-blue-600 text-sm top-0 cursor-pointer" :href="'/app/sections/' + section.id">details</a>
 						<p class="leading-snug mt-4 text-justify">{{ section.content }}</p>
 					</div>
 				</div>
@@ -33,9 +33,9 @@
 							<div class="px-6 py-4 relative">
 								<span class="text-4xl">{{ sections[sectionInfoIndex].time }}</span>
 								<span class="absolute top-0 right-0 mt-4 mr-5 text-4xl">{{ sections[sectionInfoIndex].duration_formatted }}</span>
-								<span class="block text-xl mt-2 text-gray-600 cursor-pointer hover:underline">Lake Mead</span>
+								<span class="block text-xl mt-2 text-gray-600 cursor-pointer hover:underline" v-if="sections[sectionInfoIndex].locationable != null">{{ sections[sectionInfoIndex].locationable.name }}</span>
 							</div>
-							<div class="relative">
+							<div class="relative" v-if="sections[sectionInfoIndex].locationable != null">
 								<img src="/img/example-map.png" alt="#">
 								<div class="absolute bg-gray-100 flex flex-col items-center mr-2 mt-2 px-1 px-2 py-3 right-0 rounded-full text-2xl text-xl top-0">
 									<font-awesome-icon class="cursor-default" :icon="['fas', 'map-marker-alt']" />
@@ -99,6 +99,7 @@
                     	console.log(response);
                     	this.loading = false;
                         this.sections = response.data.data;
+                        this.$store.commit('setSections', response.data.data);
                     })
                     .catch((error) => {
                     	console.log(error);

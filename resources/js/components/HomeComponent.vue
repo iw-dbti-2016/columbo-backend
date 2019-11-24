@@ -36,14 +36,8 @@
         },
         methods: {
             getTrips: function() {
-                if (this.$store.getters.hasTrips) {
-                    this.trips = this.$store.getters.getTrips;
-                    return;
-                }
-
                 axios.get('/api/v1/user/trips')
                     .then((response) => {
-                        console.log(response);
                         this.trips = response.data.data;
                         this.$store.commit('setTrips', response.data.data);
                     })

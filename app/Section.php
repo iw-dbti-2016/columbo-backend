@@ -94,7 +94,7 @@ class Section extends Model
     	return $this->belongsTo(Report::class);
     }
 
-    public function location()
+    public function locationable()
     {
     	return $this->morphTo('locationable');
     }

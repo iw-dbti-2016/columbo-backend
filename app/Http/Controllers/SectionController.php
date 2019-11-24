@@ -23,7 +23,7 @@ class SectionController extends Controller
     {
         $this->ensureUrlCorrectnessOrFail($trip, $report);
 
-        return $this->okResponse(null, $report->sections()->noDraft()->published()->orderRecent()->get());
+        return $this->okResponse(null, $report->sections()->noDraft()->published()->orderRecent()->with('locationable')->get());
     }
 
     /**
@@ -35,7 +35,7 @@ class SectionController extends Controller
     {
         $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
 
-        return $this->okResponse(null, $section);
+        return $this->okResponse(null, $section->with('locationable')->find($section->id));
     }
 
     /**

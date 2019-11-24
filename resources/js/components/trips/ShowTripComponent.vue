@@ -88,6 +88,8 @@
                     .then((response) => {
                     	this.loading = false;
                         this.reports = response.data.data;
+
+                        this.$store.commit('setReports', response.data.data);
                     })
                     .catch((error) => {
                         if (error.response.status == 500 || error.response.status == 403) {
