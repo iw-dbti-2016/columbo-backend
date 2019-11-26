@@ -27,7 +27,8 @@ class SectionController extends Controller
                     ->noDraft()
                     ->published()
                     ->orderRecent()
-                    ->with('locationable:id,coordinates,name')
+                    ->with('locationable:id,coordinates,name,info')
+                    ->with('owner:id,first_name,middle_name,last_name,username')
                     ->get();
 
         return $this->okResponse(null, $data);

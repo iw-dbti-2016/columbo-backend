@@ -1,6 +1,6 @@
 <template>
 	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<a @click.prevent="$router.push('/app/trips/1')" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" href="/app/trips/1" title="Cancel"><font-awesome-icon :icon="['fas', 'times']" /></a>
+		<router-link :to="{name: 'showTrip', params: {params: this.$route.params.tripId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Cancel"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
 				<h1 class="text-4xl tracking-wide">Create a new report</h1>
@@ -31,7 +31,7 @@
 						</div>
 					</div>
 					<input @click.prevent="submitReport" class="inline-block mt-4 px-4 py-3 bg-green-500 rounded text-white cursor-pointer focus:outline-none hover:bg-green-600 focus:bg-green-600 focus:shadow-lg" type="submit" value="Create this report!">
-					<a @click.prevent="$router.push('/app/trips/1')" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-gray-100 rounded shadow focus:outline-none hover:bg-gray-200 focus:bg-gray-200 focus:shadow-md" href="/app/trips/1">Cancel</a>
+					<router-link :to="{name: 'showTrip', params: {tripId: this.$route.params.tripId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-gray-100 rounded shadow focus:outline-none hover:bg-gray-200 focus:bg-gray-200 focus:shadow-md">Cancel</router-link>
 				</div>
 			</div>
 			<div class="mt-12 w-1/3">

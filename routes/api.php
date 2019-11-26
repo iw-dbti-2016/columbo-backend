@@ -33,6 +33,10 @@ Route::group(['prefix' => 'v1'], function() {
 			Route::get('/trips', 'UserController@listTrips');
 		});
 
+		Route::group(['prefix' => 'users/{user}'], function() {
+			Route::get('/', 'UserController@show');
+		});
+
 		Route::group(['prefix' => 'trips'], function() {
 			Route::get('/{trip}', 'tripController@get');
 			Route::post('/create', 'tripController@store');

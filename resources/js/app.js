@@ -44,6 +44,11 @@ const routes = [
 		component: require('./components/HomeComponent.vue').default,
 	},
 	{
+		path: '/app/users/:username',
+		name: 'showProfile',
+		component: require('./components/profile/ProfileComponent.vue').default,
+	},
+	{
 		path: '/app/trips/create',
 		name: 'createTrip',
 		component: require('./components/trips/CreateTripComponent.vue').default,
@@ -95,7 +100,7 @@ const routes = [
 	},
 	{
 		path: '*',
-		component: require('./components/errors/404.vue').default,
+		component: require('./components/errors/404Component.vue').default,
 	}
 ];
 

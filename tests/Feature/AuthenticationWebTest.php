@@ -629,7 +629,7 @@ class AuthenticationWebTest extends TestCase
             "username" => "johndoe",
         ]);
 
-        $response = $this->callAsUser(User::where('username', 'johndoe')->first(), "GET", "/auth/email/resend");
+        $response = $this->callAsUser(User::where('username', 'johndoe')->first(), "POST", "/auth/email/resend");
 
         $response->assertStatus(302);
         $response->assertSessionHas('resent');
@@ -640,7 +640,7 @@ class AuthenticationWebTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->callAsUser($user, "GET", "/auth/email/resend");
+        $response = $this->callAsUser($user, "POST", "/auth/email/resend");
 
         $response->assertStatus(302);
         $response->assertSessionHas("verified");
@@ -649,7 +649,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function an_unauthorized_user_cannot_resend_a_verification_email()
     {
-        $response = $this->get("/auth/email/resend");
+        $response = $this->post("/auth/email/resend");
 
         $response->assertRedirect("/auth/login");
     }

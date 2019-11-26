@@ -4,6 +4,7 @@ namespace TravelCompanion\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
@@ -38,5 +39,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(\Parsedown::class);
+
+        Route::bind('user', function ($value) {
+            return \TravelCompanion\User::where('username', $value)->firstOrFail();
+        });
     }
 }

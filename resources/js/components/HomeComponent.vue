@@ -1,23 +1,13 @@
 <template>
     <div class="">
-        <div class="w-full max-w-4xl m-auto my-8">
-            <h1 class="text-gray-600 font-light tracking-wider text-5xl mb-6">My Trips</h1>
-            <a @click.prevent="createNewTrip" href="#"><font-awesome-icon :icon="['fab', 'font-awesome']" /> Create new trip</a>
+        <div class="m-auto max-w-4xl my-8 py-10 w-full relative">
+            <h1 class="text-black tracking-wide text-6xl uppercase mb-6">My Trips</h1>
+            <router-link :to="{name: 'createTrip'}" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white"><font-awesome-icon :icon="['fas', 'plus']" /> Create new trip</router-link>
             <div class="mb-8 bg-white rounded-lg shadow-md">
                 <div class="my-4" v-if="trips.length != 0">
-                    <div @click="redirect(trip)" class="block px-8 py-6 border-b border-gray-400 last:border-b-0 cursor-pointer" v-for="trip in trips">{{ trip.name }}</div>
+                    <router-link :to="{name: 'showTrip', params: {tripId: trip.id}}" class="block px-8 py-6 border-b border-gray-400 last:border-b-0 cursor-pointer" :key="index" v-for="(trip, index) in trips">{{ trip.name }}</router-link>
                 </div>
                 <div class="my-4 px-8 py-6" v-else>No trips found...</div>
-            </div>
-
-            <div class="flex flex-col justify-around h-full">
-                <a @click.prevent="getUserData" href="#">Get your data</a>
-                <a @click.prevent="refreshToken" href="#">Refresh token</a>
-                <div v-show="userData !== {}">
-                    <ul>
-                        <li v-for="(item,key) in userData">{{ key }}: {{ item }}</li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
@@ -81,12 +71,6 @@
                         console.log("error: " + error);
                     });
             },
-            redirect: function(trip) {
-                this.$router.push({path: "/app/trips/" + trip.id});
-            },
-            createNewTrip: function() {
-                this.$router.push({path: "/app/trips/create"});
-            }
         },
     }
 </script>

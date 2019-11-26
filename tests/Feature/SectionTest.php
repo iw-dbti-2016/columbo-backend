@@ -182,13 +182,13 @@ class SectionTest extends TestCase
         						"published_at" => Carbon::now()->format("Y-m-d H:i:s"),
         					]);
 
-        // published_at
-        $response[] = $this->expectJSON()
+        // published_at (OPTIONAL, DEFAULT NOW)
+        /*$response[] = $this->expectJSON()
         					->actingAs($user)
         					->post("/api/v1/trips/" . $trip->id . "/reports/" . $report->id . "/sections/create", [
         						"content" => "Lorem ipsum dolor sit amet, consectetur adipisicing elit. A quas corporis asperiores quos alias, maxime molestiae quibusdam. Quo, voluptates, animi.",
         						"visibility" => "members",
-        					]);
+        					]);*/
 
         foreach ($responses as $response) {
         	$response->assertStatus(422);
