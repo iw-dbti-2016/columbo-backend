@@ -22,13 +22,7 @@ class AuthenticationWebTest extends TestCase
 
         $response->assertRedirect('/auth/email/verify');
 
-        $this->assertDatabaseHas("users", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe",
-            "email" => "john@example.com"
-        ]);
+        $this->assertDatabaseHas("users", $this->getTestDataWithout(["password", "password_confirmation"]));
     }
 
     /** @test */
@@ -47,9 +41,10 @@ class AuthenticationWebTest extends TestCase
         }
 
         $this->assertDatabaseMissing("users", [
-            "first_name" => "John",
-            "last_name" => "Doe",
             "username" => "johndoe",
+        ]);
+
+        $this->assertDatabaseMissing("users", [
             "email" => "john@example.com"
         ]);
     }
@@ -57,90 +52,51 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function a_client_cannot_register_with_wrong_data()
     {
+        $wrong_data_fields = [
+            // First name wrong characters [A-Za-z-']{2,50}
+            ["first_name" => "Johnnythebest!!"],
+            // First name too long
+            ["first_name" => "JohnDoeTheBestWithAnExtremelyUnneccesaryLongNameWantsToRegisterForThisApplicationTooPleaseLetMeInIAmSoHypedRightNow"],
+            // First name too short
+            ["first_name" => "J"],
+            // Middle name wrong characters [A-Za-z-'. ]{0,100} (little more complicated regex: points only after word group etc)
+            ["middle_name" => "#R."],
+            // Middle name too long
+            ["middle_name" => "Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert"],
+            // Last name wrong characters [A-Za-z-']{2,50}
+            ["last_name" => "Doe45"],
+            // Last name too short
+            ["last_name" => "D"],
+            // Last name too long
+            ["last_name" => "DoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoe"],
+            // Username wrong characters [A-Za-z0-9-.]{4,40}
+            ["username" => "johndoe9 :)"],
+            // Username too short
+            ["username" => "jd"],
+            // Username too long
+            ["username" => "johndoejohndoejohndoejohndoejohndoejohndoe11"],
+            // Invalid email
+            ["email" => "john12example.com"],
+            // Invalid email
+            ["email" => "john13@example@example.com"],
+            // Email too long (max 80)
+            ["email" => "johnjohnjohnjohnjohnjohn14@examplexamplexamplexamplexamplexamplexample.comcomcomcom"],
+            // Password too short .*{}
+            [
+                "password" => "pw",
+                "password_confirmation" => "pw",
+            ]
+            // Password confirmation not matching
+            [
+                "password" => "password",
+                "password_confirmation" => "pass",
+            ]
+        ];
         $responses = [];
 
-        // First name wrong characters [A-Za-z-']{2,50}
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "first_name" => "Johnnythebest!!",
-        ]));
-
-        // First name too long
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "first_name" => "JohnDoeTheBestWithAnExtremelyUnneccesaryLongNameWantsToRegisterForThisApplicationTooPleaseLetMeInIAmSoHypedRightNow",
-        ]));
-
-        // First name too short
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "first_name" => "J",
-        ]));
-
-        // Middle name wrong characters [A-Za-z-'. ]{0,100} (little more complicated regex: points only after word group etc)
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "middle_name" => "#R.",
-        ]));
-
-        // Middle name too long
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "middle_name" => "Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert",
-        ]));
-
-        // Last name wrong characters [A-Za-z-']{2,50}
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "last_name" => "Doe45",
-        ]));
-
-        // Last name too short
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "last_name" => "D",
-        ]));
-
-        // Last name too long
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "last_name" => "DoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoe",
-        ]));
-
-        // Username wrong characters [A-Za-z0-9-.]{4,40}
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "username" => "johndoe9 :)",
-        ]));
-
-        // Username too short
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "username" => "jd",
-        ]));
-
-        // Username too long
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "username" => "johndoejohndoejohndoejohndoejohndoejohndoe11",
-        ]));
-
-        // Invalid email
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "email" => "john12example.com",
-        ]));
-
-        // Invalid email
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "email" => "john13@example@example.com",
-        ]));
-
-        // Email too long (max 80)
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "email" => "johnjohnjohnjohnjohnjohn14@examplexamplexamplexamplexamplexamplexample.comcomcomcom",
-        ]));
-
-
-        // Password too short .*{}
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "password" => "pw",
-            "password_confirmation" => "pw",
-        ]));
-
-        // Password confirmation not matching
-        $responses[] = $this->post("/auth/register", $this->getTestDataWith([
-            "password" => "password",
-            "password_confirmation" => "pass",
-        ]));
+        foreach($wrong_data_fields as $field) {
+            $responses[] = $this->post("/auth/register", $this->getTestDataWith($field));
+        }
 
         foreach ($responses as $i => $response) {
             $response->assertStatus(302);
@@ -453,15 +409,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function an_authorized_user_without_validated_email_can_resend_a_verification_email()
     {
-        $response = $this->post("/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe",
-            "email" => "john@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        $response = $this->post("/auth/register", $this->getTestData());
 
         $response->assertRedirect("/auth/email/verify");
 
