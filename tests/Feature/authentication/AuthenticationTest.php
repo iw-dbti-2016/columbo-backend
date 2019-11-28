@@ -21,15 +21,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function a_client_can_register_with_basic_information()
     {
-        $response = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe",
-            "email" => "john@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        $response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestData());
 
         $response->assertStatus(201);
         $response->assertJSONStructure([
@@ -48,55 +40,13 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function a_client_cannot_register_without_all_required_fields()
     {
+        $required_fields = ["first_name", "last_name", "username", "email", "password", "password_confirmation"];
+
         $responses = [];
 
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "last_name" => "Doe",
-            "username" => "johndoe",
-            "email" => "john@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
-
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "username" => "johndoe",
-            "email" => "john@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
-
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "last_name" => "Doe",
-            "email" => "john@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
-
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "last_name" => "Doe",
-            "username" => "johndoe",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
-
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "last_name" => "Doe",
-            "username" => "johndoe",
-            "email" => "john@example.com",
-            "password_confirmation" => "password",
-        ]);
-
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "last_name" => "Doe",
-            "username" => "johndoe",
-            "email" => "john@example.com",
-            "password" => "password",
-        ]);
+        foreach ($required_fields as $field) {
+            $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWithout($field));
+        }
 
         foreach ($responses as $i => $response) {
             $response->assertStatus(422);
@@ -121,180 +71,86 @@ class AuthenticationTest extends TestCase
         $responses = [];
 
         // First name wrong characters [A-Za-z-']{2,50}
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "Johnnythebest!!",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe1",
-            "email" => "john1@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
+            "first_name" => "Johnnythebest!!"
+        ]));
 
         // First name too long
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "first_name" => "JohnDoeTheBestWithAnExtremelyUnneccesaryLongNameWantsToRegisterForThisApplicationTooPleaseLetMeInIAmSoHypedRightNow",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe2",
-            "email" => "john2@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // First name too short
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "first_name" => "J",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe3",
-            "email" => "john3@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // Middle name wrong characters [A-Za-z-'. ]{0,100} (little more complicated regex: points only after word group etc)
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "middle_name" => "#R.",
-            "last_name" => "Doe",
-            "username" => "johndoe4",
-            "email" => "john4@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // Middle name too long
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "middle_name" => "Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert Robert",
-            "last_name" => "Doe",
-            "username" => "johndoe5",
-            "email" => "john5@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
-        // First name wrong characters [A-Za-z-']{2,50}
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
+        // Last name wrong characters [A-Za-z-']{2,50}
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "last_name" => "Doe45",
-            "username" => "johndoe",
-            "email" => "john6@example6.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // Last name too short
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "last_name" => "D",
-            "username" => "johndoe7",
-            "email" => "john7@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // Last name too long
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "last_name" => "DoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoeDoe",
-            "username" => "johndoe8",
-            "email" => "john8@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // Username wrong characters [A-Za-z0-9-.]{4,40}
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "username" => "johndoe9 :)",
-            "email" => "john9@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // Username too short
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "username" => "jd",
-            "email" => "john10@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // Username too long
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "username" => "johndoejohndoejohndoejohndoejohndoejohndoe11",
-            "email" => "john11@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // Invalid email
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe12",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "email" => "john12example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // Invalid email
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe13",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "email" => "john13@example@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // Email too long (max 80)
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe14",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "email" => "johnjohnjohnjohnjohnjohn14@examplexamplexamplexamplexamplexamplexample.comcomcomcom",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        ]));
 
         // Password too short .*{}
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe17",
-            "email" => "john17@example.com",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "password" => "pw",
             "password_confirmation" => "pw",
-        ]);
+        ]));
 
         // Password confirmation not matching
-        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe18",
-            "email" => "john18@example.com",
+        $responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "password" => "password",
             "password_confirmation" => "pass",
-        ]);
+        ]));
 
         foreach ($responses as $i => $response) {
             $response->assertStatus(422);
@@ -317,18 +173,11 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function additional_field_are_ignored_on_registration()
     {
-        $response = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe",
-            "email" => "john@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
+        $response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
             "birth_date" => "2019-01-01",
             "grandfather_last_name" => "Doedoe",
             "grandmother_favorite_color" => "yellow, but not yellow yellow, rather yellow-red-ish",
-        ]);
+        ]));
 
         $response->assertStatus(201);
         $response->assertJSONStructure([
@@ -371,15 +220,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function a_user_cannot_get_data_after_registration_without_email_verification()
     {
-        $response = $this->expectJSON()->post("/api/v1/auth/register", [
-            "first_name" => "John",
-            "middle_name" => "R.",
-            "last_name" => "Doe",
-            "username" => "johndoe",
-            "email" => "john@example.com",
-            "password" => "password",
-            "password_confirmation" => "password",
-        ]);
+        $response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestData());
 
         $response->assertStatus(201);
         $response->assertJSONStructure([
@@ -772,5 +613,38 @@ class AuthenticationTest extends TestCase
             "success",
             "message",
         ]);
+    }
+
+    private function getTestData($replacements=[])
+    {
+        return [
+            "first_name"            => "John",
+            "middle_name"           => "R.",
+            "last_name"             => "Doe",
+            "username"              => "johndoe",
+            "email"                 => "john@example.com",
+            "password"              => "password",
+            "password_confirmation" => "password",
+        ];
+    }
+
+    private function getTestDataWith($replacements=[])
+    {
+        return array_merge($this->getTestData(), $replacements);
+    }
+
+    private function getTestDataWithout($unset)
+    {
+        $array = $this->getTestData();
+
+        if (is_array($unset)) {
+            foreach ($unset as $field) {
+                unset($array[$field]);
+            }
+        } else {
+            unset($array[$unset]);
+        }
+
+        return $array;
     }
 }
