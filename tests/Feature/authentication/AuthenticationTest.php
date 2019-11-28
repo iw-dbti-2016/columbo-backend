@@ -567,7 +567,7 @@ class AuthenticationTest extends TestCase
         ]);
     }
 
-    private function getTestData($replacements=[])
+    private function getTestData()
     {
         return [
             "first_name"            => "John",
@@ -578,25 +578,5 @@ class AuthenticationTest extends TestCase
             "password"              => "password",
             "password_confirmation" => "password",
         ];
-    }
-
-    private function getTestDataWith($replacements=[])
-    {
-        return array_merge($this->getTestData(), $replacements);
-    }
-
-    private function getTestDataWithout($unset)
-    {
-        $array = $this->getTestData();
-
-        if (is_array($unset)) {
-            foreach ($unset as $field) {
-                unset($array[$field]);
-            }
-        } else {
-            unset($array[$unset]);
-        }
-
-        return $array;
     }
 }

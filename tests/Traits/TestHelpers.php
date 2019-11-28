@@ -33,4 +33,43 @@ trait TestHelpers
 
 		return $this->call($method, $uri, $parameters, $cookies);
 	}
+
+	/**
+	 * Returns the test-data with extra keys or
+	 * 	specific keys overwritten.
+	 *
+	 * @param  Array	$replacement
+	 * @return Array
+	 */
+    protected function getTestDataWith($replacement)
+    {
+    	return array_replace($this->getTestData(), $replacement);
+    }
+
+    /**
+     * Return the test-data without soecified keys.
+     *
+     * @param  Array/String $unset
+     * @return Array
+     */
+    protected function getTestDataWithout($unset)
+    {
+        $array = $this->getTestData();
+
+        if (is_array($unset)) {
+            foreach ($unset as $field) {
+                unset($array[$field]);
+            }
+        } else {
+            unset($array[$unset]);
+        }
+
+        return $array;
+    }
+
+	/** Must be overridden */
+	protected function getTestData()
+    {
+    	return [];
+    }
 }

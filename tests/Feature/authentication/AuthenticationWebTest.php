@@ -85,12 +85,12 @@ class AuthenticationWebTest extends TestCase
             [
                 "password" => "pw",
                 "password_confirmation" => "pw",
-            ]
+            ],
             // Password confirmation not matching
             [
                 "password" => "password",
                 "password_confirmation" => "pass",
-            ]
+            ],
         ];
         $responses = [];
 
@@ -451,7 +451,7 @@ class AuthenticationWebTest extends TestCase
         $response->assertStatus(404);
     }
 
-    private function getTestData($replacements=[])
+    private function getTestData()
     {
         return [
             "first_name"            => "John",
@@ -462,25 +462,5 @@ class AuthenticationWebTest extends TestCase
             "password"              => "password",
             "password_confirmation" => "password",
         ];
-    }
-
-    private function getTestDataWith($replacements=[])
-    {
-        return array_merge($this->getTestData(), $replacements);
-    }
-
-    private function getTestDataWithout($unset)
-    {
-        $array = $this->getTestData();
-
-        if (is_array($unset)) {
-            foreach ($unset as $field) {
-                unset($array[$field]);
-            }
-        } else {
-            unset($array[$unset]);
-        }
-
-        return $array;
     }
 }

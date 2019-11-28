@@ -16,73 +16,26 @@ class TripDataValidationTest extends TestCase
     public function a_user_cannot_make_a_trip_with_invalid_data()
     {
         $user = factory(User::class)->create();
-
+        $invalid_fields = [
+            // Name too long
+            ["name" => "Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip"],
+            // Synopsis too long
+            ["synopsis" => "Chillin' in the Bahamas, duration: 1 month! Chillin' in the Bahamas, duration: 1 month! Chillin' in the Bahamas, duration: 1 month!"],
+            // Date wrong format
+            ["start_date" => Carbon::now()->format("d/m/Y")],
+            ["end_date" => Carbon::now()->addMonths(1)->format("d/m/Y")],
+            // Visibility invalid number
+            ["visibility" => "random"],
+            // Published at not timestamp
+            ["published_at" => Carbon::now()->format("Y-m-d")],
+        ];
         $responses = [];
 
-        // Name too long
-        $responses[] = $this->expectJSON()
-                            ->actingAs($user)
-                            ->post("/api/v1/trips/create", [
-                                "name" => "Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip Cool trip",
-                                "synopsis" => "Chillin' in the Bahamas, duration: 1 month!",
-                                "description" => "Blablablabla description blablabla",
-                                "start_date" => Carbon::now()->format("Y-m-d"),
-                                "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => "members",
-                                "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
-                            ]);
-
-        // Synopsis too long
-        $responses[] = $this->expectJSON()
-                            ->actingAs($user)
-                            ->post("/api/v1/trips/create", [
-                                "name" => "Cool trip",
-                                "synopsis" => "Chillin' in the Bahamas, duration: 1 month! Chillin' in the Bahamas, duration: 1 month! Chillin' in the Bahamas, duration: 1 month!",
-                                "description" => "Blablablabla description blablabla",
-                                "start_date" => Carbon::now()->format("Y-m-d"),
-                                "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => "public",
-                                "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
-                            ]);
-
-        // Date wrong format
-        $responses[] = $this->expectJSON()
-                            ->actingAs($user)
-                            ->post("/api/v1/trips/create", [
-                                "name" => "Cool trip",
-                                "synopsis" => "Chillin' in the Bahamas, duration: 1 month!",
-                                "description" => "Blablablabla description blablabla",
-                                "start_date" => Carbon::now()->format("d/m/Y"),
-                                "end_date" => Carbon::now()->addMonths(1)->format("d/m/Y"),
-                                "visibility" => "authenticated",
-                                "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
-                            ]);
-
-        // Visibility invalid number
-        $responses[] = $this->expectJSON()
-                            ->actingAs($user)
-                            ->post("/api/v1/trips/create", [
-                                "name" => "Cool trip",
-                                "synopsis" => "Chillin' in the Bahamas, duration: 1 month!",
-                                "description" => "Blablablabla description blablabla",
-                                "start_date" => Carbon::now()->format("Y-m-d"),
-                                "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => "random",
-                                "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
-                            ]);
-
-        // Published at not timestamp
-        $responses[] = $this->expectJSON()
-                            ->actingAs($user)
-                            ->post("/api/v1/trips/create", [
-                                "name" => "Cool trip",
-                                "synopsis" => "Chillin' in the Bahamas, duration: 1 month!",
-                                "description" => "Blablablabla description blablabla",
-                                "start_date" => Carbon::now()->format("Y-m-d"),
-                                "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => "public",
-                                "published_at" => Carbon::now()->format("Y-m-d"),
-                            ]);
+        foreach($invalid_fields as $field) {
+            $responses[] = $this->expectJSON()
+                                ->actingAs($user)
+                                ->post("/api/v1/trips/create", $this->getTestDataWith($field));
+        }
 
         foreach ($responses as $response) {
             $response->assertStatus(422);
@@ -102,69 +55,14 @@ class TripDataValidationTest extends TestCase
     public function a_trip_cannot_be_made_without_all_required_fields()
     {
         $user = factory(User::class)->create();
-
+        $required_fields = ["name", "start_date", "end_date", "visibility"];
         $responses = [];
 
-        // No name
-        $responses[] = $this->expectJSON()
-                            ->actingAs($user)
-                            ->post("/api/v1/trips/create", [
-                                "synopsis" => "Chillin' in the Bahamas, duration: 1 month!",
-                                "description" => "Blablablabla description blablabla",
-                                "start_date" => Carbon::now()->format("Y-m-d"),
-                                "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => "public",
-                                "published_at" => Carbon::now()->format("Y-m-d"),
-                            ]);
-
-        // No start date
-        $responses[] = $this->expectJSON()
-                            ->actingAs($user)
-                            ->post("/api/v1/trips/create", [
-                                "name" => "Cool trip",
-                                "synopsis" => "Chillin' in the Bahamas, duration: 1 month!",
-                                "description" => "Blablablabla description blablabla",
-                                "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => "public",
-                                "published_at" => Carbon::now()->format("Y-m-d"),
-                            ]);
-
-        // No end date
-        $responses[] = $this->expectJSON()
-                            ->actingAs($user)
-                            ->post("/api/v1/trips/create", [
-                                "name" => "Cool trip",
-                                "synopsis" => "Chillin' in the Bahamas, duration: 1 month!",
-                                "description" => "Blablablabla description blablabla",
-                                "start_date" => Carbon::now()->format("Y-m-d"),
-                                "visibility" => "public",
-                                "published_at" => Carbon::now()->format("Y-m-d"),
-                            ]);
-
-        // No visibility
-        $responses[] = $this->expectJSON()
-                            ->actingAs($user)
-                            ->post("/api/v1/trips/create", [
-                                "name" => "Cool trip",
-                                "synopsis" => "Chillin' in the Bahamas, duration: 1 month!",
-                                "description" => "Blablablabla description blablabla",
-                                "start_date" => Carbon::now()->format("Y-m-d"),
-                                "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "published_at" => Carbon::now()->format("Y-m-d"),
-                            ]);
-
-        // No published at (NOT REQUIRED, DEFAULT NOW())
-        /*$responses[] = $this->expectJSON()
-                            ->actingAs($user)
-                            ->post("/api/v1/trips/create", [
-                                "name" => "Cool trip",
-                                "synopsis" => "Chillin' in the Bahamas, duration: 1 month!",
-                                "description" => "Blablablabla description blablabla",
-                                "start_date" => Carbon::now()->format("Y-m-d"),
-                                "end_date" => Carbon::now()->addMonths(1)->format("Y-m-d"),
-                                "visibility" => "public",
-                            ]);*/
-
+        foreach($required_fields as $field) {
+            $responses[] = $this->expectJSON()
+                                ->actingAs($user)
+                                ->post("/api/v1/trips/create", $this->getTestDataWithout($field));
+        }
 
         foreach ($responses as $response) {
             $response->assertStatus(422);
@@ -178,5 +76,18 @@ class TripDataValidationTest extends TestCase
         $this->assertDatabaseMissing("trips", [
             "user_id" => $user->id,
         ]);
+    }
+
+    private function getTestData()
+    {
+        return [
+            "name"         => "Cool trip",
+            "synopsis"     => "Chillin' in the Bahamas, duration: 1 month!",
+            "description"  => "Blablablabla description blablabla",
+            "start_date"   => Carbon::now()->format("Y-m-d"),
+            "end_date"     => Carbon::now()->addMonths(1)->format("Y-m-d"),
+            "visibility"   => "members",
+            "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
+        ];
     }
 }
