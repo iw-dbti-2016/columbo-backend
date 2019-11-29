@@ -83,6 +83,36 @@ class TripDataValidationTest extends TestCase
         $this->assertDatabaseMissing("trips", ["user_id" => $user->id]);
     }
 
+    /** @test */
+    public function a_trip_cannot_be_updated_without_all_required_fields()
+    {
+        $user = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
+        $trip = $user->tripsOwner()->create($this->getTestData());
+
+        $required_fields = ["name", "start_date", "end_date", "visibility"];
+        $responses = [];
+
+        foreach($required_fields as $field) {
+            $update_data = array_merge($this->getTestDataWithout($field), ["user_id" => $user2->id]);
+
+            $responses[] = $this->expectJSON()
+                                ->actingAs($user)
+                                ->patch("/api/v1/trips/{$trip->id}", $update_data);
+
+            $responses[] = $this->expectJSON()
+                                ->actingAs($user)
+                                ->put("/api/v1/trips/{$trip->id}", $update_data);
+        }
+
+        foreach ($responses as $response) {
+            $response->assertStatus(422);
+            $response->assertJSONStructure($this->errorStructure());
+        }
+
+        $this->assertDatabaseMissing("trips", ["user_id" => $user2->id]);
+    }
+
     private function getTestData()
     {
         return [

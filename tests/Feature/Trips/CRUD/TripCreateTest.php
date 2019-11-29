@@ -13,7 +13,7 @@ class TripCreateTest extends TestCase
     use RefreshDatabase, APITestHelpers;
 
     /** @test */
-    public function a_user_can_make_a_trip()
+    public function a_user_can_create_a_trip()
     {
         $user = factory(User::class)->create();
 

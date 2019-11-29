@@ -3,6 +3,7 @@
 namespace Tests\Feature\Reports\CRUD;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
 use TravelCompanion\Report;
@@ -18,33 +19,22 @@ class ReportUpdateTest extends TestCase
     {
         $user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
 
+        $report = factory(Report::class)->make();
         $report->owner()->associate($user);
         $report->trip()->associate($trip);
-
         $report->save();
 
         $response = $this->expectJSON()
-                            ->actingAs($user)
-                            ->patch("/api/v1/trips/{$trip->id}/reports/{$report->id}", [
-                                "title" => "New Title",
-                                "date" => $report->date,
-                                "description" => $report->description,
-                                "visibility" => $report->visibility,
-                                "published_at" => $report->published_at->format("Y-m-d H:i:s"),
-                            ]);
+                         ->actingAs($user)
+                         ->patch("/api/v1/trips/{$trip->id}/reports/{$report->id}", $this->getTestDataWith([
+                             "title" => "New Title"
+                         ]));
 
         $response->assertStatus(200);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-            "data",
-        ]);
+        $response->assertJSONStructure($this->successStructure());
 
-        $this->assertDatabaseHas("reports", [
-            "title" => "New Title",
-        ]);
+        $this->assertDatabaseHas("reports", ["title" => "New Title"]);
     }
 
     /** @test */
@@ -53,27 +43,30 @@ class ReportUpdateTest extends TestCase
         $user = factory(User::class)->create();
         $user2 = factory(User::class)->create();
         $trip = $user2->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
 
+        $report = factory(Report::class)->make();
         $report->owner()->associate($user2);
         $report->trip()->associate($trip);
-
         $report->save();
 
         $response = $this->expectJSON()
-                            ->actingAs($user)
-                            ->patch("/api/v1/trips/{$trip->id}/reports/{$report->id}", [
-                                "title" => "New Title",
-                            ]);
+                         ->actingAs($user)
+                         ->patch("/api/v1/trips/{$trip->id}/reports/{$report->id}", $this->getTestDataWith([
+                             "title" => "New Title",
+                         ]));
 
-        $response->assertStatus(403);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
+        $this->assertUnauthorized($response);
+        $this->assertDatabaseMissing("reports", ["title" => "New Title"]);
+    }
 
-        $this->assertDatabaseMissing("reports", [
-            "title" => "New Title",
-        ]);
+    private function getTestData()
+    {
+        return [
+            "title"        => "Title",
+            "date"         => Carbon::now()->addDays(1)->format("Y-m-d"),
+            "description"  => "description",
+            "visibility"   => "friends",
+            "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
+        ];
     }
 }

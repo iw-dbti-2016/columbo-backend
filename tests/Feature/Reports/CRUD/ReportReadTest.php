@@ -19,22 +19,18 @@ class ReportReadTest extends TestCase
         $user = factory(User::class)->create();
         $user2 = factory(User::class)->create();
         $trip = $user2->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
 
+        $report = factory(Report::class)->make();
         $report->owner()->associate($user2);
         $report->trip()->associate($trip);
-
         $report->save();
 
         $response = $this->expectJSON()
-                            ->actingAs($user)
-                            ->get("/api/v1/trips/{$trip->id}/reports/{$report->id}");
+                         ->actingAs($user)
+                         ->get("/api/v1/trips/{$trip->id}/reports/{$report->id}");
 
         $response->assertStatus(200);
-        $response->assertJSONStructure([
-            "success",
-            "data",
-        ]);
+        $response->assertJSONStructure($this->successStructure(false));
     }
 
     /** @test */
@@ -44,21 +40,17 @@ class ReportReadTest extends TestCase
         $user2 = factory(User::class)->create();
         $trip1 = $user2->tripsOwner()->save(factory(Trip::class)->make());
         $trip2 = $user2->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
 
+        $report = factory(Report::class)->make();
         $report->owner()->associate($user2);
         $report->trip()->associate($trip1);
-
         $report->save();
 
         $response = $this->expectJSON()
-                            ->actingAs($user)
-                            ->get("/api/v1/trips/{$trip2->id}/reports/{$report->id}");
+                         ->actingAs($user)
+                         ->get("/api/v1/trips/{$trip2->id}/reports/{$report->id}");
 
         $response->assertStatus(404);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
+        $response->assertJSONStructure($this->successStructureWithoutData());
     }
 }

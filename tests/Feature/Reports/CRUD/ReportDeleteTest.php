@@ -27,14 +27,11 @@ class ReportDeleteTest extends TestCase
         $report->save();
 
         $response = $this->expectJSON()
-                            ->actingAs($user)
-                            ->delete("/api/v1/trips/{$trip->id}/reports/{$report->id}");
+                         ->actingAs($user)
+                         ->delete("/api/v1/trips/{$trip->id}/reports/{$report->id}");
 
         $response->assertStatus(200);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
+        $response->assertJSONStructure($this->successStructureWithoutData());
 
         $this->assertDatabaseHas("reports", [
             "id" => $report->id,
@@ -48,30 +45,20 @@ class ReportDeleteTest extends TestCase
         $user = factory(User::class)->create();
         $user2 = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
 
+        $report = factory(Report::class)->make();
         $report->owner()->associate($user);
         $report->trip()->associate($trip);
-
         $report->save();
 
         $response = $this->expectJSON()
-                            ->actingAs($user2)
-                            ->delete("/api/v1/trips/{$trip->id}/reports/{$report->id}");
+                         ->actingAs($user2)
+                         ->delete("/api/v1/trips/{$trip->id}/reports/{$report->id}");
 
-        $response->assertStatus(403);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
-
+        $this->assertUnauthorized($response);
         $this->assertDatabaseHas("reports", [
             "id" => $report->id,
-        ]);
-
-        $this->assertDatabaseMissing("reports", [
-            "id" => $report->id,
-            "deleted_at" => Carbon::now()->format("Y-m-d H:i:s"),
+            "deleted_at" => null,
         ]);
     }
 }
