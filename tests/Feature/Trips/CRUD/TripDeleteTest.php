@@ -20,17 +20,14 @@ class TripDeleteTest extends TestCase
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
 
         $response = $this->expectJSON()
-                            ->actingAs($user)
-                            ->delete("/api/v1/trips/{$trip->id}");
+                         ->actingAs($user)
+                         ->delete("/api/v1/trips/{$trip->id}");
 
         $response->assertStatus(200);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
+        $response->assertJSONStructure($this->successStructureWithoutData());
 
         $this->assertDatabaseHas("trips", [
-            "id" => $trip->id,
+            "id"         => $trip->id,
             "deleted_at" => Carbon::now()->format("Y-m-d H:i:s"),
         ]);
     }
@@ -43,22 +40,13 @@ class TripDeleteTest extends TestCase
         $user2 = factory(User::class)->create();
 
         $response = $this->expectJSON()
-                            ->actingAs($user2)
-                            ->delete("/api/v1/trips/{$trip->id}");
+                         ->actingAs($user2)
+                         ->delete("/api/v1/trips/{$trip->id}");
 
-        $response->assertStatus(403);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
-
+        $this->assertUnauthorized($response);
         $this->assertDatabaseHas("trips", [
-            "id" => $trip->id,
-        ]);
-
-        $this->assertDatabaseMissing("trips", [
-            "id" => $trip->id,
-            "deleted_at" => Carbon::now()->format("Y-m-d H:i:s"),
+            "id"         => $trip->id,
+            "deleted_at" => null,
         ]);
     }
 }

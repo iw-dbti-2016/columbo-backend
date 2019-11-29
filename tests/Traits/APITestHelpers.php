@@ -49,6 +49,49 @@ trait APITestHelpers
 		return $this;
 	}
 
+	protected function successStructure($message=true, $data=true)
+	{
+		$array = ["success"];
+
+		if ($message)
+			$array = array_merge($array, ["message"]);
+
+		if ($data)
+			$array = array_merge($array, ["data"]);
+
+		return $array;
+	}
+
+	protected function successStructureWithoutData($message=true)
+	{
+		return $this->successStructure($message, false);
+	}
+
+	protected function errorStructure($message=true)
+	{
+		$array = [
+			"success",
+            "errors",
+        ];
+
+        if ($message)
+        	$array = array_merge($array, ["message"]);
+
+       	return $array;
+	}
+
+	protected function assertUnauthenticated($response)
+	{
+    	$response->assertStatus(401);
+        $response->assertJSONStructure($this->successStructureWithoutData());
+	}
+
+	protected function assertUnauthorized($response)
+	{
+    	$response->assertStatus(403);
+        $response->assertJSONStructure($this->successStructureWithoutData());
+	}
+
 	/**
 	 * Returns the test-data with extra keys or
 	 * 	specific keys overwritten.

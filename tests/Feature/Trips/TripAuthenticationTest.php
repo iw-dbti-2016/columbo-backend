@@ -18,33 +18,25 @@ class TripAuthenticationTest extends TestCase
     use RefreshDatabase, APITestHelpers;
 
     /** @test */
+    public function an_unauthenticated_user_cannot_create_a_trip()
+    {
+        $response = $this->expectJSON()
+                         ->post("/api/v1/trips/create", $this->getTestData());
+
+        $this->assertUnauthenticated($response);
+        $this->assertDatabaseMissing("trips", ["name" => "Cool trip"]);
+    }
+
+    /** @test */
     public function an_unauthenticated_user_cannot_read_a_trip()
     {
     	$user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
 
-        $response = $this->expectJSON()->get("/api/v1/trips/{$trip->id}");
-
-    	$response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
-    }
-
-    /** @test */
-    public function an_unauthenticated_user_cannot_make_a_trip()
-    {
         $response = $this->expectJSON()
-                            ->post("/api/v1/trips/create", $this->getTestData());
+                         ->get("/api/v1/trips/{$trip->id}");
 
-        $response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
-
-        $this->assertDatabaseMissing("trips", ["name" => "Cool trip"]);
+        $this->assertUnauthenticated($response);
     }
 
     /** @test */
@@ -54,47 +46,32 @@ class TripAuthenticationTest extends TestCase
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
 
         $response = $this->expectJSON()
-        					->patch("/api/v1/trips/{$trip->id}", $this->getTestDataWith([
-        						"name" => "Testname 2",
-        					]));
+        				 ->patch("/api/v1/trips/{$trip->id}", $this->getTestDataWith([
+        			         "name" => "Testname 2",
+        			     ]));
 
-    	$response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
-
+    	$this->assertUnauthenticated($response);
         $this->assertDatabaseMissing("trips", ["name" => "Testname 2"]);
 
         $response = $this->expectJSON()
-        					->put("/api/v1/trips/{$trip->id}", $this->getTestDataWith([
-        						"name" => "Testname 2",
-        					]));
+                         ->put("/api/v1/trips/{$trip->id}", $this->getTestDataWith([
+                             "name" => "Testname 2",
+                         ]));
 
-    	$response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
-
+    	$this->assertUnauthenticated($response);
         $this->assertDatabaseMissing("trips", ["name" => "Testname 2"]);
     }
 
     /** @test */
-    public function an_unauthenticated_user_cannot_destroy_a_trip()
+    public function an_unauthenticated_user_cannot_delete_a_trip()
     {
     	$user = factory(User::class)->create();
         $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
 
         $response = $this->expectJSON()
-        					->delete("/api/v1/trips/{$trip->id}");
+        				 ->delete("/api/v1/trips/{$trip->id}");
 
-    	$response->assertStatus(401);
-        $response->assertJSONStructure([
-            "success",
-            "message",
-        ]);
-
+    	$this->assertUnauthenticated($response);
         $this->assertDatabaseHas("trips", ["id" => $trip->id]);
     }
 
