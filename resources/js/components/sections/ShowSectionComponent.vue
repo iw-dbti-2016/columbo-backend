@@ -11,8 +11,8 @@
 			<div class="flex-grow w-1/3">
 				<div class="mt-16 bg-gray-100 rounded-lg shadow-lg overflow-hidden">
 					<div class="px-6 py-4 relative">
-						<span class="text-4xl">{{ section.time }}</span>
-						<span class="absolute top-0 right-0 mt-4 mr-5 text-4xl">{{ section.duration_formatted }}</span>
+						<span class="text-4xl">{{ section.start_time }}</span>
+						<span class="absolute top-0 right-0 mt-4 mr-5 text-4xl">{{ calculateDuration() }}</span>
 					</div>
 					<div class="relative" v-if="section.locationable != null">
 						<img src="/img/example-map.png" alt="#">
@@ -80,6 +80,38 @@
                         console.log("error: " + error);
                     });
             },
+            calculateDuration: function() {
+            	if (typeof this.section.start_time === "undefined" || typeof this.section.end_time === "undefined") {
+            		return "0m";
+            	}
+
+                let start = this.section.start_time.split(":");
+                let end = this.section.end_time.split(":");
+
+                start = 60 * parseInt(start[0]) + parseInt(start[1]);
+                end = 60 * parseInt(end[0]) + parseInt(end[1]);
+
+                let duration = end - start;
+
+                let hr = Math.floor(duration / 60);
+                let min = duration % 60;
+
+                let formatted_duration = "";
+
+                if (hr != 0) {
+                    formatted_duration += hr + "h";
+                }
+
+                if (min != 0) {
+                    formatted_duration += (min < 10 ? "0" : "") + min;
+
+                    if (hr == 0) formatted_duration += "m";
+                } else {
+                    formatted_duration += "00";
+                }
+
+                return formatted_duration;
+            }
         },
     }
 </script>

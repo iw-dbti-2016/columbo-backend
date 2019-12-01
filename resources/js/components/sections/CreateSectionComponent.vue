@@ -82,8 +82,8 @@
 				let reportId = this.$route.params.reportId;
 
 				axios.post(`/api/v1/trips/${tripId}/reports/${reportId}/sections/create`, {
-					time: this.startTime,
-					duration_minutes: this.calculateDuration(),
+					start_time: this.startTime,
+					end_time: this.endTime,
 					content: this.content,
 					is_draft: this.draft,
 					visibility: "friends", // TODO

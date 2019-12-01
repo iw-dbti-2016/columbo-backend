@@ -34,8 +34,8 @@
 					<div class="bg-gray-100 rounded-lg shadow-lg overflow-hidden">
 						<div v-if="sections.length > 0">
 							<div class="px-6 py-4 relative">
-								<span class="text-4xl">{{ sections[sectionInfoIndex].time }}</span>
-								<span class="absolute top-0 right-0 mt-4 mr-5 text-4xl">{{ sections[sectionInfoIndex].duration_formatted }}</span>
+								<span class="text-4xl">{{ sections[sectionInfoIndex].start_time }}</span>
+								<span class="absolute top-0 right-0 mt-4 mr-5 text-4xl">{{ calculateDuration(sections[sectionInfoIndex].start_time, sections[sectionInfoIndex].end_time) }}</span>
 								<span class="block text-xl mt-2 text-gray-600 cursor-pointer hover:underline" v-if="sections[sectionInfoIndex].locationable != null">{{ sections[sectionInfoIndex].locationable.name }}</span>
 							</div>
 							<div class="relative" v-if="sections[sectionInfoIndex].locationable != null">
@@ -120,6 +120,34 @@
             	if (this.sectionInfoIndex != index) {
             		this.sectionInfoIndex = index;
             	}
+            },
+            calculateDuration: function(start, end) {
+                start = start.split(":");
+                end = end.split(":");
+
+                start = 60 * parseInt(start[0]) + parseInt(start[1]);
+                end = 60 * parseInt(end[0]) + parseInt(end[1]);
+
+                let duration = end - start;
+
+                let hr = Math.floor(duration / 60);
+                let min = duration % 60;
+
+                let formatted_duration = "";
+
+                if (hr != 0) {
+                    formatted_duration += hr + "h";
+                }
+
+                if (min != 0) {
+                    formatted_duration += (min < 10 ? "0" : "") + min;
+
+                    if (hr == 0) formatted_duration += "m";
+                } else {
+                    formatted_duration += "00";
+                }
+
+                return formatted_duration;
             }
         },
     }

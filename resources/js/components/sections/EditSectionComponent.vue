@@ -84,8 +84,8 @@
 				let sectionId = this.$route.params.sectionId;
 
 				axios.put(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${sectionId}`, {
-					time: this.section.time,
-					duration_minutes: this.calculateDuration(),
+					start_time: this.section.start_time,
+					end_time: this.section.end_time,
 					content: this.section.content,
 					is_draft: this.section.is_draft,
 					visibility: "friends", // TODO
@@ -137,28 +137,7 @@
             },
 		},
 		watch: {
-			startTime: function(val) {
-				let start = val.split(":");
-				let end = this.endTime.split(":");
 
-				if (start.length != 2 || end.length != 2) {
-					this.duration = "--";
-					return;
-				}
-
-				this.duration = (end[0] - start[0]) * 60 + (end[1] - start[1]);
-			},
-			endTime: function(val) {
-				let start = this.startTime.split(":");
-				let end = val.split(":");
-
-				if (start.length != 2 || end.length != 2) {
-					this.duration = "--";
-					return;
-				}
-
-				this.duration = (end[0] - start[0]) * 60 + (end[1] - start[1]);
-			}
 		}
 	}
 </script>

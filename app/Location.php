@@ -25,4 +25,9 @@ class Location extends Model
     {
     	return $this->morphMany(Action::class, 'actionable');
     }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

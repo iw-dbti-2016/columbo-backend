@@ -19,8 +19,8 @@ class Section extends Model
     protected $fillable = [
         "content",
         "image",
-        "time",
-        "duration_minutes",
+        "start_time",
+        "end_time",
         "is_draft",
         "visibility",
         "published_at",
@@ -31,15 +31,14 @@ class Section extends Model
         "is_draft",
         "content",
         "image",
-        "time",
-        "duration_minutes",
+        "start_time",
+        "end_time",
         "visibility", // Sometimes???
         "published_at",
         "deleted_at",
         "created_at",
         "updated_at",
         "published_at_diff",
-        "duration_formatted",
         "locationable",
         "owner",
     ];
@@ -69,35 +68,14 @@ class Section extends Model
         return $query->where("published_at", "<", Carbon::now("UTC"));
     }
 
-    public function getDurationFormattedAttribute()
+    public function getStartTimeAttribute($start_time)
     {
-        if ($this->duration_minutes == null) {
-            return $this->duration_minutes;
-        } else {
-            $hr = floor($this->duration_minutes / 60);
-            $min = $this->duration_minutes % 60;
-
-            $formatted_duration = "";
-
-            if ($hr != 0) {
-                $formatted_duration .= $hr . "h";
-            }
-
-            if ($min != 0) {
-                $formatted_duration .= ($min < 10 ? "0" : "") . $min;
-
-                if ($hr == 0) $formatted_duration .= "m";
-            } else {
-                $formatted_duration .= "00";
-            }
-
-            return $formatted_duration;
-        }
+        return ($start_time == null) ? $start_time : substr($start_time, 0, 5);
     }
 
-    public function getTimeAttribute($time)
+    public function getEndTimeAttribute($end_time)
     {
-        return ($time == null) ? $time : substr($time, 0, 5);
+        return ($end_time == null) ? $end_time : substr($end_time, 0, 5);
     }
 
     public function getPublishedAtDiffAttribute()
