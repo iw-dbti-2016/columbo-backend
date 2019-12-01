@@ -1,6 +1,6 @@
 <template>
 	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<router-link :to="{name: 'showTrip', params: {params: this.$route.params.tripId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Cancel"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
+		<router-link :to="{name: 'showTrip', params: {tripId: this.$route.params.tripId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Cancel"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
 				<h1 class="text-4xl tracking-wide">Create a new report</h1>
