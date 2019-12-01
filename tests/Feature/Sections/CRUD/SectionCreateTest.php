@@ -12,102 +12,49 @@ use TravelCompanion\User;
 
 class SectionCreateTest extends TestCase
 {
-	use RefreshDatabase, APITestHelpers;
+    use RefreshDatabase, APITestHelpers;
 
     /** @test */
-    public function authenticated_user_can_create_sections()
+    public function users_can_create_sections_in_their_reports()
     {
-    	$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
-
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-
-        $report->save();
+        $user   = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
         $response = $this->expectJSON()
-        					->actingAs($user)
-        					->post("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/create", [
-        						"content" => "Lorem ipsum dolor sit amet, consectetur adipisicing elit. A quas corporis asperiores quos alias, maxime molestiae quibusdam. Quo, voluptates, animi.",
-        						"visibility" => "members",
-        						"published_at" => Carbon::now()->format("Y-m-d H:i:s"),
-        					]);
+                         ->actingAs($user)
+                         ->post("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/create", $this->getTestData());
 
         $response->assertStatus(201);
-        $response->assertJSONStructure([
-        	"success",
-        	"message",
-        	"data",
-        ]);
+        $response->assertJSONStructure($this->successStructure());
 
-        $this->assertDatabaseHas("sections", [
-        	"user_id" => $user->id,
-        	"report_id" => $report->id,
-        ]);
+        $this->assertDatabaseHas("sections", ["user_id" => $user->id]);
+        $this->assertDatabaseHas("sections", ["report_id" => $report->id]);
     }
 
     /** @test */
-    public function authenticated_user_cannot_create_section_if_trip_is_wrong()
+    public function users_cannot_create_sections_in_other_users_reports()
     {
-    	$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $trip2 = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
-
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-
-        $report->save();
+        $user   = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $trip2  = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
         $response = $this->expectJSON()
-        					->actingAs($user)
-        					->post("/api/v1/trips/{$trip2->id}/reports/{$report->id}/sections/create", [
-        						"content" => "Lorem ipsum dolor sit amet, consectetur adipisicing elit. A quas corporis asperiores quos alias, maxime molestiae quibusdam. Quo, voluptates, animi.",
-        						"visibility" => "members",
-        						"published_at" => Carbon::now()->format("Y-m-d H:i:s"),
-        					]);
+                         ->actingAs($user)
+                         ->post("/api/v1/trips/{$trip2->id}/reports/{$report->id}/sections/create", $this->getTestData());
 
-        $response->assertStatus(404);
-        $response->assertJSONStructure([
-        	"success",
-        	"message",
-        ]);
-
-        $this->assertDatabaseMissing("sections", [
-        	"user_id" => $user->id,
-        	"report_id" => $report->id,
-        ]);
+        $this->assertNotFound($response);
+        $this->assertDatabaseMissing("sections", ["user_id" => $user->id]);
+        $this->assertDatabaseMissing("sections", ["report_id" => $report->id]);
     }
 
-    /** @test */
-    public function unauthenticated_users_cannot_make_sections()
+    private function getTestData()
     {
-    	$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
-
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-
-        $report->save();
-
-        $response = $this->expectJSON()
-        					->post("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/create", [
-        						"content" => "Lorem ipsum dolor sit amet, consectetur adipisicing elit. A quas corporis asperiores quos alias, maxime molestiae quibusdam. Quo, voluptates, animi.",
-        						"visibility" => "members",
-        						"published_at" => Carbon::now()->format("Y-m-d H:i:s"),
-        					]);
-
-        $response->assertStatus(401);
-        $response->assertJSONStructure([
-        	"success",
-        	"message",
-        ]);
-
-        $this->assertDatabaseMissing("sections", [
-        	"user_id" => $user->id,
-        	"report_id" => $report->id,
-        ]);
+        return [
+            "content"      => "Lorem ipsum dolor sit amet, consectetur adipisicing elit. A quas corporis asperiores quos alias, maxime molestiae quibusdam. Quo, voluptates, animi.",
+            "visibility"   => "members",
+            "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
+        ];
     }
 }

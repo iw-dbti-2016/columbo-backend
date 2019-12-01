@@ -53,4 +53,18 @@ class ReportReadTest extends TestCase
         $response->assertStatus(404);
         $response->assertJSONStructure($this->successStructureWithoutData());
     }
+
+    /** @test */
+    public function users_can_get_report_list()
+    {
+        $user = factory(User::class)->create();
+        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+
+        $response = $this->expectJSON()
+                         ->actingAs($user)
+                         ->get("/api/v1/trips/{$trip->id}/reports");
+
+        $response->assertStatus(200);
+        $response->assertJSONStructure($this->successStructure(false));
+    }
 }

@@ -12,127 +12,69 @@ use TravelCompanion\User;
 
 class SectionReadTest extends TestCase
 {
-	use RefreshDatabase, APITestHelpers;
+    use RefreshDatabase, APITestHelpers;
 
-	/** @test */
-	public function authenticated_users_can_retreive_sections()
-	{
-		$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
-
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-
-        $report->save();
-        $section = factory(Section::class)->make();
-
-        $section->owner()->associate($user);
-        $section->report()->associate($report);
-
-        $section->save();
+    /** @test */
+    public function users_can_read_section_details()
+    {
+        $user    = $this->createUser();
+        $trip    = $this->createTrip($user);
+        $report  = $this->createReport($user, $trip);
+        $section = $this->createSection($user, $report);
 
         $response = $this->expectJSON()
-        					->actingAs($user)
-        					->get("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}");
+                         ->actingAs($user)
+                         ->get("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}");
 
-    	$response->assertStatus(200);
-    	$response->assertJSONStructure([
-    		"success",
-    		"data",
-        ]);
-	}
+        $response->assertStatus(200);
+        $response->assertJSONStructure($this->successStructure(false));
+    }
 
-	/** @test */
-	public function unauthenticated_users_cannot_retrieve_sections()
-	{
-		$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
-
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-
-        $report->save();
-        $section = factory(Section::class)->make();
-
-        $section->owner()->associate($user);
-        $section->report()->associate($report);
-
-        $section->save();
+    /** @test */
+    public function users_cannot_read_section_details_with_wrong_trip()
+    {
+        $user    = $this->createUser();
+        $trip    = $this->createTrip($user);
+        $trip2   = $this->createTrip($user);
+        $report  = $this->createReport($user, $trip);
+        $section = $this->createSection($user, $report);
 
         $response = $this->expectJSON()
-        					->get("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}");
+                         ->actingAs($user)
+                         ->get("/api/v1/trips/{$trip2->id}/reports/{$report->id}/sections/{$section->id}");
 
-    	$response->assertStatus(401);
-    	$response->assertJSONStructure([
-    		"success",
-    		"message",
-        ]);
-	}
+        $this->assertNotFound($response);
+    }
 
-	/** @test */
-	public function users_cannot_retrieve_sections_with_wrong_trip()
-	{
-		$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $trip2 = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
-
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-
-        $report->save();
-        $section = factory(Section::class)->make();
-
-        $section->owner()->associate($user);
-        $section->report()->associate($report);
-
-        $section->save();
+    /** @test */
+    public function users_cannot_read_section_details_with_wrong_report()
+    {
+        $user    = $this->createUser();
+        $trip    = $this->createTrip($user);
+        $report  = $this->createReport($user, $trip);
+        $report2 = $this->createReport($user, $trip);
+        $section = $this->createSection($user, $report);
 
         $response = $this->expectJSON()
-        					->actingAs($user)
-        					->get("/api/v1/trips/{$trip2->id}/reports/{$report->id}/sections/{$section->id}");
+                         ->actingAs($user)
+                         ->get("/api/v1/trips/{$trip->id}/reports/{$report2->id}/sections/{$section->id}");
 
-    	$response->assertStatus(404);
-    	$response->assertJSONStructure([
-    		"success",
-    		"message",
-        ]);
-	}
+        $this->assertNotFound($response);
+    }
 
-	/** @test */
-	public function users_cannot_retrieve_sections_with_wrong_report()
-	{
-		$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
-
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-
-        $report->save();
-        $report2 = factory(Report::class)->make();
-
-        $report2->owner()->associate($user);
-        $report2->trip()->associate($trip);
-
-        $report2->save();
-        $section = factory(Section::class)->make();
-
-        $section->owner()->associate($user);
-        $section->report()->associate($report);
-
-        $section->save();
+    /** @test */
+    public function users_can_read_section_lists()
+    {
+        $user    = $this->createUser();
+        $trip    = $this->createTrip($user);
+        $report  = $this->createReport($user, $trip);
+        $section = $this->createSection($user, $report);
 
         $response = $this->expectJSON()
-        					->actingAs($user)
-        					->get("/api/v1/trips/{$trip->id}/reports/{$report2->id}/sections/{$section->id}");
+                         ->actingAs($user)
+                         ->get("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections");
 
-    	$response->assertStatus(404);
-    	$response->assertJSONStructure([
-    		"success",
-    		"message",
-        ]);
-	}
+        $response->assertStatus(200);
+        $response->assertJSONStructure($this->successStructure(false));
+    }
 }

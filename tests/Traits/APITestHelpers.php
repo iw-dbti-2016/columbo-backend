@@ -3,6 +3,10 @@
 namespace Tests\Traits;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use TravelCompanion\Report;
+use TravelCompanion\Section;
+use TravelCompanion\Trip;
+use TravelCompanion\User;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -49,6 +53,10 @@ trait APITestHelpers
 		return $this;
 	}
 
+	/////////////////////////////////////
+	// STRUCTURE AND STATUS ASSERTIONS //
+	/////////////////////////////////////
+
 	protected function successStructure($message=true, $data=true)
 	{
 		$array = ["success"];
@@ -91,6 +99,56 @@ trait APITestHelpers
     	$response->assertStatus(403);
         $response->assertJSONStructure($this->successStructureWithoutData());
 	}
+
+	protected function assertNotFound($response)
+	{
+		$response->assertStatus(404);
+		$response->assertJSONStructure($this->successStructureWithoutData());
+	}
+
+	protected function assertValidationFailed($response)
+	{
+		$response->assertStatus(422);
+		$response->assertJSONStructure($this->errorStructure());
+	}
+
+	//////////////////////
+	// ENTITY CREATIONS //
+	//////////////////////
+
+	protected function createUser($data=[])
+	{
+		return factory(User::class)->create($data);
+	}
+
+	protected function createTrip(User $user, $data=[])
+	{
+		return $user->tripsOwner()->save(factory(Trip::class)->make($data));
+	}
+
+	protected function createReport(User $user, Trip $trip, $data=[])
+	{
+		$report = factory(Report::class)->make($data);
+        $report->owner()->associate($user);
+        $report->trip()->associate($trip);
+        $report->save();
+
+		return $report;
+	}
+
+	protected function createSection(User $user, Report $report, $data=[])
+	{
+		$section = factory(Section::class)->make($data);
+        $section->owner()->associate($user);
+        $section->report()->associate($report);
+        $section->save();
+
+		return $section;
+	}
+
+	///////////////
+	// TEST DATA //
+	///////////////
 
 	/**
 	 * Returns the test-data with extra keys or

@@ -12,97 +12,140 @@ use TravelCompanion\User;
 
 class SectionDataValidationTest extends TestCase
 {
-	use RefreshDatabase, APITestHelpers;
+    use RefreshDatabase, APITestHelpers;
 
     /** @test */
-    public function section_cannot_be_created_with_invalid_data()
+    public function a_section_cannot_be_created_with_invalid_data()
     {
-    	$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
+        $user   = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-
-        $report->save();
-
+        $invalid_fields = $this->getInvalidFields();
         $responses = [];
 
-        // Wrong visibility
-        $response[] = $this->expectJSON()
-        					->actingAs($user)
-        					->post("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/create", [
-        						"content" => "Lorem ipsum dolor sit amet, consectetur adipisicing elit. A quas corporis asperiores quos alias, maxime molestiae quibusdam. Quo, voluptates, animi.",
-        						"visibility" => "random",
-        						"published_at" => Carbon::now()->format("Y-m-d H:i:s"),
-        					]);
-
-        // Wrong published_at format
-        $response[] = $this->expectJSON()
-        					->actingAs($user)
-        					->post("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/create", [
-        						"content" => "Lorem ipsum dolor sit amet, consectetur adipisicing elit. A quas corporis asperiores quos alias, maxime molestiae quibusdam. Quo, voluptates, animi.",
-        						"visibility" => "members",
-        						"published_at" => Carbon::now()->format("d/m/Y H:i:s"),
-        					]);
-
-        foreach ($responses as $response) {
-        	$response->assertStatus(422);
-        	$response->assertJSONStructure([
-        		"success",
-        		"message",
-        		"errors",
-        	]);
+        foreach($invalid_fields as $field) {
+            $responses[] = $this->expectJSON()
+                                ->actingAs($user)
+                                ->post("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/create", $this->getTestDataWith($field));
         }
 
-        $this->assertDatabaseMissing("sections", [
-        	"user_id" => $user->id,
-        	"report_id" => $report->id,
-        ]);
+        foreach($responses as $response) {
+            $this->assertValidationFailed($response);
+        }
+
+        $this->assertDatabaseMissing("sections", ["user_id" => $user->id]);
+        $this->assertDatabaseMissing("sections", ["report_id" => $report->id]);
+    }
+
+    /** @test */
+    public function a_section_cannot_be_updated_with_invalid_data()
+    {
+        $user    = $this->createUser();
+        $trip    = $this->createTrip($user);
+        $report  = $this->createReport($user, $trip);
+        $section = $this->createSection($user, $report);
+
+        $invalid_fields = $this->getInvalidFields();
+        $responses = [];
+
+        foreach($invalid_fields as $field) {
+            $update_data = array_merge(
+                $this->getTestDataWith($field),
+                ["content" => "updated content"]
+            );
+
+            $response[] = $this->expectJSON()
+                               ->actingAs($user)
+                               ->put("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}", $update_data);
+
+            $response[] = $this->expectJSON()
+                               ->actingAs($user)
+                               ->patch("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}", $update_data);
+        }
+
+        foreach ($responses as $response) {
+            $this->assertValidationFailed($response);
+        }
+
+        $this->assertDatabaseMissing("sections", ["content" => "updated content"]);
     }
 
     /** @test */
     public function section_cannot_be_created_without_required_fields()
     {
-    	$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
+        $user   = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-
-        $report->save();
-
+        $required_fields = ["visibility"];
         $responses = [];
 
-        // Visibility
-        $response[] = $this->expectJSON()
-        					->actingAs($user)
-        					->post("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/create", [
-        						"content" => "Lorem ipsum dolor sit amet, consectetur adipisicing elit. A quas corporis asperiores quos alias, maxime molestiae quibusdam. Quo, voluptates, animi.",
-        						"published_at" => Carbon::now()->format("Y-m-d H:i:s"),
-        					]);
+        foreach($required_fields as $field) {
+            $response[] = $this->expectJSON()
+                               ->actingAs($user)
+                               ->post("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/create", $this->getTestDataWithout($field));
+        }
 
-        // published_at (OPTIONAL, DEFAULT NOW)
-        /*$response[] = $this->expectJSON()
-        					->actingAs($user)
-        					->post("/api/v1/trips/" . $trip->id . "/reports/" . $report->id . "/sections/create", [
-        						"content" => "Lorem ipsum dolor sit amet, consectetur adipisicing elit. A quas corporis asperiores quos alias, maxime molestiae quibusdam. Quo, voluptates, animi.",
-        						"visibility" => "members",
-        					]);*/
-
-        foreach ($responses as $response) {
-        	$response->assertStatus(422);
-        	$response->assertJSONStructure([
-        		"success",
-        		"message",
-        		"errors",
-        	]);
+        foreach($responses as $response) {
+            $this->assertValidationFailed($response);
         }
 
         $this->assertDatabaseMissing("sections", [
-        	"user_id" => $user->id,
-        	"report_id" => $report->id,
+            "user_id" => $user->id,
+            "report_id" => $report->id,
         ]);
-	}
+    }
+
+    /** @test */
+    public function a_section_cannot_be_updated_without_all_required_fields()
+    {
+        $user    = $this->createUser();
+        $trip    = $this->createTrip($user);
+        $report  = $this->createReport($user, $trip);
+        $section = $this->createSection($user, $report);
+
+        $required_fields = ["visibility"];
+        $responses = [];
+
+        foreach($required_fields as $field) {
+            $update_data = array_merge(
+                $this->getTestDataWithout($field),
+                ["content" => "updated content"]
+            );
+
+            $response[] = $this->expectJSON()
+                               ->actingAs($user)
+                               ->put("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}", $update_data);
+
+            $response[] = $this->expectJSON()
+                               ->actingAs($user)
+                               ->patch("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}", $update_data);
+        }
+
+        foreach($responses as $response) {
+            $this->assertValidationFailed($response);
+        }
+
+        $this->assertDatabaseMissing("sections", ["content" => "updated content"]);
+    }
+
+    private function getTestData()
+    {
+        return [
+           "content"      => "updated content",
+           "visiblity"    => "friends",
+           "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
+       ];
+    }
+
+    private function getInvalidFields()
+    {
+        return [
+            // Wrong Visibility
+            ["visibility"   => "random"],
+            // Wrong published_at format
+            ["published_at" => Carbon::now()->format("d/m/Y H:i:s")],
+        ];
+    }
 }
