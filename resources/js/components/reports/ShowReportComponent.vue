@@ -2,6 +2,7 @@
 	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
 		<router-link :to="{name: 'showTrip', params: {tripId: $route.params.tripId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Close this report"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
 		<router-link :to="{name: 'editReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-12 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Edit this report"><font-awesome-icon :icon="['fas', 'edit']" /></router-link>
+        <div @click.prevent="removeReport" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-24 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Remove this report"><font-awesome-icon :icon="['fas', 'trash-alt']" /></div>
 		<div>
 			<h1 class="text-6xl tracking-wide uppercase">{{ report.title }}</h1> <!-- TITLE -->
 			<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
@@ -120,6 +121,25 @@
             	if (this.sectionInfoIndex != index) {
             		this.sectionInfoIndex = index;
             	}
+            },
+            removeReport: function() {
+                let tripId = this.$route.params.tripId;
+
+                axios.delete(`/api/v1/trips/${tripId}/reports/${this.$route.params.reportId}`)
+                    .then((response) => {
+                        console.log(response);
+                        this.$router.push({name: 'showTrip', params: {tripId: tripId}});
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        if (error.response.status == 500 || error.response.status == 403) {
+                            this.userData = error.response.data;
+                        }
+                        if (error.response.status == 401) {
+                            document.getElementById('logout').submit();
+                        }
+                        console.log("error: " + error);
+                    });
             },
             calculateDuration: function(start, end) {
                 start = start.split(":");

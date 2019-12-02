@@ -2,7 +2,8 @@
 	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
 		<router-link :to="{name: 'home'}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Close this trip"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
 		<router-link :to="{name: 'editTrip', params: {'tripId': $route.params.tripId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-12 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Edit this trip"><font-awesome-icon :icon="['fas', 'edit']" /></router-link>
-		<div class="flex flex-row justify-between">
+		<div @click.prevent="removeTrip" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-24 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Remove this trip"><font-awesome-icon :icon="['fas', 'trash-alt']" /></div>
+        <div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3">
 				<h1 class="text-6xl tracking-wide uppercase">{{ trip.name }}</h1> <!-- NAME -->
 				<p class="ml-2 text-gray-700 text-sm">{{ trip.synopsis }}</p> <!-- SYNOPSIS -->
@@ -100,7 +101,26 @@
                         }
                         console.log("error: " + error);
                     });
-            }
+            },
+            removeTrip: function() {
+                let tripId = this.$route.params.tripId;
+
+                axios.delete(`/api/v1/trips/${tripId}`)
+                    .then((response) => {
+                        console.log(response);
+                        this.$router.push({name: 'home'});
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        if (error.response.status == 500 || error.response.status == 403) {
+                            this.userData = error.response.data;
+                        }
+                        if (error.response.status == 401) {
+                            document.getElementById('logout').submit();
+                        }
+                        console.log("error: " + error);
+                    });
+            },
         },
     }
 </script>
