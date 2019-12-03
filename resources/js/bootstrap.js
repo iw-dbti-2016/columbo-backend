@@ -1,4 +1,5 @@
 window._ = require('lodash');
+
 window.dompurify = require('dompurify');
 const { Remarkable } = require('remarkable');
 window.remarkable = new Remarkable();
@@ -19,12 +20,10 @@ remarkable.use(function(md, opts) {
 	});
 
 	md.inline.ruler.before("text", "user_tag", function(state, checkMode) {
-		let regex = /^@([A-Za-z-'\. ]+):([A-Za-z0-9-.]{4,40})/;
+		let regex = /^@([A-Za-z-'\. ]+):([A-Za-z0-9-.]{4,40});/;
 		let found = regex.exec(state.src.substr(state.pos));
-		console.log(state);
 
 		if (found !== null) {
-			console.log(found);
 			if (checkMode) return true;
 
 			state.push({"type": "user_tag", "level": 0, "username": found[2], "name": found[1]});
@@ -38,42 +37,16 @@ remarkable.use(function(md, opts) {
 	}
 
 	md.renderer.rules.user_tag = function(tokens, idx, options, env) {
-		console.log(tokens);
-		return `<a href="/users/${tokens[idx].username}">${tokens[idx].name}</a>`
+		return `<router-link :to="{name: 'showProfile', params: {'username': '${tokens[idx].username}'}}">${tokens[idx].name}</router-link>`;
+		//return `<a @click.prevent="/app/users/${tokens[idx].username}" href="/app/users/${tokens[idx].username}">${tokens[idx].name}</a>`;
 	}
 });
 
-/**
- * We'll load jQuery and the Bootstrap jQuery plugin which provides support
- * for JavaScript based Bootstrap features such as modals and tabs. This
- * code may be modified to fit the specific needs of your application.
- */
-
-// try {
-//     window.Popper = require('popper.js').default;
-//     window.$ = window.jQuery = require('jquery');
-
-//     require('bootstrap');
-// } catch (e) {}
-
-/**
- * We'll load the axios HTTP library which allows us to easily issue requests
- * to our Laravel back-end. This library automatically handles sending the
- * CSRF token as a header based on the value of the "XSRF" token cookie.
- */
 
 window.axios = require('axios');
-
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-/**
- * Next we will register the CSRF Token as a common header with Axios so that
- * all outgoing HTTP requests automatically have it attached. This is just
- * a simple convenience so we don't have to attach every token manually.
- */
-
 let token = document.head.querySelector('meta[name="csrf-token"]');
-
 if (token) {
     window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 } else {

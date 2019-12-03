@@ -30,7 +30,7 @@
 						<label class="text-gray-700 mt-3 block" for="content">Content</label>
 						<a @click.prevent="preview = !preview" href="#">Toggle preview</a>
 						<textarea v-if="!preview" v-model="section.content" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" name="" id="" cols="30" rows="10"></textarea>
-						<div v-else><span class="markdown" v-html="parseMarkdown(section.content)"></span></div>
+						<div v-else><MarkdownComponent v-bind:content="section.content"></MarkdownComponent></div>
 						<div>
 							<span></span>
 							<span></span>
@@ -119,7 +119,7 @@
             	let sectionId = this.$route.params.sectionId;
 
             	if (this.$store.getters.hasSectionWithId(sectionId)) {
-            		this.section = this.$store.getters.getSectionById(sectionId)[0];
+            		this.section = _.cloneDeep(this.$store.getters.getSectionById(sectionId)[0]);
             		return;
             	}
 
@@ -137,9 +137,6 @@
                         }
                         console.log("error: " + error);
                     });
-            },
-            parseMarkdown: function(content) {
-                return dompurify.sanitize(remarkable.render(content), {ALLOWED_TAGS: ['h1', 'h2', 'h3', 'br', 'hr', 'p', 'strong', 'em', 'iframe'], ALLOWED_ATTR: ['src', 'width', 'height', 'allowTransparancy', 'allow']}); //dompurify.sanitize(
             },
 		},
 		watch: {

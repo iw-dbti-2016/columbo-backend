@@ -7,7 +7,7 @@
 			<div class="flex-grow mr-8 w-2/3">
 				<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span>
 				<span class="block ml-2 mt-4 text-2xl">{{ section.published_at_diff }}</span>
-                <p class="leading-normal ml-2 mt-2 text-justify text-md"><span class="markdown" v-html="parseMarkdown(section.content)"></span></p> <!-- DESCRIPTION -->
+                <p class="leading-normal ml-2 mt-2 text-justify text-md"><MarkdownComponent v-bind:content="section.content"></MarkdownComponent></p> <!-- DESCRIPTION -->
 			</div>
 			<div class="flex-grow w-1/3">
 				<div class="mt-16 bg-gray-100 rounded-lg shadow-lg overflow-hidden">
@@ -100,9 +100,6 @@
                         }
                         console.log("error: " + error);
                     });
-            },
-            parseMarkdown: function(content) {
-                return dompurify.sanitize(remarkable.render(content), {ALLOWED_TAGS: ['a', 'h1', 'h2', 'h3', 'br', 'hr', 'p', 'strong', 'em', 'iframe'], ALLOWED_ATTR: ['href', 'src', 'width', 'height', 'allowTransparancy', 'allow']}); //dompurify.sanitize(
             },
             calculateDuration: function() {
             	if (typeof this.section.start_time === "undefined" || typeof this.section.end_time === "undefined") {

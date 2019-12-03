@@ -88,7 +88,7 @@
         		let tripId = this.$route.params.tripId;
 
             	if (this.$store.getters.hasTripWithId(tripId)) {
-            		this.trip = this.$store.getters.getTripById(tripId)[0];
+            		this.trip = _.cloneDeep(this.$store.getters.getTripById(tripId)[0]);
             		return;
             	}
 

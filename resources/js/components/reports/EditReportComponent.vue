@@ -69,7 +69,7 @@
             	let reportId = this.$route.params.reportId;
 
             	if (this.$store.getters.hasReportWithId(reportId)) {
-            		this.report = this.$store.getters.getReportById(reportId)[0];
+            		this.report = _.cloneDeep(this.$store.getters.getReportById(reportId)[0]);
             		return;
             	}
 
