@@ -7,19 +7,39 @@ remarkable.use(function(md, opts) {
 	md.inline.ruler.before("text", "spotify_track", function(state, checkMode) {
 
 		let regex = /^spotify:track:([a-zA-Z0-9]+)(.*)$/;
-		let found = regex.exec(state.src.substr(state.pos, state.posMax - state.pos));
+		let found = regex.exec(state.src.substr(state.pos));
 
 		if (found !== null) {
 			if (checkMode) return true;
 
-			state.push({"type": "spotify_track", "level": 1, "track": found[1]});
+			state.push({"type": "spotify_track", "level": 0, "track": found[1]});
 			state.pos = state.posMax;
 			return true;
 		}
 	});
 
+	md.inline.ruler.before("text", "user_tag", function(state, checkMode) {
+		let regex = /^@([A-Za-z-'\. ]+):([A-Za-z0-9-.]{4,40})/;
+		let found = regex.exec(state.src.substr(state.pos));
+		console.log(state);
+
+		if (found !== null) {
+			console.log(found);
+			if (checkMode) return true;
+
+			state.push({"type": "user_tag", "level": 0, "username": found[2], "name": found[1]});
+			state.pos += found[0].length;
+			return true;
+		}
+	});
+
 	md.renderer.rules.spotify_track = function(tokens, idx, options, env) {
-		return `<iframe class="rounded" src="https://open.spotify.com/embed/track/${tokens[idx].track}" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+		return `<iframe src="https://open.spotify.com/embed/track/${tokens[idx].track}" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+	}
+
+	md.renderer.rules.user_tag = function(tokens, idx, options, env) {
+		console.log(tokens);
+		return `<a href="/users/${tokens[idx].username}">${tokens[idx].name}</a>`
 	}
 });
 

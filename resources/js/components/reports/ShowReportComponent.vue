@@ -7,7 +7,11 @@
 			<h1 class="text-6xl tracking-wide uppercase">{{ report.title }}</h1> <!-- TITLE -->
 			<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
 			<span class="block ml-2 mt-4 text-2xl">{{ report.date }}</span> <!-- DATE -->
-			<p class="leading-normal ml-2 mt-2 text-justify text-md">{{ report.description }}</p> <!-- DESCRIPTION -->
+			<div>
+                <!-- <p class="leading-normal ml-2 mt-2 text-justify text-md"> -->
+                <span class="markdown" v-html="parseMarkdown(report.description)"></span>
+                <!-- </p> DESCRIPTION -->
+            </div>
 		</div>
 		<div class="mt-8 flex flex-row justify-between">
 			<div class="flex-grow mr-4 w-2/3"> <!-- SECTIONS -->

@@ -102,7 +102,7 @@
                     });
             },
             parseMarkdown: function(content) {
-                return dompurify.sanitize(remarkable.render(content), {ALLOWED_TAGS: ['h1', 'h2', 'h3', 'br', 'hr', 'p', 'strong', 'em', 'iframe'], ALLOWED_ATTR: ['src', 'width', 'height', 'allowTransparancy', 'allow']}); //dompurify.sanitize(
+                return dompurify.sanitize(remarkable.render(content), {ALLOWED_TAGS: ['a', 'h1', 'h2', 'h3', 'br', 'hr', 'p', 'strong', 'em', 'iframe'], ALLOWED_ATTR: ['href', 'src', 'width', 'height', 'allowTransparancy', 'allow']}); //dompurify.sanitize(
             },
             calculateDuration: function() {
             	if (typeof this.section.start_time === "undefined" || typeof this.section.end_time === "undefined") {
