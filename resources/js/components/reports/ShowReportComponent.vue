@@ -21,10 +21,7 @@
 						<span class="text-gray-500 text-sm uppercase" :title="section.published_at">{{ section.published_at_diff }}</span>
 						<span class="block mt-1 text-gray-500 text-xs uppercase">by <router-link :to="{name: 'showProfile', params: {username: section.owner.username}}" class="cursor-pointer hover:underline text-blue-600">{{ section.owner.first_name }} {{ section.owner.middle_name }} {{ section.owner.last_name }}</router-link></span>
 						<router-link :to="{name: 'showSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: section.id}}" class="absolute capitalize hover:underline mr-5 mt-4 right-0 text-blue-600 text-sm top-0 cursor-pointer">details</router-link>
-						<p class="leading-snug mt-4 text-justify">{{ section.content }}</p>
-                        <p class="leading-snug mt-4 text-justify">spotify:track:6xTtThCvuvIYHl1ddntJGj to:</p>
-                        <iframe class="bg-white mt-4" style="border-radius: 10px;" src="https://open.spotify.com/embed/track/6xTtThCvuvIYHl1ddntJGj" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-                        <p class="leading-snug mt-4 text-justify">{{ section.content }}</p>
+						<div class="leading-snug mt-4 text-justify"><span class="markdown" v-html="parseMarkdown(section.content)"></span></div>
 					</div>
 				</div>
 				<span class="block mt-2 text-gray-700" v-else-if="loading">Loading sections.</span>
@@ -140,6 +137,9 @@
                         }
                         console.log("error: " + error);
                     });
+            },
+            parseMarkdown: function(content) {
+                return dompurify.sanitize(remarkable.render(content), {ALLOWED_TAGS: ['h1', 'h2', 'h3', 'br', 'hr', 'p', 'strong', 'em', 'iframe'], ALLOWED_ATTR: ['src', 'width', 'height', 'allowTransparancy', 'allow']}); //dompurify.sanitize(
             },
             calculateDuration: function(start, end) {
                 start = start.split(":");

@@ -1,4 +1,27 @@
 window._ = require('lodash');
+window.dompurify = require('dompurify');
+const { Remarkable } = require('remarkable');
+window.remarkable = new Remarkable();
+
+remarkable.use(function(md, opts) {
+	md.inline.ruler.before("text", "spotify_track", function(state, checkMode) {
+
+		let regex = /^spotify:track:([a-zA-Z0-9]+)(.*)$/;
+		let found = regex.exec(state.src.substr(state.pos, state.posMax - state.pos));
+
+		if (found !== null) {
+			if (checkMode) return true;
+
+			state.push({"type": "spotify_track", "level": 1, "track": found[1]});
+			state.pos = state.posMax;
+			return true;
+		}
+	});
+
+	md.renderer.rules.spotify_track = function(tokens, idx, options, env) {
+		return `<iframe class="rounded" src="https://open.spotify.com/embed/track/${tokens[idx].track}" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+	}
+});
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support

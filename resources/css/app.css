@@ -63,6 +63,22 @@
  * @import "utilities/skew-transforms";
  */
 
+.markdown h1 {
+	@apply text-5xl;
+}
+
+.markdown h2 {
+	@apply text-4xl;
+}
+
+.markdown iframe {
+	@apply rounded;
+}
+
+.markdown p {
+	@apply mt-2;
+}
+
 .component-fade-enter-active, .component-fade-leave-active {
 	transition: opacity .25s ease;
 }
