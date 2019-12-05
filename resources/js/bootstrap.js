@@ -20,7 +20,7 @@ remarkable.use(function(md, opts) {
 	});
 
 	md.inline.ruler.before("text", "user_tag", function(state, checkMode) {
-		let regex = /^@([A-Za-z-'\. ]+):([A-Za-z0-9-.]{4,40});/;
+		let regex = /^@([A-Za-z-'\. ]+):([A-Za-z0-9-\.]{4,40});/;
 		let found = regex.exec(state.src.substr(state.pos));
 
 		if (found !== null) {

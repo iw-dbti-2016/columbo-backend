@@ -26,16 +26,7 @@
 						</div>
 					</div>
 					<span class="">Duration: {{ section.duration_minutes }}</span>
-					<div>
-						<label class="text-gray-700 mt-3 block" for="content">Content</label>
-						<a @click.prevent="preview = !preview" href="#">Toggle preview</a>
-						<textarea v-if="!preview" v-model="section.content" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" name="" id="" cols="30" rows="10"></textarea>
-						<div v-else><MarkdownComponent v-bind:content="section.content"></MarkdownComponent></div>
-						<div>
-							<span></span>
-							<span></span>
-						</div>
-					</div>
+					<MarkdownInputComponent :content.sync="section.content"></MarkdownInputComponent>
 					<div>
 						<label class="text-gray-700 mt-3 block" for="draft">
 							<input v-model="section.is_draft" name="draft" id="draft" class="inline-block mt-2 px-4 py-3" type="checkbox">

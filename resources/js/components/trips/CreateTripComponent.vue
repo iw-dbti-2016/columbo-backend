@@ -40,14 +40,7 @@
 							</div>
 						</div>
 					</div>
-					<div>
-						<label class="text-gray-700 mt-3 block" for="">Description</label>
-						<textarea v-model="description" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" name="" id="" cols="30" rows="10"></textarea>
-						<div>
-							<span></span>
-							<span></span>
-						</div>
-					</div>
+					<MarkdownInputComponent label="Description" :content.sync="description"></MarkdownInputComponent>
 					<input @click.prevent="submitTrip" class="inline-block mt-4 px-4 py-3 bg-green-500 rounded text-white cursor-pointer focus:outline-none hover:bg-green-600 focus:bg-green-600 focus:shadow-lg" type="submit" value="Create this trip!">
 					<router-link :to="{name: 'home'}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-gray-100 rounded shadow focus:outline-none hover:bg-gray-200 focus:bg-gray-200 focus:shadow-md">Cancel</router-link>
 				</div>

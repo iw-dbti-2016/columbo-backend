@@ -7,7 +7,7 @@
 			<h1 class="text-6xl tracking-wide uppercase">{{ report.title }}</h1> <!-- TITLE -->
 			<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
 			<span class="block ml-2 mt-4 text-2xl">{{ report.date }}</span> <!-- DATE -->
-            <MarkdownComponent v-bind:content="report.description"></MarkdownComponent>
+            <MarkdownOutputComponent v-bind:content="report.description"></MarkdownOutputComponent>
 		</div>
 		<div class="mt-8 flex flex-row justify-between">
 			<div class="flex-grow mr-4 w-2/3"> <!-- SECTIONS -->
@@ -21,7 +21,7 @@
 						<span class="text-gray-500 text-sm uppercase" :title="section.published_at">{{ section.published_at_diff }}</span>
 						<span class="block mt-1 text-gray-500 text-xs uppercase">by <router-link :to="{name: 'showProfile', params: {username: section.owner.username}}" class="cursor-pointer hover:underline text-blue-600">{{ section.owner.first_name }} {{ section.owner.middle_name }} {{ section.owner.last_name }}</router-link></span>
 						<router-link :to="{name: 'showSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: section.id}}" class="absolute capitalize hover:underline mr-5 mt-4 right-0 text-blue-600 text-sm top-0 cursor-pointer">details</router-link>
-                        <MarkdownComponent v-bind:content="section.content"></MarkdownComponent>
+                        <MarkdownOutputComponent v-bind:content="section.content"></MarkdownOutputComponent>
 					</div>
 				</div>
 				<span class="block mt-2 text-gray-700" v-else-if="loading">Loading sections.</span>

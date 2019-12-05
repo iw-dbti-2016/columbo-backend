@@ -9,7 +9,9 @@
 				<p class="ml-2 text-gray-700 text-sm">{{ trip.synopsis }}</p> <!-- SYNOPSIS -->
 				<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
 				<span class="block ml-2 mt-3 text-gray-700 text-lg">{{ trip.start_date }} - {{ trip.end_date }}</span> <!-- START AND END DATE -->
-				<p class="leading-normal ml-2 mt-3 text-justify text-md">{{ trip.description }}</p> <!-- DESCRIPTION -->
+				<p class="leading-normal ml-2 mt-3 text-justify text-md">
+                    <MarkdownOutputComponent :content="trip.description"></MarkdownOutputComponent>
+                </p> <!-- DESCRIPTION -->
 			</div>
 			<div class="mt-12 w-1/3">
 				<div class="bg-gray-100 px-6 py-4 rounded-lg shadow-md">

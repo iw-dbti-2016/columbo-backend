@@ -180,7 +180,8 @@ const store = new Vuex.Store({
 	}
 });
 
-Vue.component('MarkdownComponent', require('./components/global/MarkdownComponent.vue').default);
+Vue.component('MarkdownOutputComponent', require('./components/global/MarkdownOutputComponent.vue').default);
+Vue.component('MarkdownInputComponent', require('./components/global/MarkdownInputComponent.vue').default);
 
 const app = new Vue({
 	router: router,

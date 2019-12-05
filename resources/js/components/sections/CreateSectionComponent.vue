@@ -26,14 +26,7 @@
 						</div>
 					</div>
 					<span class="">Duration: {{ duration }}</span>
-					<div>
-						<label class="text-gray-700 mt-3 block" for="content">Content</label>
-						<textarea v-model="content" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" name="" id="" cols="30" rows="10"></textarea>
-						<div>
-							<span></span>
-							<span></span>
-						</div>
-					</div>
+					<MarkdownInputComponent label="Content" :content.sync="content"></MarkdownInputComponent>
 					<div>
 						<label class="text-gray-700 mt-3 block" for="draft">
 							<input v-model="draft" name="draft" id="draft" class="inline-block mt-2 px-4 py-3" type="checkbox">
