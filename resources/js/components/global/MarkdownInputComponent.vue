@@ -6,9 +6,9 @@
 		<label class="text-gray-700 mt-3 block" for="content">{{ label }}</label>
 		<div class="mt-2">
 			<a :class="{'font-bold': !preview}" class="bg-gray-100 inline-block mr-1 px-8 py-4 rounded shadow hover:shadow-md" @click.prevent="preview = false" href="#">Edit</a>
-			<a :class="{'font-bold': preview}" class="bg-gray-100 inline-block px-8 py-4 rounded shadow hover:shadow-md" @click.prevent="data2 = replaceMarkdownByTags(data);preview = true" href="#">Preview</a>
+			<a :class="{'font-bold': preview}" class="bg-gray-100 inline-block px-8 py-4 rounded shadow hover:shadow-md" @click.prevent="outOfSyncInputData = initTagData(data);preview = true" href="#">Preview</a>
 		</div>
-		<div v-if="!preview" @input="updateData" id="edit-box" contenteditable="true" class="inline-block whitespace-pre-wrap leading-tight resize-y w-full h-64 overflow-y-auto bg-gray-100 block mt-2 px-4 py-3 shadow rounded focus:outline-none focus:shadow-md" v-html="replaceMarkdownByTags(data2)"></div>
+		<div v-if="!preview" @focus="suggestions = '';focus = true" @blur="focus = false" @click="onClick" @keyup="onKeyUp" @input="onEditContent" id="edit-box" contenteditable="true" class="inline-block whitespace-pre-wrap leading-tight resize-y w-full h-64 overflow-y-auto bg-gray-100 block mt-2 px-4 py-3 shadow rounded focus:outline-none focus:shadow-md" v-html="outOfSyncInputData"></div>
 		<div v-else>
 			<MarkdownOutputComponent :content="data"></MarkdownOutputComponent>
 		</div>
@@ -20,6 +20,11 @@
 </template>
 
 <script>
+	// @ positions in map
+	// every move of caret check where closest @ before caret is and substring + match
+	//
+	// Only parse tags available in prop
+	//
 	export default {
 		props: {
 			content: {
@@ -40,215 +45,511 @@
 							last_name: "Doe",
 							username: "johndoe",
 						},
+						{
+							first_name: "Jonas",
+							middle_name: "R",
+							last_name: "Donzo",
+							username: "jonasrdonzo",
+						}
 					];
 				},
 			},
 		},
 		data() {
 			return {
-				data: this.content,
-				data2: this.content,
-				raw: this.content,
+				markdownData: this.content,
+				htmlData: this.content,
+				outOfSyncInputData: this.content,
 				preview: false,
 				suggestions: "",
+
+				//
+
+				cursorPosition: 0,
+				contentLength: 0,
+				focus: false,
+				atSymbols: [], // Parsed on every insert
+				tags: [], // Parsed at the beginning when loading data, positions updated on every insert
+				// {
+				// 		textPosition
+				// 		(MarkdownPosition) => don't really care about this
+				// 		htmlPosition
+				// 		textLength
+				// 		htmlLength
+				// 		tagText
+				// 		tagMarkdown
+				// 		tagHtml
+				// 		username
+				// }
 			};
 		},
 		watch: {
 			content: function(value) {
-				this.data = value;
+				this.markdownData = value;
 
-				if (this.data2.length === 0) {
-					this.data2 = value;
-					this.raw = value;
+				if (this.outOfSyncInputData.length === 0) {
+					this.outOfSyncInputData = this.initTagData(value);
 				}
+
+				this.htmlData = this.markdownToHtml(value);
 			}
 		},
 		methods: {
-			addTag(e) {
-				let name = e.srcElement.dataset.name;
-				let username = e.srcElement.dataset.username;
-				let length = parseInt(e.srcElement.dataset.length);
-				let caretpos = parseInt(e.srcElement.dataset.caretposition);
+			// START THIRD TRY, FOR REAL NOW
+			///////////////////////
+			// BASIC CONVERSIONS //
+			///////////////////////
+			markdownToHtml(markdown) {
+				let tagRegex = new RegExp("@([A-Za-z-'\. ]+):([A-Za-z0-9-\.]{4,40});", "g");
 
-				if (typeof name === "undefined" || typeof username === "undefined") {
+				return tagRegex.exec(markdown, '<span contenteditable="false" data-username="$2" class="bg-gray-200 px-1 rounded inline-block">@$1</span>');
+			},
+			markdownToText(markdown) {
+				let tagRegex = new RegExp("@([A-Za-z-'\. ]+):([A-Za-z0-9-\.]{4,40});", "g");
+
+				return tagRegex.exec(markdown, "@$1");
+			},
+			textToMarkdown(text) {
+
+			},
+			textToHtml(text) {
+
+			},
+			htmlToText(html) {
+
+			},
+			htmlToMarkdown(html) {
+
+			},
+			convertBasedOnTags(startContent, positionSelector) {
+
+			},
+
+			///////////////////
+			// UPDATING TAGS //
+			///////////////////
+
+			// START NEW TRY
+			initTagData(content) {
+				// console.log("INIT\n", content);
+				let tagRegex = new RegExp("@([A-Za-z-'\. ]+):([A-Za-z0-9-\.]{4,40});");
+
+				this.tags = [];
+
+				let innerText = _.cloneDeep(content);
+				let htmlOffset = 0;
+				let found;
+				while ((found = tagRegex.exec(innerText)) != null) {
+					// if (! this.isTaggable(found[2])) {
+					// 	continue;
+					// }
+					// ^ This results in an infinite loop because the global flag is not set.
+
+					let tagHtml = `<span contenteditable="false" data-username="${found[2]}" class="bg-gray-200 px-1 rounded inline-block">@${found[1]}</span>`;
+
+					this.tags.push({
+						textPosition: found.index,
+						htmlPosition: found.index + htmlOffset,
+						textLength: found[1].length + 1,
+						htmlLength: tagHtml.length,
+						tagText: "@" + found[1],
+						tagMarkdown: found[0],
+						tagHtml: tagHtml,
+						username: found[2],
+					});
+
+					htmlOffset += tagHtml.length - (found[1].length + 1);
+					innerText = innerText.substr(0, found.index) + "@" + found[1] + innerText.substr(found.index + found[0].length);
+				}
+
+				this.contentLength = innerText.length;
+
+				// Set global flag
+				tagRegex = tagRegex.constructor(tagRegex, "g");
+				return content.replace(tagRegex, '<span contenteditable="false" data-username="$2" class="bg-gray-200 px-1 rounded inline-block">@$1</span>');
+			},
+			// isTaggable(username) {
+			// 	for (var i = this.tagSuggestions.length - 1; i >= 0; i--) {
+			// 		if (this.tagSuggestions[i].username == username) {
+			// 			return true;
+			// 		}
+			// 	}
+
+			// 	return false;
+			// },
+			onClick(e) {
+				this.tryToMatch(e.srcElement);
+			},
+			onKeyUp(e) {
+				this.tryToMatch(e.srcElement);
+			},
+			tryToMatch(srcElement) {
+				this.updateTagPositions(srcElement.innerText.length, this.cursorPosition);
+
+				this.updateCursorPosition(srcElement);
+				// console.log(this.cursorPosition);
+				this.mapAtSymbols(srcElement.innerText);
+				this.findMatch(srcElement.innerText);
+			},
+			updateCursorPosition(srcElement) {
+				let newCursorPosition = getCaretPosition(srcElement);
+
+				if (typeof newCursorPosition === "undefined" || newCursorPosition < 0) {
+					this.cursorPosition = 0;
+					this.focus = false;
+				}
+
+				this.focus = true;
+				this.cursorPosition = newCursorPosition;
+			},
+			onEditContent(e) {
+				// console.log("edit", e);
+			},
+			updateTagPositions(newLength, cursorPosition) {
+				if (newLength == this.contentLength) {
 					return;
 				}
 
-				this.data2 = this.raw;
-				let container = document.getElementById("edit-box");
+				let diff = newLength - this.contentLength;
 
-				this.replaceTagInData(container, caretpos, `@${name}:${username};`);
-				setCaretPosition(container, caretpos + name.length + 21);
+				for (var i = this.tags.length - 1; i >= 0; i--) {
+					let tag = this.tags[i];
 
-				this.suggestions = "";
-			},
-			replaceTagInData(container, caretpos, tag) {
-				let subdata = container.innerText.substr(0, caretpos);
-				let at = subdata.lastIndexOf("@");
-
-				let exactContent = container.innerText.substr(at, caretpos - at);
-				let regex = new RegExp("(?<!>)(" + exactContent + ")(?!<)", "g");
-
-				this.raw = container.innerHTML.replace(regex, this.replaceMarkdownByTags(tag));
-				this.data2 = this.raw;
-				this.updateData({target: {innerHTML: this.raw}});
-			},
-			updateData(e) {
-				var innerdata = e.target.innerHTML;
-
-				if (! this.checkForSuggestions(innerdata, e.target)) {
-					this.suggestions = "";
+					if (tag.position > cursorPosition) {
+						tag.position += diff;
+					}
 				}
 
-				this.raw = e.target.innerHTML;
-				this.data = this.replaceTagsByMarkdown(this.raw);
-				this.$emit('update:content', this.data);
+				this.contentLength = newLength;
 			},
-			replaceMarkdownByTags(data) {
-				let regex = /@([A-Za-z-'\. ]+):([A-Za-z0-9-\.]{4,40});/g;
-
-				return data.replace(regex, '<span contenteditable="false" data-username="$2" class="bg-gray-200 px-1 rounded inline-block">@$1</span> ');
-			},
-			checkForSuggestions(data, container) {
-				let regex = /(?<!>)@([A-Za-z\.' ]+)(?!<)/g;
+			mapAtSymbols(text) {
+				this.atSymbols = [];
+				let regex = /@/g;
 
 				let found;
-				while ((found = regex.exec(data)) != null) {
-					if (this.matchAndSuggest(found[1], container)) {
+				while ((found = regex.exec(text)) != null) {
+					this.atSymbols.push({
+						position: found.index,
+					});
+				}
+
+				// console.log(this.atSymbols);
+			},
+			findMatch(text) {
+				let closestAt = this.findClosestAtSymbol();
+
+				if (closestAt.position < 0 || this.cursorPosition < 0) {
+					return false;
+				}
+
+				let substr = text.substr(closestAt, this.cursorPosition - closestAt);
+
+				if (! this.isTag(closestAt)) {
+					this.matchAndSuggest(substr, closestAt.position);
+				}
+			},
+			isTag(tagPosition) {
+				for (var i = this.tags.length - 1; i >= 0; i--) {
+					if (this.tags[i].position == tagPosition) {
 						return true;
 					}
 				}
 
 				return false;
 			},
-			matchAndSuggest(match, container) {
-				let match_parts = match.split(" ");
+			findClosestAtSymbol() {
+				let distance = Infinity;
+				let closest = {position: -1};
 
-				if (match_parts.length == 0) {
-					return false;
-				}
+				for (var i = this.atSymbols.length - 1; i >= 0; i--) {
+					let atPosition = this.atSymbols[i].position;
+					let atDistance = this.cursorPosition - atPosition;
 
-				if (match_parts[0].length <= 1) {
-					return false;
-				}
-
-				let matches = {};
-				let current_part_index = 0;
-				let current_part = "";
-				let max_match_index = 0;
-
-				while (current_part_index < match_parts.length) {
-					current_part += match_parts[current_part_index];
-
-					for (var i = this.tagSuggestions.length - 1; i >= 0; i--) {
-						let s = this.tagSuggestions[i];
-						let name = s.first_name + " " + ((s.middle_name === null) ? "" : s.middle_name + " ") + s.last_name;
-
-						let index = name.toLocaleLowerCase().indexOf(current_part.toLocaleLowerCase());
-
-						if (index >= 0) {
-							max_match_index = current_part_index;
-
-							matches[s.username] = {
-								index: index,
-								length: current_part.length,
-								short: s.first_name,
-								name: name,
-								username: s.username,
-							};
-						}
+					if (atDistance > 0 && atDistance < distance) {
+						distance = atDistance;
+						closest = this.atSymbols[i];
 					}
-
-					if (max_match_index !== current_part_index) {
-						break;
-					}
-
-					current_part += " ";
-					current_part_index++;
 				}
 
-				if (Object.keys(matches).length === 0) {
-					return false;
-				}
-
-				this.showMatchResults(matches, container);
-				return true;
+				return closest.position;
 			},
-			showMatchResults(matches, container) {
-				let max = 0;
-				let match = null;
-				let caretPosition = getCaretPosition(container)[0];
+			matchAndSuggest(substr, atPosition) {
+				// For each in prop
+				// Try to match first_name, last_name and middle name + concatenation exactly.
+				let matches = [];
 
-				for (var i = Object.values(matches).length - 1; i >= 0; i--) {
-					let current = Object.values(matches)[i];
+				for (var i = this.tagSuggestions.length - 1; i >= 0; i--) {
+					let suggestion = this.tagSuggestions[i];
+					let length;
 
-					if (current.length > max) {
-						max = current.length;
-						match = current;
+					if ((length = this.matchesInSomeWay(suggestion, substr)) > 1) {
+						matches.push({
+							startIndex: atPosition,
+							currentIndex: this.cursorPosition,
+							length: length,
+
+							username: suggestion.username,
+							firstName: suggestion.first_name,
+							name: suggestion.first_name + " " + ((suggestion.middle_name == null) ? "" : suggestion.middle_name + " ") + suggestion.last_name,
+						});
 					}
 				}
 
-				this.suggestions = `<span data-name="${match.short}" data-username="${match.username}" data-caretposition="${caretPosition}" data-length="${match.length}" class="align-middle block fixed hover:bg-gray-200 cursor-pointer px-2 py-1 rounded">@${match.short}</span><span data-name="${match.name}" data-username="${match.username}" data-caretposition="${caretPosition}" data-length="${match.length}" class="block hover:bg-gray-200 cursor-pointer px-2 py-1 rounded">@${match.name}</span>`;
-			},
-			replaceTagsByMarkdown(data) {
-				let regex = /<[a-z=" ]+data-username="([A-Za-z0-9-\.]{4,40})"[a-z0-9-=" ]+>@([A-Za-z-'\. ]+)<\/span>/g;
+				this.suggestions = "";
 
-				return data.replace(regex, '@$2:$1;');
-			}
+				if (matches.length) {
+					this.showMatchResults(matches);
+				}
+			},
+			matchesInSomeWay(suggestion, string) {
+				let matchPart = string.substr(1).toLocaleLowerCase(); // Remove @ symbol
+				let name = suggestion.first_name + " " + ((suggestion.middle_name == null) ? "" : suggestion.middle_name + " ") + suggestion.last_name;
+
+				if (name.toLocaleLowerCase().startsWith(matchPart)
+					|| suggestion.last_name.toLocaleLowerCase().startsWith(matchPart)) {
+					return matchPart.length;
+				}
+
+				return 0;
+			},
+			showMatchResults(matches) {
+				for (var i = matches.length - 1; i >= 0; i--) {
+					let match = matches[i];
+
+					this.suggestions += `<span 	data-name="${match.firstName}"
+												data-username="${match.username}"
+												data-atposition="${match.startIndex}"
+												data-caretposition="${match.currentIndex}"
+												data-length="${match.length}"
+												class="align-middle block fixed hover:bg-gray-200 cursor-pointer px-2 py-1 rounded">@${match.firstName}</span>
+										<span 	data-name="${match.name}"
+												data-username="${match.username}"
+												data-atposition="${match.startIndex}"
+												data-caretposition="${match.currentIndex}"
+												data-length="${match.length}"
+												class="block hover:bg-gray-200 cursor-pointer px-2 py-1 rounded">@${match.name}</span>`;
+				}
+
+			},
+			addTag(e) {
+				console.log(e.srcElement);
+				let name     = e.srcElement.dataset.name;
+				let username = e.srcElement.dataset.username;
+				let length   = parseInt(e.srcElement.dataset.length);
+				let atpos    = parseInt(e.srcElement.dataset.atposition);
+				let caretpos = parseInt(e.srcElement.dataset.caretposition);
+
+				if (typeof name === "undefined" || typeof username === "undefined") {
+					return;
+				}
+
+				// Add tag in this.tags
+				// Update other tags (name.length - length difference) (they move back)
+				// replace tag in data
+				// update cursor position
+
+				// this.outOfSyncInputData = this.raw;
+				let container = document.getElementById("edit-box");
+
+				this.replaceTagInData(container, atpos, caretpos, `@${name}:${username};`);
+				setCaretPosition(container, caretpos + name.length - length);
+
+				// this.suggestions = "";
+			},
+			replaceTagInData(container, atpos, caretpos, tag) {
+				let text = container.innerText;
+
+				this.markdownData = text.substr(0, atpos) + tag + text.substr(caretpos);
+				this.outOfSyncInputData = this.initTagData(this.markdownData);
+			},
+			// END NEW TRY
+
+			// addTag(e) {
+			// 	let name = e.srcElement.dataset.name;
+			// 	let username = e.srcElement.dataset.username;
+			// 	let length = parseInt(e.srcElement.dataset.length);
+			// 	let caretpos = parseInt(e.srcElement.dataset.caretposition);
+
+			// 	if (typeof name === "undefined" || typeof username === "undefined") {
+			// 		return;
+			// 	}
+
+			// 	this.outOfSyncInputData = this.raw;
+			// 	let container = document.getElementById("edit-box");
+
+			// 	this.replaceTagInData(container, caretpos, `@${name}:${username};`);
+			// 	setCaretPosition(container, caretpos + name.length + 21);
+
+			// 	this.suggestions = "";
+			// },
+			// replaceTagInData(container, caretpos, tag) {
+			// 	let subdata = container.innerText.substr(0, caretpos);
+			// 	let at = subdata.lastIndexOf("@");
+
+			// 	let exactContent = container.innerText.substr(at, caretpos - at);
+			// 	let regex = new RegExp("(?<!>)(" + exactContent + ")(?!<)", "g");
+
+			// 	this.raw = container.innerHTML.replace(regex, this.replaceMarkdownByTags(tag + " "));
+			// 	this.outOfSyncInputData = this.raw;
+			// 	this.updateData({target: {innerHTML: this.raw}});
+			// },
+			// updateData(e) {
+			// 	console.log(e);
+			// 	var innerdata = e.target.innerHTML;
+
+			// 	if (! this.checkForSuggestions(innerdata, e.target)) {
+			// 		this.suggestions = "";
+			// 	}
+
+			// 	this.raw = e.target.innerHTML;
+			// 	this.markdownData = this.replaceTagsByMarkdown(this.raw);
+			// 	this.$emit('update:content', this.markdownData);
+			// },
+			// replaceMarkdownByTags(data) {
+			// 	let regex = /@([A-Za-z-'\. ]+):([A-Za-z0-9-\.]{4,40});/g;
+
+			// 	return data.replace(regex, '<span contenteditable="false" data-username="$2" class="bg-gray-200 px-1 rounded inline-block">@$1</span>');
+			// },
+			// checkForSuggestions(data, container) {
+			// 	let regex = /(?<!>)@([A-Za-z\.' ]+)(?!<)/g;
+
+			// 	let found;
+			// 	while ((found = regex.exec(data)) != null) {
+			// 		if (this.matchAndSuggest(found[1], container)) {
+			// 			return true;
+			// 		}
+			// 	}
+
+			// 	return false;
+			// },
+			// matchAndSuggest(match, container) {
+			// 	let match_parts = match.split(" ");
+
+			// 	if (match_parts.length == 0) {
+			// 		return false;
+			// 	}
+
+			// 	if (match_parts[0].length <= 1) {
+			// 		return false;
+			// 	}
+
+			// 	let matches = {};
+			// 	let current_part_index = 0;
+			// 	let current_part = "";
+			// 	let max_match_index = 0;
+
+			// 	while (current_part_index < match_parts.length) {
+			// 		current_part += match_parts[current_part_index];
+
+			// 		for (var i = this.tagSuggestions.length - 1; i >= 0; i--) {
+			// 			let s = this.tagSuggestions[i];
+			// 			let name = s.first_name + " " + ((s.middle_name === null) ? "" : s.middle_name + " ") + s.last_name;
+
+			// 			let index = name.toLocaleLowerCase().indexOf(current_part.toLocaleLowerCase());
+
+			// 			if (index >= 0) {
+			// 				max_match_index = current_part_index;
+
+			// 				matches[s.username] = {
+			// 					index: index,
+			// 					length: current_part.length,
+			// 					short: s.first_name,
+			// 					name: name,
+			// 					username: s.username,
+			// 				};
+			// 			}
+			// 		}
+
+			// 		if (max_match_index !== current_part_index) {
+			// 			break;
+			// 		}
+
+			// 		current_part += " ";
+			// 		current_part_index++;
+			// 	}
+
+			// 	if (Object.keys(matches).length === 0) {
+			// 		return false;
+			// 	}
+
+			// 	this.showMatchResults(matches, container);
+			// 	return true;
+			// },
+			// showMatchResults(matches, container) {
+			// 	let max = 0;
+			// 	let match = null;
+			// 	let caretPosition = getCaretPosition(container)[0];
+
+			// 	for (var i = Object.values(matches).length - 1; i >= 0; i--) {
+			// 		let current = Object.values(matches)[i];
+
+			// 		if (current.length > max) {
+			// 			max = current.length;
+			// 			match = current;
+			// 		}
+			// 	}
+
+			// 	this.suggestions = `<span data-name="${match.short}" data-username="${match.username}" data-caretposition="${caretPosition}" data-length="${match.length}" class="align-middle block fixed hover:bg-gray-200 cursor-pointer px-2 py-1 rounded">@${match.short}</span><span data-name="${match.name}" data-username="${match.username}" data-caretposition="${caretPosition}" data-length="${match.length}" class="block hover:bg-gray-200 cursor-pointer px-2 py-1 rounded">@${match.name}</span>`;
+			// },
+			// replaceTagsByMarkdown(data) {
+			// 	let regex = /<[a-z=" ]+data-username="([A-Za-z0-9-\.]{4,40})"[a-z0-9-=" ]+>@([A-Za-z-'\. ]+)<\/span>/g;
+
+			// 	return data.replace(regex, '@$2:$1;');
+			// }
 		}
 	}
 
+	// https://stackoverflow.com/a/41034697/2993212
+	function createRange(node, chars, range) {
+	    if (!range) {
+	        range = document.createRange()
+	        range.selectNode(node);
+	        range.setStart(node, 0);
+	    }
 
-function createRange(node, chars, range) {
-    if (!range) {
-        range = document.createRange()
-        range.selectNode(node);
-        range.setStart(node, 0);
-    }
+	    if (chars.count === 0) {
+	        range.setEnd(node, chars.count);
+	    } else if (node && chars.count >0) {
+	        if (node.nodeType === Node.TEXT_NODE) {
+	            if (node.textContent.length < chars.count) {
+	                chars.count -= node.textContent.length;
+	            } else {
+	                 range.setEnd(node, chars.count);
+	                 chars.count = 0;
+	            }
+	        } else {
+	            for (var lp = 0; lp < node.childNodes.length; lp++) {
+	                range = createRange(node.childNodes[lp], chars, range);
 
-    if (chars.count === 0) {
-        range.setEnd(node, chars.count);
-    } else if (node && chars.count >0) {
-        if (node.nodeType === Node.TEXT_NODE) {
-            if (node.textContent.length < chars.count) {
-                chars.count -= node.textContent.length;
-            } else {
-                 range.setEnd(node, chars.count);
-                 chars.count = 0;
-            }
-        } else {
-            for (var lp = 0; lp < node.childNodes.length; lp++) {
-                range = createRange(node.childNodes[lp], chars, range);
-
-                if (chars.count === 0) {
-                   break;
-                }
-            }
-        }
-   }
-
-   return range;
-};
-
-function setCaretPosition(el, chars) {
-    if (chars >= 0) {
-    	el.focus();
-    	setTimeout(function() {
-	        var selection = window.getSelection();
-
-	        var range = createRange(el.parentNode, { count: chars });
-
-	        if (range) {
-	            range.collapse(false);
-	            selection.removeAllRanges();
-	            selection.addRange(range);
+	                if (chars.count === 0) {
+	                   break;
+	                }
+	            }
 	        }
-	    }, 100);
-    }
-};
+	   }
+
+	   return range;
+	};
+
+	function setCaretPosition(el, chars) {
+	    if (chars >= 0) {
+	    	el.focus();
+	    	setTimeout(function() {
+		        var selection = window.getSelection();
+
+		        var range = createRange(el.parentNode, { count: chars });
+
+		        if (range) {
+		            range.collapse(false);
+		            selection.removeAllRanges();
+		            selection.addRange(range);
+		        }
+		    }, 100);
+	    }
+	};
 
 
-	// https://stackoverflow.com/a/53128599/2993212
+	// Adapted from https://stackoverflow.com/a/53128599/2993212
 	// node_walk: walk the element tree, stop when func(node) returns false
 	function node_walk(node, func) {
 		var result = func(node);
@@ -269,7 +570,7 @@ function setCaretPosition(el, chars) {
 		else {
 			var nodes_to_find = [sel.anchorNode, sel.extentNode];
 			if(!elem.contains(sel.anchorNode) || !elem.contains(sel.extentNode))
-				return undefined;
+				return -1;
 			else {
 				var found = [0,0];
 				var i;
@@ -293,8 +594,7 @@ function setCaretPosition(el, chars) {
 				cum_length[1] += sel.extentOffset;
 			}
 		}
-		if(cum_length[0] <= cum_length[1])
-			return cum_length;
-		return [cum_length[1], cum_length[0]];
+
+		return cum_length[0];
 	}
 </script>
