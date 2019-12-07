@@ -52,13 +52,6 @@
 		},
 		data() {
 			return {
-				markdownData: this.content,
-				htmlData: this.content,
-				outOfSyncInputData: this.content,
-				preview: false,
-				suggestions: "",
-
-				//
 				click: false,
 
 				cursorPosition: 0,
@@ -66,6 +59,7 @@
 				focus: false,
 				atSymbols: [], // Parsed on every insert
 				tags: [], // Parsed at the beginning when loading data, positions updated on every insert
+				//
 				// {
 				// 		textPosition
 				// 		(MarkdownPosition) => don't really care about this
@@ -77,7 +71,19 @@
 				// 		tagHtml
 				// 		username
 				// }
+
+				markdownData: this.content,
+				htmlData: "",
+				outOfSyncInputData: "",
+				preview: false,
+				suggestions: "",
+
 			};
+		},
+		beforeMount() {
+			this.markdownData = this.content;
+			this.outOfSyncInputData = this.initTagData(this.content);
+			this.htmlData = this.markdownToHtml(this.content);
 		},
 		watch: {
 			content: function(value) {
