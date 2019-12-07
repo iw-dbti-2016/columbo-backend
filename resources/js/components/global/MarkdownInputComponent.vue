@@ -6,11 +6,11 @@
 		<label class="text-gray-700 mt-3 block" for="content">{{ label }}</label>
 		<div class="mt-2">
 			<a :class="{'font-bold': !preview}" class="bg-gray-100 inline-block mr-1 px-8 py-4 rounded shadow hover:shadow-md" @click.prevent="preview = false" href="#">Edit</a>
-			<a :class="{'font-bold': preview}" class="bg-gray-100 inline-block px-8 py-4 rounded shadow hover:shadow-md" @click.prevent="outOfSyncInputData = initTagData(data);preview = true" href="#">Preview</a>
+			<a :class="{'font-bold': preview}" class="bg-gray-100 inline-block px-8 py-4 rounded shadow hover:shadow-md" @click.prevent="switchToPreview" href="#">Preview</a>
 		</div>
-		<div v-if="!preview" @focus="suggestions = '';focus = true" @blur="focus = false" @click="onClick" @keyup="onKeyUp" @input="onEditContent" id="edit-box" contenteditable="true" class="inline-block whitespace-pre-wrap leading-tight resize-y w-full h-64 overflow-y-auto bg-gray-100 block mt-2 px-4 py-3 shadow rounded focus:outline-none focus:shadow-md" v-html="outOfSyncInputData"></div>
+		<div v-if="!preview" @focus="suggestions = '';" @blur="" @click="onClick" @keyup="onKeyUp" id="edit-box" contenteditable="true" class="inline-block whitespace-pre-wrap leading-tight resize-y w-full h-64 overflow-y-auto bg-gray-100 block mt-2 px-4 py-3 shadow rounded focus:outline-none focus:shadow-md" v-html="outOfSyncInputData"></div>
 		<div v-else>
-			<MarkdownOutputComponent :content="data"></MarkdownOutputComponent>
+			<MarkdownOutputComponent :content="markdownData"></MarkdownOutputComponent>
 		</div>
 		<div>
 			<span></span>
@@ -20,11 +20,6 @@
 </template>
 
 <script>
-	// @ positions in map
-	// every move of caret check where closest @ before caret is and substring + match
-	//
-	// Only parse tags available in prop
-	//
 	export default {
 		props: {
 			content: {
@@ -64,6 +59,7 @@
 				suggestions: "",
 
 				//
+				click: false,
 
 				cursorPosition: 0,
 				contentLength: 0,
@@ -95,7 +91,6 @@
 			}
 		},
 		methods: {
-			// START THIRD TRY, FOR REAL NOW
 			///////////////////////
 			// BASIC CONVERSIONS //
 			///////////////////////
@@ -110,28 +105,77 @@
 				return tagRegex.exec(markdown, "@$1");
 			},
 			textToMarkdown(text) {
-
+				return this.convertBasedOnTags(
+					text,
+					tag => tag.tagMarkdown,
+					tag => tag.textPosition,
+					tag => tag.textLength
+				);
 			},
 			textToHtml(text) {
-
+				return this.convertBasedOnTags(
+					text,
+					tag => tag.tagHtml,
+					tag => tag.textPosition,
+					tag => tag.textLength
+				);
 			},
 			htmlToText(html) {
-
+				return this.convertBasedOnTags(
+					html,
+					tag => tag.tagText,
+					tag => tag.htmlPosition,
+					tag => tag.htmlLength
+				);
 			},
 			htmlToMarkdown(html) {
-
+				return this.convertBasedOnTags(
+					html,
+					tag => tag.tagMarkdown,
+					tag => tag.htmlPosition,
+					tag => tag.htmlLength
+				);
 			},
-			convertBasedOnTags(startContent, positionSelector) {
+			convertBasedOnTags(startContent, replacementSelector, positionSelector, lengthSelector) {
+				let lastTag;
+				let threshold = Infinity;
 
+				let newContent = _.cloneDeep(startContent);
+
+				while ((lastTag = this.searchLastTagBelow(positionSelector, threshold)) != false) {
+					let lastPosition = positionSelector(lastTag);
+					let length = lengthSelector(lastTag);
+					threshold = lastPosition;
+
+					newContent = newContent.substr(0, lastPosition) + replacementSelector(lastTag) + newContent.substr(lastPosition + length);
+				}
+
+				return newContent;
+			},
+			searchLastTagBelow(positionSelector, threshold) {
+				let position = 0;
+				let tag = false;
+
+				for (var i = this.tags.length - 1; i >= 0; i--) {
+					let currentTag = this.tags[i];
+					let currentPos = positionSelector(currentTag);
+
+					if (currentPos >= position && currentPos < threshold) {
+						position = currentPos;
+						tag = currentTag;
+					}
+				}
+
+				return tag;
+			},
+			switchToPreview() {
+				this.suggestions = "";
+				this.markdownData = this.textToMarkdown(document.getElementById('edit-box').innerText);
+				this.outOfSyncInputData = this.initTagData(this.markdownData);
+				this.preview = true;
 			},
 
-			///////////////////
-			// UPDATING TAGS //
-			///////////////////
-
-			// START NEW TRY
 			initTagData(content) {
-				// console.log("INIT\n", content);
 				let tagRegex = new RegExp("@([A-Za-z-'\. ]+):([A-Za-z0-9-\.]{4,40});");
 
 				this.tags = [];
@@ -185,11 +229,28 @@
 			},
 			tryToMatch(srcElement) {
 				this.updateTagPositions(srcElement.innerText.length, this.cursorPosition);
+				this.removeDeletedTags(srcElement);
 
 				this.updateCursorPosition(srcElement);
-				// console.log(this.cursorPosition);
 				this.mapAtSymbols(srcElement.innerText);
 				this.findMatch(srcElement.innerText);
+			},
+			removeDeletedTags(srcElement) {
+				let text = srcElement.innerText;
+
+				for (var i = this.tags.length - 1; i >= 0; i--) {
+					let tag = this.tags[i];
+
+					if (! text.substr(tag.textPosition).startsWith(tag.tagText)) {
+						this.tags.splice(i, 1);
+						this.markdownData = this.textToMarkdown(text);
+						this.htmlData = this.textToHtml(text);
+						this.outOfSyncInputData = this.htmlData;
+						let scroll = srcElement.scrollTop;
+						setCaretPosition(srcElement, this.cursorPosition + 17);
+						srcElement.scrollTop = scroll;
+					}
+				}
 			},
 			updateCursorPosition(srcElement) {
 				let newCursorPosition = getCaretPosition(srcElement);
@@ -202,9 +263,6 @@
 				this.focus = true;
 				this.cursorPosition = newCursorPosition;
 			},
-			onEditContent(e) {
-				// console.log("edit", e);
-			},
 			updateTagPositions(newLength, cursorPosition) {
 				if (newLength == this.contentLength) {
 					return;
@@ -215,8 +273,9 @@
 				for (var i = this.tags.length - 1; i >= 0; i--) {
 					let tag = this.tags[i];
 
-					if (tag.position > cursorPosition) {
-						tag.position += diff;
+					if (tag.textPosition > cursorPosition) {
+						tag.textPosition += diff;
+						tag.htmlPosition += diff;
 					}
 				}
 
@@ -232,25 +291,23 @@
 						position: found.index,
 					});
 				}
-
-				// console.log(this.atSymbols);
 			},
 			findMatch(text) {
 				let closestAt = this.findClosestAtSymbol();
 
-				if (closestAt.position < 0 || this.cursorPosition < 0) {
+				if (closestAt < 0 || this.cursorPosition < 0) {
 					return false;
 				}
 
 				let substr = text.substr(closestAt, this.cursorPosition - closestAt);
 
 				if (! this.isTag(closestAt)) {
-					this.matchAndSuggest(substr, closestAt.position);
+					this.matchAndSuggest(substr, closestAt);
 				}
 			},
 			isTag(tagPosition) {
 				for (var i = this.tags.length - 1; i >= 0; i--) {
-					if (this.tags[i].position == tagPosition) {
+					if (this.tags[i].textPosition == tagPosition) {
 						return true;
 					}
 				}
@@ -274,8 +331,6 @@
 				return closest.position;
 			},
 			matchAndSuggest(substr, atPosition) {
-				// For each in prop
-				// Try to match first_name, last_name and middle name + concatenation exactly.
 				let matches = [];
 
 				for (var i = this.tagSuggestions.length - 1; i >= 0; i--) {
@@ -332,7 +387,6 @@
 
 			},
 			addTag(e) {
-				console.log(e.srcElement);
 				let name     = e.srcElement.dataset.name;
 				let username = e.srcElement.dataset.username;
 				let length   = parseInt(e.srcElement.dataset.length);
@@ -343,159 +397,26 @@
 					return;
 				}
 
-				// Add tag in this.tags
-				// Update other tags (name.length - length difference) (they move back)
-				// replace tag in data
-				// update cursor position
-
-				// this.outOfSyncInputData = this.raw;
 				let container = document.getElementById("edit-box");
+				let scrollPos = container.scrollTop;
 
 				this.replaceTagInData(container, atpos, caretpos, `@${name}:${username};`);
-				setCaretPosition(container, caretpos + name.length - length);
+				setCaretPosition(container, caretpos + name.length - length + 23);
+				container.scrollTop = scrollPos;
 
-				// this.suggestions = "";
+				this.focus = false;
+				this.suggestions = "";
 			},
 			replaceTagInData(container, atpos, caretpos, tag) {
 				let text = container.innerText;
 
-				this.markdownData = text.substr(0, atpos) + tag + text.substr(caretpos);
+				let updatedTextData = text.substr(0, atpos) + tag + " " + text.substr(caretpos);
+				this.updateTagPositions(updatedTextData.length, atpos);
+
+				this.markdownData = this.textToMarkdown(updatedTextData);
+				this.htmlData = this.markdownToHtml(this.markdownData);
 				this.outOfSyncInputData = this.initTagData(this.markdownData);
 			},
-			// END NEW TRY
-
-			// addTag(e) {
-			// 	let name = e.srcElement.dataset.name;
-			// 	let username = e.srcElement.dataset.username;
-			// 	let length = parseInt(e.srcElement.dataset.length);
-			// 	let caretpos = parseInt(e.srcElement.dataset.caretposition);
-
-			// 	if (typeof name === "undefined" || typeof username === "undefined") {
-			// 		return;
-			// 	}
-
-			// 	this.outOfSyncInputData = this.raw;
-			// 	let container = document.getElementById("edit-box");
-
-			// 	this.replaceTagInData(container, caretpos, `@${name}:${username};`);
-			// 	setCaretPosition(container, caretpos + name.length + 21);
-
-			// 	this.suggestions = "";
-			// },
-			// replaceTagInData(container, caretpos, tag) {
-			// 	let subdata = container.innerText.substr(0, caretpos);
-			// 	let at = subdata.lastIndexOf("@");
-
-			// 	let exactContent = container.innerText.substr(at, caretpos - at);
-			// 	let regex = new RegExp("(?<!>)(" + exactContent + ")(?!<)", "g");
-
-			// 	this.raw = container.innerHTML.replace(regex, this.replaceMarkdownByTags(tag + " "));
-			// 	this.outOfSyncInputData = this.raw;
-			// 	this.updateData({target: {innerHTML: this.raw}});
-			// },
-			// updateData(e) {
-			// 	console.log(e);
-			// 	var innerdata = e.target.innerHTML;
-
-			// 	if (! this.checkForSuggestions(innerdata, e.target)) {
-			// 		this.suggestions = "";
-			// 	}
-
-			// 	this.raw = e.target.innerHTML;
-			// 	this.markdownData = this.replaceTagsByMarkdown(this.raw);
-			// 	this.$emit('update:content', this.markdownData);
-			// },
-			// replaceMarkdownByTags(data) {
-			// 	let regex = /@([A-Za-z-'\. ]+):([A-Za-z0-9-\.]{4,40});/g;
-
-			// 	return data.replace(regex, '<span contenteditable="false" data-username="$2" class="bg-gray-200 px-1 rounded inline-block">@$1</span>');
-			// },
-			// checkForSuggestions(data, container) {
-			// 	let regex = /(?<!>)@([A-Za-z\.' ]+)(?!<)/g;
-
-			// 	let found;
-			// 	while ((found = regex.exec(data)) != null) {
-			// 		if (this.matchAndSuggest(found[1], container)) {
-			// 			return true;
-			// 		}
-			// 	}
-
-			// 	return false;
-			// },
-			// matchAndSuggest(match, container) {
-			// 	let match_parts = match.split(" ");
-
-			// 	if (match_parts.length == 0) {
-			// 		return false;
-			// 	}
-
-			// 	if (match_parts[0].length <= 1) {
-			// 		return false;
-			// 	}
-
-			// 	let matches = {};
-			// 	let current_part_index = 0;
-			// 	let current_part = "";
-			// 	let max_match_index = 0;
-
-			// 	while (current_part_index < match_parts.length) {
-			// 		current_part += match_parts[current_part_index];
-
-			// 		for (var i = this.tagSuggestions.length - 1; i >= 0; i--) {
-			// 			let s = this.tagSuggestions[i];
-			// 			let name = s.first_name + " " + ((s.middle_name === null) ? "" : s.middle_name + " ") + s.last_name;
-
-			// 			let index = name.toLocaleLowerCase().indexOf(current_part.toLocaleLowerCase());
-
-			// 			if (index >= 0) {
-			// 				max_match_index = current_part_index;
-
-			// 				matches[s.username] = {
-			// 					index: index,
-			// 					length: current_part.length,
-			// 					short: s.first_name,
-			// 					name: name,
-			// 					username: s.username,
-			// 				};
-			// 			}
-			// 		}
-
-			// 		if (max_match_index !== current_part_index) {
-			// 			break;
-			// 		}
-
-			// 		current_part += " ";
-			// 		current_part_index++;
-			// 	}
-
-			// 	if (Object.keys(matches).length === 0) {
-			// 		return false;
-			// 	}
-
-			// 	this.showMatchResults(matches, container);
-			// 	return true;
-			// },
-			// showMatchResults(matches, container) {
-			// 	let max = 0;
-			// 	let match = null;
-			// 	let caretPosition = getCaretPosition(container)[0];
-
-			// 	for (var i = Object.values(matches).length - 1; i >= 0; i--) {
-			// 		let current = Object.values(matches)[i];
-
-			// 		if (current.length > max) {
-			// 			max = current.length;
-			// 			match = current;
-			// 		}
-			// 	}
-
-			// 	this.suggestions = `<span data-name="${match.short}" data-username="${match.username}" data-caretposition="${caretPosition}" data-length="${match.length}" class="align-middle block fixed hover:bg-gray-200 cursor-pointer px-2 py-1 rounded">@${match.short}</span><span data-name="${match.name}" data-username="${match.username}" data-caretposition="${caretPosition}" data-length="${match.length}" class="block hover:bg-gray-200 cursor-pointer px-2 py-1 rounded">@${match.name}</span>`;
-			// },
-			// replaceTagsByMarkdown(data) {
-			// 	let regex = /<[a-z=" ]+data-username="([A-Za-z0-9-\.]{4,40})"[a-z0-9-=" ]+>@([A-Za-z-'\. ]+)<\/span>/g;
-
-			// 	return data.replace(regex, '@$2:$1;');
-			// }
 		}
 	}
 
