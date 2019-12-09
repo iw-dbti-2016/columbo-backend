@@ -8,7 +8,7 @@
 			<a :class="{'font-bold': !preview}" class="bg-gray-100 inline-block mr-1 px-8 py-4 rounded shadow hover:shadow-md" @click.prevent="preview = false" href="#">Edit</a>
 			<a :class="{'font-bold': preview}" class="bg-gray-100 inline-block px-8 py-4 rounded shadow hover:shadow-md" @click.prevent="switchToPreview" href="#">Preview</a>
 		</div>
-		<div v-if="!preview" @focus="suggestions = '';" @blur="" @click="onClick" @keyup="onKeyUp" id="edit-box" contenteditable="true" class="inline-block whitespace-pre-wrap leading-tight resize-y w-full h-64 overflow-y-auto bg-gray-100 block mt-2 px-4 py-3 shadow rounded focus:outline-none focus:shadow-md" v-html="outOfSyncInputData"></div>
+		<div v-if="!preview" @focus="suggestions = '';" @blur="" @click="onClick" @keyup="onKeyUp" id="edit-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" class="inline-block whitespace-pre-wrap leading-tight resize-y w-full h-64 overflow-y-auto bg-gray-100 block mt-2 px-4 py-3 shadow rounded focus:outline-none focus:shadow-md" v-html="outOfSyncInputData"></div>
 		<div v-else>
 			<MarkdownOutputComponent :content="markdownData"></MarkdownOutputComponent>
 		</div>
@@ -236,6 +236,8 @@
 			tryToMatch(srcElement) {
 				this.updateTagPositions(srcElement.innerText.length, this.cursorPosition);
 				this.removeDeletedTags(srcElement);
+
+				this.$emit("update:content", this.markdownData);
 
 				this.updateCursorPosition(srcElement);
 				this.mapAtSymbols(srcElement.innerText);

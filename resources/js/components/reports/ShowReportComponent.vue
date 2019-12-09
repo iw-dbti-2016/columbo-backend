@@ -29,24 +29,7 @@
 			</div>
 			<div class="flex-grow w-1/3">
 				<div class="sticky top-0 pt-8">
-					<div class="bg-gray-100 rounded-lg shadow-lg overflow-hidden">
-						<div v-if="sections.length > 0">
-							<div class="px-6 py-4 relative">
-								<span class="text-4xl">{{ sections[sectionInfoIndex].start_time }}</span>
-								<span class="absolute top-0 right-0 mt-4 mr-5 text-4xl">{{ calculateDuration(sections[sectionInfoIndex].start_time, sections[sectionInfoIndex].end_time) }}</span>
-								<span class="block text-xl mt-2 text-gray-600 cursor-pointer hover:underline" v-if="sections[sectionInfoIndex].locationable != null">{{ sections[sectionInfoIndex].locationable.name }}</span>
-							</div>
-							<div class="relative" v-if="sections[sectionInfoIndex].locationable != null">
-								<img src="/img/example-map.png" alt="#">
-								<div class="absolute bg-gray-100 flex flex-col items-center mr-2 mt-2 px-1 px-2 py-3 right-0 rounded-full text-2xl text-xl top-0">
-									<font-awesome-icon class="cursor-default" :icon="['fas', 'map-marker-alt']" />
-									<font-awesome-icon class="mt-2 cursor-pointer text-gray-600 hover:text-black" :icon="['far', 'image']" />
-								</div>
-							</div>
-						</div>
-						<span class="block mt-2 text-gray-700 px-6 py-4" v-else-if="loading">Loading sections.</span>
-						<span class="block mt-2 text-gray-700 px-6 py-4" v-else>When adding sections, location data will be shown here</span>
-					</div>
+					<SectionSideCardComponent :section="sections[sectionInfoIndex]" :loading="loading"></SectionSideCardComponent>
 				</div>
 			</div>
 		</div>
@@ -54,9 +37,11 @@
 </template>
 
 <script>
-	export default {
-		mounted() {
+    import SectionSideCardComponent from './../sections/SectionSideCardComponent.vue';
 
+	export default {
+		components: {
+            SectionSideCardComponent,
         },
         data() {
             return {
@@ -138,34 +123,6 @@
                         console.log("error: " + error);
                     });
             },
-            calculateDuration: function(start, end) {
-                start = start.split(":");
-                end = end.split(":");
-
-                start = 60 * parseInt(start[0]) + parseInt(start[1]);
-                end = 60 * parseInt(end[0]) + parseInt(end[1]);
-
-                let duration = end - start;
-
-                let hr = Math.floor(duration / 60);
-                let min = duration % 60;
-
-                let formatted_duration = "";
-
-                if (hr != 0) {
-                    formatted_duration += hr + "h";
-                }
-
-                if (min != 0) {
-                    formatted_duration += (min < 10 ? "0" : "") + min;
-
-                    if (hr == 0) formatted_duration += "m";
-                } else {
-                    formatted_duration += "00";
-                }
-
-                return formatted_duration;
-            }
         },
     }
 </script>

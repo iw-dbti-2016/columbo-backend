@@ -1,6 +1,6 @@
 <template>
 	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-        <h1 class="text-6xl tracking-wide uppercase">Profile</h1>
+        <h1 class="text-6xl tracking-wide uppercase">@{{ user.username }}</h1>
         <pre>
             {{ user }}
         </pre>

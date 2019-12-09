@@ -15,8 +15,8 @@
             	let parsedContent = dompurify.sanitize(
 					remarkable.render(this.content),
 					{
-						ALLOWED_TAGS: ['router-link', 'a', 'h1', 'h2', 'h3', 'br', 'hr', 'p', 'strong', 'em', 'iframe'],
-						ALLOWED_ATTR: [':to', 'href', 'src', 'width', 'height', 'allowTransparancy', 'allow']
+						ALLOWED_TAGS: ['router-link', 'h1', 'h2', 'h3', 'br', 'hr', 'p', 'strong', 'em', 'iframe'],
+						ALLOWED_ATTR: [':to', 'src', 'width', 'height', 'allowTransparancy', 'allow']
 					}
 				);
 

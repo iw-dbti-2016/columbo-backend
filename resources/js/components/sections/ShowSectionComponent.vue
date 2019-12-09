@@ -10,25 +10,11 @@
                 <p class="leading-normal ml-2 mt-2 text-justify text-md"><MarkdownOutputComponent v-bind:content="section.content"></MarkdownOutputComponent></p> <!-- DESCRIPTION -->
 			</div>
 			<div class="flex-grow w-1/3">
-				<div class="mt-16 bg-gray-100 rounded-lg shadow-lg overflow-hidden">
-					<div class="px-6 py-4 relative">
-						<span class="text-4xl">{{ section.start_time }}</span>
-						<span class="absolute top-0 right-0 mt-4 mr-5 text-4xl">{{ calculateDuration() }}</span>
-					</div>
-					<div class="relative" v-if="section.locationable != null">
-						<img src="/img/example-map.png" alt="#">
-						<div class="absolute bg-gray-100 flex flex-col items-center mr-2 mt-2 px-1 px-2 py-3 right-0 rounded-full text-2xl text-xl top-0">
-							<font-awesome-icon class="cursor-default" :icon="['fas', 'map-marker-alt']" />
-							<font-awesome-icon class="mt-2 cursor-pointer text-gray-600 hover:text-black" :icon="['far', 'image']" />
-						</div>
-					</div>
-				</div>
+                <SectionSideCardComponent :section="section"></SectionSideCardComponent>
 			</div>
 		</div>
 		<div class="mt-8" v-if="section.locationable != null">
 			<span class="block text-2xl">{{ section.locationable.name }}</span>
-			<!-- <a @click.prevent="$router.push('/app/reports/create')" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white" href="/app/reports/create">Create a new report</a> -->
-			<!-- <span class="block mt-2 text-gray-700">No reports written yet.</span> -->
 			<div class="bg-gray-100 mt-2 rounded-lg flex flex-row overflow-hidden shadow-md">
 				<div class="flex-grow w-2/3 px-5 py-4 relative">{{ section.locationable.info }}</div>
 				<div class="flex flex-col flex-grow items-center justify-around w-1/3">
@@ -36,18 +22,23 @@
 				</div>
 			</div>
 		</div>
+        <ErrorHandlerComponent :error="error"></ErrorHandlerComponent>
 	</div>
 </template>
 
 <script>
-	export default {
-		mounted() {
+    import SectionSideCardComponent from './SectionSideCardComponent.vue';
 
+    export default {
+        components: {
+            SectionSideCardComponent,
         },
         data() {
             return {
             	loading: true,
                 section: {},
+                showMap: true,
+                error: "",
             };
         },
         created() {
@@ -71,15 +62,7 @@
                         this.section = response.data.data;
                         this.loading = false;
                     })
-                    .catch((error) => {
-                        if (error.response.status == 500 || error.response.status == 403) {
-                            this.userData = error.response.data;
-                        }
-                        if (error.response.status == 401) {
-                            document.getElementById('logout').submit();
-                        }
-                        console.log("error: " + error);
-                    });
+                    .catch(this.handleError);
             },
             removeSection: function() {
                 let tripId = this.$route.params.tripId;
@@ -90,49 +73,19 @@
                         console.log(response);
                         this.$router.push({name: 'showReport', params: {tripId: tripId, reportId: reportId}});
                     })
-                    .catch((error) => {
-                        console.log(error);
-                        if (error.response.status == 500 || error.response.status == 403) {
-                            this.userData = error.response.data;
-                        }
-                        if (error.response.status == 401) {
-                            document.getElementById('logout').submit();
-                        }
-                        console.log("error: " + error);
-                    });
+                    .catch(this.handleError);
             },
-            calculateDuration: function() {
-            	if (typeof this.section.start_time === "undefined" || typeof this.section.end_time === "undefined") {
-            		return "0m";
-            	}
-
-                let start = this.section.start_time.split(":");
-                let end = this.section.end_time.split(":");
-
-                start = 60 * parseInt(start[0]) + parseInt(start[1]);
-                end = 60 * parseInt(end[0]) + parseInt(end[1]);
-
-                let duration = end - start;
-
-                let hr = Math.floor(duration / 60);
-                let min = duration % 60;
-
-                let formatted_duration = "";
-
-                if (hr != 0) {
-                    formatted_duration += hr + "h";
+            handleError(error) {
+                if (error.response.status == 401) {
+                    document.getElementById('logout').submit();
+                    return;
                 }
 
-                if (min != 0) {
-                    formatted_duration += (min < 10 ? "0" : "") + min;
-
-                    if (hr == 0) formatted_duration += "m";
-                } else {
-                    formatted_duration += "00";
-                }
-
-                return formatted_duration;
-            }
+                this.error = error.response.data;
+            },
+            noResponse() {
+                this.error = "No response...";
+            },
         },
     }
 </script>

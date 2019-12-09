@@ -33,6 +33,7 @@
         "@fortawesome/free-solid-svg-icons": "^5.11.2",
         "@fortawesome/vue-fontawesome": "^0.1.8",
         "dompurify": "^2.0.7",
+        "ol": "^6.1.1",
         "remarkable": "^2.0.0",
         "vuex": "^3.1.2"
     }
