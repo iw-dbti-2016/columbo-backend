@@ -53,6 +53,7 @@
 				</div>
 			</div>
 		</div>
+        <ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
 </template>
 
@@ -67,6 +68,8 @@
 
 				submitText: "Store this report!",
 				duration: "--",
+
+				error: "",
 			};
 		},
 		methods: {
@@ -83,13 +86,9 @@
 					//published_at for postponed publication
 				})
 					.then((response) => {
-						console.log(response);
 						this.$router.push({name: 'showSection', params: {tripId: tripId, reportId: reportId, sectionId: response.data.data.id}});
 					})
-					.catch((error) => {
-						console.log("error: " + error);
-						console.log(error.response.data);
-					});
+					.catch(this.handleError);
 			},
 			calculateDuration: function() {
 				let start = this.startTime.split(":");
@@ -100,6 +99,13 @@
 				}
 
 				return (end[0] - start[0]) * 60 + (end[1] - start[1]);
+			},
+			handleError: function(error) {
+				if (error.response.status == 401) {
+					document.getElementById('logout').submit();
+				}
+
+				this.error = error.response.data;
 			}
 		},
 		watch: {

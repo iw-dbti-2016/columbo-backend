@@ -34,6 +34,8 @@
 		methods: {
 			hide() {
 				this.error = "";
+				this.timeout = null;
+				this.$emit('update:error', "");
 			},
 		},
 	};

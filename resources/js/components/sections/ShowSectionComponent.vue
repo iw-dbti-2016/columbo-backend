@@ -22,7 +22,7 @@
 				</div>
 			</div>
 		</div>
-        <ErrorHandlerComponent :error="error"></ErrorHandlerComponent>
+        <ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
 </template>
 
@@ -60,9 +60,9 @@
                     .then((response) => {
                     	this.$store.commit('addSection', response.data);
                         this.section = response.data.data;
-                        this.loading = false;
                     })
-                    .catch(this.handleError);
+                    .catch(this.handleError)
+                    .finally(this.stopLoading);
             },
             removeSection: function() {
                 let tripId = this.$route.params.tripId;
@@ -70,10 +70,10 @@
 
                 axios.delete(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${this.$route.params.sectionId}`)
                     .then((response) => {
-                        console.log(response);
                         this.$router.push({name: 'showReport', params: {tripId: tripId, reportId: reportId}});
                     })
-                    .catch(this.handleError);
+                    .catch(this.handleError)
+                    .finally(this.stopLoading);
             },
             handleError(error) {
                 if (error.response.status == 401) {
@@ -85,6 +85,9 @@
             },
             noResponse() {
                 this.error = "No response...";
+            },
+            stopLoading() {
+                this.loading = false;
             },
         },
     }

@@ -60,17 +60,17 @@
 				</div>
 			</div>
 		</div>
+		<ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
 </template>
 
 <script>
 	export default {
-		mounted() {
-
-		},
 		data() {
             return {
                 trip: {},
+
+                error: "",
             };
         },
         created() {
@@ -90,15 +90,7 @@
                     	this.$store.commit('addTrip', response.data);
                         this.trip = response.data.data;
                     })
-                    .catch((error) => {
-                        if (error.response.status == 500 || error.response.status == 403) {
-                            this.userData = error.response.data;
-                        }
-                        if (error.response.status == 401) {
-                            document.getElementById('logout').submit();
-                        }
-                        console.log("error: " + error);
-                    });
+                    .catch(this.handleError);
         	},
             updateTrip: function() {
             	let tripId = this.$route.params.tripId;
@@ -113,14 +105,17 @@
                 	//published_at for postponed publication
                 })
                     .then((response) => {
-                        console.log(response);
                         this.$store.commit('setTrips', [this.trip]);
                         this.$router.push({name: 'showTrip', params: {tripId: tripId}});
                     })
-                    .catch((error) => {
-                        console.log("error: " + error);
-                        console.log(error.response.data);
-                    });
+                    .catch(this.handleError);
+            },
+            handleError: function(error) {
+                if (error.response.status == 401) {
+                    document.getElementById('logout').submit();
+                }
+
+                this.userData = error.response.data;
             },
         },
 	}

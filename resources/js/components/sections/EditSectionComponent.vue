@@ -53,19 +53,20 @@
 				</div>
 			</div>
 		</div>
+        <ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
 </template>
 
 <script>
 	export default {
-		mounted() {
-
-		},
 		data() {
 			return {
 				section: {},
 				duration: "--",
 				preview: false,
+
+				loading: false,
+				error: "",
 			};
 		},
 		created() {
@@ -86,13 +87,10 @@
 					//published_at for postponed publication
 				})
 					.then((response) => {
-						console.log(response);
 						this.$router.push({name: 'showSection', params: {tripId: tripId, reportId: reportId, sectionId: response.data.data.id}});
 					})
-					.catch((error) => {
-						console.log("error: " + error);
-						console.log(error.response.data);
-					});
+					.catch(this.handleError)
+					.finally(this.stopLoading);
 			},
 			calculateDuration: function() {
 				let start = this.startTime.split(":");
@@ -119,19 +117,19 @@
                     	this.$store.commit('addSection', response.data);
                         this.section = response.data.data;
                     })
-                    .catch((error) => {
-                        if (error.response.status == 500 || error.response.status == 403) {
-                            this.userData = error.response.data;
-                        }
-                        if (error.response.status == 401) {
-                            document.getElementById('logout').submit();
-                        }
-                        console.log("error: " + error);
-                    });
+                    .catch(this.handleError)
+                    .finally(this.stopLoading);
+            },
+            handleError: function(error) {
+				if (error.response.status == 401) {
+					document.getElementById('logout').submit();
+				}
+
+				this.error = error.response.data;
+            },
+            stopLoading: function() {
+            	this.loading = false;
             },
 		},
-		watch: {
-
-		}
 	}
 </script>

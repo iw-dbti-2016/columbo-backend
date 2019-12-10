@@ -33,6 +33,7 @@
 				</div>
 			</div>
 		</div>
+        <ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
 </template>
 
@@ -45,10 +46,12 @@
         },
         data() {
             return {
-            	loading: true,
                 report: {},
                 sections: [],
                 sectionInfoIndex: 0,
+
+                loading: true,
+                error: "",
             };
         },
         created() {
@@ -70,34 +73,16 @@
                     	this.$store.commit('addReport', response.data);
                         this.report = response.data.data;
                     })
-                    .catch((error) => {
-                        if (error.response.status == 500 || error.response.status == 403) {
-                            this.userData = error.response.data;
-                        }
-                        if (error.response.status == 401) {
-                            document.getElementById('logout').submit();
-                        }
-                        console.log("error: " + error);
-                    });
+                    .catch(this.handleError);
             },
             getSections: function() {
             	axios.get(`/api/v1/trips/${this.$route.params.tripId}/reports/${this.$route.params.reportId}/sections`)
                     .then((response) => {
-                    	console.log(response);
-                    	this.loading = false;
                         this.sections = response.data.data;
                         this.$store.commit('setSections', response.data.data);
                     })
-                    .catch((error) => {
-                    	console.log(error);
-                        if (error.response.status == 500 || error.response.status == 403) {
-                            this.userData = error.response.data;
-                        }
-                        if (error.response.status == 401) {
-                            document.getElementById('logout').submit();
-                        }
-                        console.log("error: " + error);
-                    });
+                    .catch(this.handleError)
+                    .finally(this.stopLoading);
             },
             mouseOverSection: function(index) {
             	if (this.sectionInfoIndex != index) {
@@ -109,20 +94,20 @@
 
                 axios.delete(`/api/v1/trips/${tripId}/reports/${this.$route.params.reportId}`)
                     .then((response) => {
-                        console.log(response);
                         this.$router.push({name: 'showTrip', params: {tripId: tripId}});
                     })
-                    .catch((error) => {
-                        console.log(error);
-                        if (error.response.status == 500 || error.response.status == 403) {
-                            this.userData = error.response.data;
-                        }
-                        if (error.response.status == 401) {
-                            document.getElementById('logout').submit();
-                        }
-                        console.log("error: " + error);
-                    });
+                    .catch(this.handleError);
             },
+            handleError: function(error) {
+                if (error.response.status == 401) {
+                    document.getElementById('logout').submit();
+                }
+
+                this.error = error.response.data;
+            },
+            stopLoading: function() {
+                this.loading = false;
+            }
         },
     }
 </script>

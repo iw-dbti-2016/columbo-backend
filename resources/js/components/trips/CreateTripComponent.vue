@@ -60,6 +60,7 @@
 				</div>
 			</div>
 		</div>
+		<ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
 </template>
 
@@ -72,6 +73,8 @@
                 startDate: "",
                 endDate: "",
                 description: "",
+
+                error: "",
             };
         },
         methods: {
@@ -86,13 +89,15 @@
                 	//published_at for postponed publication
                 })
                     .then((response) => {
-                        console.log(response);
                         this.$store.commit('addTrip', response.data);
                         this.$router.push({name: 'showTrip', params: {tripId: response.data.data.id}});
                     })
                     .catch((error) => {
-                        console.log("error: " + error);
-                        console.log(error.response.data);
+		                if (error.response.status == 401) {
+		                    document.getElementById('logout').submit();
+		                }
+
+		                this.userData = error.response.data;
                     });
             },
         },

@@ -37,6 +37,7 @@
 				</div>
 			</div>
 		</div>
+		<ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
 </template>
 
@@ -51,36 +52,32 @@
 				date: "",
 				description: "",
 				report: {},
+
+				loading: false,
+				error: "",
 			};
 		},
 		created() {
 			this.getReport();
 		},
 		methods: {
-            getReport: function() {
-            	let tripId = this.$route.params.tripId;
-            	let reportId = this.$route.params.reportId;
+			getReport: function() {
+				let tripId = this.$route.params.tripId;
+				let reportId = this.$route.params.reportId;
 
-            	if (this.$store.getters.hasReportWithId(reportId)) {
-            		this.report = _.cloneDeep(this.$store.getters.getReportById(reportId)[0]);
-            		return;
-            	}
+				if (this.$store.getters.hasReportWithId(reportId)) {
+					this.report = _.cloneDeep(this.$store.getters.getReportById(reportId)[0]);
+					return;
+				}
 
-                axios.get(`/api/v1/trips/${tripId}/reports/${reportId}`)
-                    .then((response) => {
-                    	this.$store.commit('addReport', response.data);
-                        this.report = response.data.data;
-                    })
-                    .catch((error) => {
-                        if (error.response.status == 500 || error.response.status == 403) {
-                            this.userData = error.response.data;
-                        }
-                        if (error.response.status == 401) {
-                            document.getElementById('logout').submit();
-                        }
-                        console.log("error: " + error);
-                    });
-            },
+				axios.get(`/api/v1/trips/${tripId}/reports/${reportId}`)
+					.then((response) => {
+						this.$store.commit('addReport', response.data);
+						this.report = response.data.data;
+					})
+					.catch(this.handleError)
+					.finally(this.stopLoading);
+			},
 			updateReport: function() {
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;
@@ -93,14 +90,20 @@
 					//published_at for postponed publication
 				})
 					.then((response) => {
-						console.log(response);
 						this.$router.push(`/app/trips/${tripId}/reports/${reportId}`);
 					})
-					.catch((error) => {
-						console.log("error: " + error);
-						console.log(error.response.data);
-					});
+					.catch(this.handleError);
 			},
+			handleError: function(error) {
+				if (error.response.status == 401) {
+					document.getElementById('logout').submit();
+				}
+
+				this.userData = error.response.data;
+			},
+			stopLoading: function() {
+				this.loading = false;
+			}
 		},
 	}
 </script>

@@ -181,7 +181,7 @@ const store = new Vuex.Store({
 });
 
 Vue.component('MarkdownOutputComponent', require('./components/global/MarkdownOutputComponent.vue').default);
-Vue.component('MarkdownInutputComponent', require('./components/global/MarkdownOutputComponent.vue').default);
+Vue.component('MarkdownInputComponent', require('./components/global/MarkdownInputComponent.vue').default);
 Vue.component('MapOutputComponent', require('./components/global/MapOutputComponent.vue').default);
 Vue.component('MapInputComponent', require('./components/global/MapInputComponent.vue').default);
 Vue.component('ErrorHandlerComponent', require('./components/global/ErrorHandlerComponent.vue').default);
