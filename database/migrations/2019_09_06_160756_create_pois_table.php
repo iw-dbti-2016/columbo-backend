@@ -18,6 +18,7 @@ class CreatePoisTable extends Migration
 
             /* DATA */
             $table->point('coordinates');
+            $table->double('map_zoom', 8, 6);
             $table->string('name', 100);
             $table->text('info')->nullable();
             $table->string('image', 100)->nullable();

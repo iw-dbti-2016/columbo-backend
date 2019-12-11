@@ -20,6 +20,7 @@ class CreatePlacesTable extends Migration
             /* DATA */
             $table->string('name', 100);
             $table->point('coordinates');
+            $table->double('map_zoom', 8, 6);
             $table->text('info');
 
             $table->softDeletes();

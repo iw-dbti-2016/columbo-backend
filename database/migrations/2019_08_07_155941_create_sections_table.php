@@ -25,8 +25,10 @@ class CreateSectionsTable extends Migration
             $table->text('content')->nullable();
 
             $table->string('image', 100)->nullable();
+            $table->string('image_caption', 100)->nullable();
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
+            $table->integer('temperature')->nullable();
 
             /* VISIBILITY */
             $table->tinyInteger('visibility')->unsigned()->index();

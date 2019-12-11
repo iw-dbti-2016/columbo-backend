@@ -21,6 +21,7 @@ class CreateLocationsTable extends Migration
             /* DATA */
             $table->boolean('is_draft')->default(true);
             $table->point('coordinates');
+            $table->double('map_zoom', 8, 6);
             $table->string('name', 100)->nullable();
             $table->text('info')->nullable();
 
