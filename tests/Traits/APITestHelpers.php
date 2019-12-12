@@ -3,15 +3,14 @@
 namespace Tests\Traits;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use TravelCompanion\Report;
-use TravelCompanion\Section;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Tests\Traits\TestHelpers;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 trait APITestHelpers
 {
+	use TestHelpers;
+
 	/**
 	 * Adds the Accept header to the request.
 	 */
@@ -111,81 +110,4 @@ trait APITestHelpers
 		$response->assertStatus(422);
 		$response->assertJSONStructure($this->errorStructure());
 	}
-
-	//////////////////////
-	// ENTITY CREATIONS //
-	//////////////////////
-
-	protected function createUser($data=[])
-	{
-		return factory(User::class)->create($data);
-	}
-
-	protected function createTrip(User $user, $data=[])
-	{
-		return $user->tripsOwner()->save(factory(Trip::class)->make($data));
-	}
-
-	protected function createReport(User $user, Trip $trip, $data=[])
-	{
-		$report = factory(Report::class)->make($data);
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-        $report->save();
-
-		return $report;
-	}
-
-	protected function createSection(User $user, Report $report, $data=[])
-	{
-		$section = factory(Section::class)->make($data);
-        $section->owner()->associate($user);
-        $section->report()->associate($report);
-        $section->save();
-
-		return $section;
-	}
-
-	///////////////
-	// TEST DATA //
-	///////////////
-
-	/**
-	 * Returns the test-data with extra keys or
-	 * 	specific keys overwritten.
-	 *
-	 * @param  Array	$replacement
-	 * @return Array
-	 */
-    protected function getTestDataWith($replacement)
-    {
-    	return array_replace($this->getTestData(), $replacement);
-    }
-
-    /**
-     * Return the test-data without soecified keys.
-     *
-     * @param  Array/String $unset
-     * @return Array
-     */
-    protected function getTestDataWithout($unset)
-    {
-        $array = $this->getTestData();
-
-        if (is_array($unset)) {
-            foreach ($unset as $field) {
-                unset($array[$field]);
-            }
-        } else {
-            unset($array[$unset]);
-        }
-
-        return $array;
-    }
-
-	/** Must be overridden */
-	protected function getTestData()
-    {
-    	return [];
-    }
 }

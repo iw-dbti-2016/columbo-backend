@@ -9,6 +9,7 @@ use TravelCompanion\Location;
 $factory->define(Location::class, function (Faker $faker) {
     return [
     	'coordinates' => new Point($faker->latitude(-90, 90), $faker->longitude(-180, 180)),
+    	'map_zoom' => $faker->randomFloat(6, 0, 20),
     	'name' => $faker->text(100),
     	'info' => $faker->text(500),
 

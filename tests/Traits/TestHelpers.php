@@ -4,10 +4,13 @@ namespace Tests\Traits;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Crypt;
+use Tests\Traits\ResourceFactory;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 trait TestHelpers
 {
+	use ResourceFactory;
+
 	private $uri = "/";
 
 	protected function setRefererUri($uri)
@@ -33,6 +36,10 @@ trait TestHelpers
 
 		return $this->call($method, $uri, $parameters, $cookies);
 	}
+
+	///////////////////////
+	// TEST DATA HELPERS //
+	///////////////////////
 
 	/**
 	 * Returns the test-data with extra keys or

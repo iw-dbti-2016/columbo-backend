@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Tests\Traits\ResourceFactory;
 use TravelCompanion\Currency;
 use TravelCompanion\Report;
 use TravelCompanion\Section;
@@ -13,12 +14,12 @@ use TravelCompanion\User;
 
 class UserTest extends TestCase
 {
-	use RefreshDatabase;
+	use RefreshDatabase, ResourceFactory;
 
 	/** @test */
     public function a_user_can_be_created()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
        	$this->assertDatabaseHas('users', ['id' => $user->id]);
     }
@@ -39,7 +40,7 @@ class UserTest extends TestCase
     /** @test */
     public function users_must_not_have_a_preferred_currency()
     {
-    	$user = factory(User::class)->create();
+    	$user = $this->createUser();
 
     	$this->assertNull($user->currency);
     }
@@ -47,11 +48,8 @@ class UserTest extends TestCase
     /** @test */
     public function a_user_can_have_a_trip()
     {
-    	$user = factory(User::class)->create();
-
-    	$trip = factory(Trip::class)->make();
-        $trip->owner()->associate($user);
-    	$trip->save();
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
 
     	$this->assertDatabaseHas('trips', ['user_id' => $user->id]);
     	$this->assertCount(1, $user->tripsOwner()->where('user_id', $user->id)->get());
@@ -60,11 +58,9 @@ class UserTest extends TestCase
     /** @test */
     public function a_user_can_have_multiple_trips()
     {
-    	$user = factory(User::class)->create();
-
-    	$trip1 = $user->tripsOwner()->save(factory(Trip::class)->make());
-    	$trip2 = $user->tripsOwner()->save(factory(Trip::class)->make());
-    	$user->save();
+    	$user = $this->createUser();
+    	$trip1 = $this->createTrip($user);
+    	$trip2 = $this->createTrip($user);
 
     	$this->assertDatabaseHas('trips', ['user_id' => $user->id, 'id' => $trip1->id]);
     	$this->assertDatabaseHas('trips', ['user_id' => $user->id, 'id' => $trip2->id]);
