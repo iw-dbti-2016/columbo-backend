@@ -15,8 +15,8 @@ class TripReadTest extends TestCase
     /** @test */
     public function users_can_read_trip_details()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
 
         $response = $this->expectJSON()
                          ->actingAs($user)
@@ -29,8 +29,8 @@ class TripReadTest extends TestCase
     /** @test */
     public function users_can_get_trip_list()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
 
         $response = $this->expectJSON()
                             ->actingAs($user)

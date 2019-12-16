@@ -146,7 +146,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function an_authenticated_user_cannot_see_login_page()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->callAsUser($user, "GET", "/auth/login");
 
@@ -156,7 +156,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function a_user_can_log_in()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->post("/auth/login", [
             "email" => $user->email,
@@ -193,7 +193,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function a_user_cannot_log_in_with_wrong_credentials()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->post("/auth/login", [
             "email" => $user->email,
@@ -215,7 +215,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function a_user_cannot_login_whithout_email_and_password()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->post("/auth/login", [
             "password" => "password",
@@ -235,7 +235,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function additional_fields_are_ignored_on_login()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->post("/auth/login", [
             "email" => $user->email,
@@ -254,7 +254,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function an_authenticated_user_can_log_out()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->callAsUser($user, "POST", "/auth/logout");
 
@@ -275,7 +275,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function an_authenticated_user_can_refresh_the_valid_token()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->callAsUser($user, "PATCH", "/api/v1/auth/refresh");
 
@@ -288,7 +288,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function an_authenticated_user_cannot_send_a_password_reset_link()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->callAsUser($user, "POST", "/auth/password/email", [
                                 "email" => $user->email,
@@ -300,7 +300,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_can_send_a_password_reset_link()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->post("/auth/password/email", [
                         "email" => $user->email,
@@ -325,7 +325,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function an_authenticated_user_cannot_see_reset_password_form()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->callAsUser($user, "GET", "/auth/password/reset/token");
 
@@ -335,7 +335,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function an_authenticated_user_cannot_reset_password()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->callAsUser($user, "POST", "/auth/password/reset", [
                         "token" => "abcdef",
@@ -359,7 +359,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function unauthenticated_user_cannot_reset_password_with_invalid_token()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->post("/auth/password/reset", [
                         "token" => "abc",
@@ -377,7 +377,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function unauthenticated_user_with_valid_token_can_reset_password()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->post("/auth/password/email", [
             'email' => $user->email,
@@ -426,7 +426,7 @@ class AuthenticationWebTest extends TestCase
     /** @test */
     public function an_authorized_user_with_validated_email_cannot_resend_a_verification_email_but_receives_a_confirmation_af_validation()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->callAsUser($user, "POST", "/auth/email/resend");
 

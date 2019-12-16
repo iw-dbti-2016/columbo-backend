@@ -17,14 +17,9 @@ class ReportDeleteTest extends TestCase
     /** @test */
     public function users_that_own_reports_can_delete_them()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
-
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-
-        $report->save();
+        $user   = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
         $response = $this->expectJSON()
                          ->actingAs($user)
@@ -42,14 +37,10 @@ class ReportDeleteTest extends TestCase
     /** @test */
     public function users_that_do_not_own_reports_cannot_delete_them()
     {
-        $user = factory(User::class)->create();
-        $user2 = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-        $report->save();
+        $user   = $this->createUser();
+        $user2  = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
         $response = $this->expectJSON()
                          ->actingAs($user2)

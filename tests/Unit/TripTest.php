@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Tests\Traits\ResourceFactory;
 use TravelCompanion\Currency;
 use TravelCompanion\Report;
 use TravelCompanion\Section;
@@ -13,16 +14,12 @@ use TravelCompanion\User;
 
 class TripTest extends TestCase
 {
-	use RefreshDatabase;
+	use RefreshDatabase, ResourceFactory;
 
     /** @test */
     public function a_trip_can_be_created()
     {
-    	$user = factory(User::class)->create();
-
-    	$trip = factory(Trip::class)->make();
-    	$trip->user_id = $user->id;
-    	$trip->save();
+    	$trip = $this->createTrip();
 
         $this->assertDatabaseHas('trips', ['id' => $trip->id]);
     }
@@ -30,11 +27,8 @@ class TripTest extends TestCase
     /** @test */
     public function a_trip_must_have_a_owner()
     {
-        $user = factory(User::class)->create();
-
-        $trip = factory(Trip::class)->make();
-        $trip->owner()->associate($user);
-        $trip->save();
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
 
         $this->assertDatabaseHas('trips', ['user_id' => $user->id]);
         $this->assertCount(1, $user->tripsOwner()->get());
@@ -43,14 +37,9 @@ class TripTest extends TestCase
     /** @test */
     public function a_trip_can_have_reports()
     {
-        $user = factory(User::class)->create();
-
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $report = factory(Report::class)->make();
-
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-        $report->save();
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
         $this->assertDatabaseHas('reports', ['trip_id' => $trip->id]);
         $this->assertDatabaseHas('reports', ['user_id' => $user->id]);
@@ -65,9 +54,7 @@ class TripTest extends TestCase
         $user2 = factory(User::class)->create();
         $user3 = factory(User::class)->create();
 
-        $trip = factory(Trip::class)->make();
-        $trip->owner()->associate($user1);
-        $trip->save();
+        $trip = $this->createTrip($user1);
 
         $trip->members()->attach($user1);
         $trip->members()->attach($user2);

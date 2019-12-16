@@ -6,6 +6,7 @@ use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Tests\Traits\ResourceFactory;
 use TravelCompanion\Action;
 use TravelCompanion\Currency;
 use TravelCompanion\Location;
@@ -16,12 +17,12 @@ use TravelCompanion\User;
 
 class ActionTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, ResourceFactory;
 
     /** @test */
     public function an_action_can_have_a_user()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $action = factory(Action::class)->make();
         $action->user()->associate($user);
@@ -35,10 +36,8 @@ class ActionTest extends TestCase
     /** @test */
     public function an_action_can_have_a_trip()
     {
-        $user = factory(User::class)->create();
-        $trip = factory(Trip::class)->make();
-        $trip->owner()->associate($user);
-        $trip->save();
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
 
         $action = factory(Action::class)->make();
         $action->user()->associate($user);
@@ -52,16 +51,8 @@ class ActionTest extends TestCase
     /** @test */
     public function an_action_can_have_a_report()
     {
-        $user = factory(User::class)->create();
-
-        $trip = factory(Trip::class)->make();
-        $trip->owner()->associate($user);
-        $trip->save();
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-        $report->save();
+        $user = $this->createUser();
+        $report = $this->createReport($user);
 
         $action = factory(Action::class)->make();
         $action->user()->associate($user);
@@ -75,21 +66,8 @@ class ActionTest extends TestCase
     /** @test */
     public function an_action_can_have_a_section()
     {
-        $user = factory(User::class)->create();
-
-        $trip = factory(Trip::class)->make();
-        $trip->owner()->associate($user);
-        $trip->save();
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-        $report->save();
-
-        $section = factory(Section::class)->make();
-        $section->owner()->associate($user);
-        $section->report()->associate($report);
-        $section->save();
+        $user = $this->createUser();
+        $section = $this->createSection($user);
 
         $action = factory(Action::class)->make();
         $action->user()->associate($user);
@@ -103,8 +81,8 @@ class ActionTest extends TestCase
     /** @test */
     public function an_action_can_have_a_location()
     {
-        $user = factory(User::class)->create();
-        $location = $user->locations()->save(factory(Location::class)->make());
+        $user = $this->createUser();
+        $location = $this->createLocation($user);
 
         $action = factory(Action::class)->make();
         $action->user()->associate($user);

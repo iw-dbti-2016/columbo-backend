@@ -15,7 +15,7 @@ class TripDataValidationTest extends TestCase
     /** @test */
     public function a_trip_cannot_be_created_with_invalid_data()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $responses = [];
 
         foreach($this->getInvalidFields() as $field) {
@@ -35,9 +35,9 @@ class TripDataValidationTest extends TestCase
     /** @test */
     public function a_trip_cannot_be_updated_with_invalid_data()
     {
-        $user = factory(User::class)->create();
-        $user2 = factory(User::class)->create();
-        $trip = $user->tripsOwner()->create($this->getTestData());
+        $user  = $this->createUser();
+        $user2 = $this->createUser();
+        $trip  = $this->createTrip($user, $this->getTestData());
         $responses = [];
 
         foreach($this->getInvalidFields() as $field) {
@@ -65,7 +65,7 @@ class TripDataValidationTest extends TestCase
     /** @test */
     public function a_trip_cannot_be_created_without_all_required_fields()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $required_fields = ["name", "start_date", "end_date", "visibility"];
         $responses = [];
 
@@ -86,9 +86,9 @@ class TripDataValidationTest extends TestCase
     /** @test */
     public function a_trip_cannot_be_updated_without_all_required_fields()
     {
-        $user = factory(User::class)->create();
-        $user2 = factory(User::class)->create();
-        $trip = $user->tripsOwner()->create($this->getTestData());
+        $user  = $this->createUser();
+        $user2 = $this->createUser();
+        $trip  = $this->createTrip($user, $this->getTestData());
 
         $required_fields = ["name", "start_date", "end_date", "visibility"];
         $responses = [];

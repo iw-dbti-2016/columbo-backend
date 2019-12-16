@@ -17,13 +17,9 @@ class ReportUpdateTest extends TestCase
     /** @test */
     public function owners_of_reports_can_update_reports()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-        $report->save();
+        $user   = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
         $response = $this->expectJSON()
                          ->actingAs($user)
@@ -40,14 +36,10 @@ class ReportUpdateTest extends TestCase
     /** @test */
     public function non_owners_of_reports_cannot_update_reports()
     {
-        $user = factory(User::class)->create();
-        $user2 = factory(User::class)->create();
-        $trip = $user2->tripsOwner()->save(factory(Trip::class)->make());
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user2);
-        $report->trip()->associate($trip);
-        $report->save();
+        $user   = $this->createUser();
+        $user2  = $this->createUser();
+        $trip   = $this->createTrip($user2);
+        $report = $this->createReport($user2, $trip);
 
         $response = $this->expectJSON()
                          ->actingAs($user)

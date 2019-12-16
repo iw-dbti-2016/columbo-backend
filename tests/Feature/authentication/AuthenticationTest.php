@@ -158,7 +158,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function a_user_can_log_in()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->expectJSON()->post("/api/v1/auth/login", [
             "email" => $user->email,
@@ -221,7 +221,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function a_user_cannot_log_in_with_wrong_credentials()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->expectJSON()->post("/api/v1/auth/login", [
             "email" => $user->email,
@@ -249,7 +249,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function a_user_cannot_login_whithout_email_and_password()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->expectJSON()->post("/api/v1/auth/login", [
             "password" => "password",
@@ -281,7 +281,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function additional_fields_are_ignored_on_login()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->expectJSON()->post("/api/v1/auth/login", [
             "email" => $user->email,
@@ -307,7 +307,7 @@ class AuthenticationTest extends TestCase
     {
         $this->expireTokens();
 
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->actingAs($user)
                         ->expectJSON()
@@ -323,7 +323,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_cannot_retreive_their_data()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->expectJSON()->get("/api/v1/user");
 
@@ -337,7 +337,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function a_user_with_valid_token_can_retreive_their_data()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->actingAs($user)->expectJSON()->get("/api/v1/user");
 
@@ -352,7 +352,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function authenticated_users_can_refresh_their_active_token()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->expectJSON()->actingAs($user)->patch("/api/v1/auth/refresh");
 
@@ -373,7 +373,7 @@ class AuthenticationTest extends TestCase
     {
         $this->expireTokens();
 
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $response = $this->expectJSON()->actingAs($user)->patch("/api/v1/auth/refresh");
 
         $response->assertStatus(401);
@@ -399,7 +399,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function an_authenticated_user_can_logout()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $response = $this->expectJSON()->actingAs($user)->delete("/api/v1/auth/logout");
 
         $response->assertStatus(200);
@@ -426,7 +426,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function an_authenticated_user_cannot_send_a_password_reset_link()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->expectJSON()
                             ->actingAs($user)
@@ -444,7 +444,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_can_send_a_password_reset_link()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->expectJSON()
                             ->post("/api/v1/auth/password/email", [
@@ -461,7 +461,7 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function a_password_reset_link_can_only_be_requested_with_valid_data()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->expectJSON()
                             ->post("/api/v1/auth/password/email", [
@@ -529,7 +529,7 @@ class AuthenticationTest extends TestCase
     public function an_authorized_user_with_validated_email_cannot_resend_a_verification_email_but_receives_a_confirmation_af_validation()
     {
         $this->withoutExceptionHandling();
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->expectJSON()
                             ->actingAs($user)

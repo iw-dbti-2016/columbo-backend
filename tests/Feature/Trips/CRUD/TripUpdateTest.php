@@ -16,8 +16,8 @@ class TripUpdateTest extends TestCase
     /** @test */
     public function users_can_update_trips_they_own()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->create($this->getTestData());
+        $user = $this->createUser();
+        $trip = $this->createTrip($user, $this->getTestData());
 
         $response = $this->expectJSON()
                          ->actingAs($user)
@@ -35,9 +35,9 @@ class TripUpdateTest extends TestCase
     /** @test */
     public function users_cannot_update_trips_they_do_not_own()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->create($this->getTestData());
-        $user2 = factory(User::class)->create();
+        $user  = $this->createUser();
+        $trip  = $this->createTrip($user, $this->getTestData());
+        $user2 = $this->createUser();
 
         $response = $this->expectJSON()
                             ->actingAs($user2)

@@ -16,8 +16,8 @@ class TripDeleteTest extends TestCase
     /** @test */
     public function a_trip_owner_can_delete_that_trip()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
 
         $response = $this->expectJSON()
                          ->actingAs($user)
@@ -35,9 +35,9 @@ class TripDeleteTest extends TestCase
     /** @test */
     public function a_trip_not_owner_cannot_delete_that_trip()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $user2 = factory(User::class)->create();
+        $user  = $this->createUser();
+        $trip  = $this->createTrip($user);
+        $user2 = $this->createUser();
 
         $response = $this->expectJSON()
                          ->actingAs($user2)

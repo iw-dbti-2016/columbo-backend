@@ -17,8 +17,7 @@ class ReportAuthenticationTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_cannot_create_a_report()
     {
-    	$user = factory(User::class)->create();
-    	$trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+    	$trip = $this->createTrip();
 
         $response = $this->expectJSON()
                          ->post("/api/v1/trips/{$trip->id}/reports/create", $this->getTestData());
@@ -30,13 +29,9 @@ class ReportAuthenticationTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_cannot_read_a_report()
     {
-    	$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-        $report->save();
+        $user   = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
         $response = $this->expectJSON()
                          ->get("/api/v1/trips/{$trip->id}/reports/{$report->id}");
@@ -47,13 +42,9 @@ class ReportAuthenticationTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_cannot_update_a_report()
     {
-    	$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-        $report->save();
+        $user   = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
         $response = $this->expectJSON()
         				 ->patch("/api/v1/trips/{$trip->id}/reports/{$report->id}", $this->getTestDataWith([
@@ -75,13 +66,9 @@ class ReportAuthenticationTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_cannot_delete_a_report()
     {
-    	$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-        $report->save();
+        $user   = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
         $response = $this->expectJSON()
         				 ->delete("/api/v1/trips/{$trip->id}/reports/{$report->id}");

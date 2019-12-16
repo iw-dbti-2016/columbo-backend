@@ -16,8 +16,8 @@ class ReportCreateTest extends TestCase
     /** @test */
     public function users_can_create_reports_in_their_trips()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
 
         $response = $this->expectJSON()
                          ->actingAs($user)
@@ -35,9 +35,9 @@ class ReportCreateTest extends TestCase
     /** @test */
     public function users_cannot_make_reports_in_other_users_their_trips()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-        $user2 = factory(User::class)->create();
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
+        $user2 = $this->createUser();
 
         $response = $this->expectJSON()
                             ->actingAs($user2)

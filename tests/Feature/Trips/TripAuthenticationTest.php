@@ -30,8 +30,7 @@ class TripAuthenticationTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_cannot_read_a_trip()
     {
-    	$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+        $trip = $this->createTrip();
 
         $response = $this->expectJSON()
                          ->get("/api/v1/trips/{$trip->id}");
@@ -42,8 +41,7 @@ class TripAuthenticationTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_cannot_update_a_trip()
     {
-    	$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+        $trip = $this->createTrip();
 
         $response = $this->expectJSON()
         				 ->patch("/api/v1/trips/{$trip->id}", $this->getTestDataWith([
@@ -65,8 +63,7 @@ class TripAuthenticationTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_cannot_delete_a_trip()
     {
-    	$user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+        $trip = $this->createTrip();
 
         $response = $this->expectJSON()
         				 ->delete("/api/v1/trips/{$trip->id}");

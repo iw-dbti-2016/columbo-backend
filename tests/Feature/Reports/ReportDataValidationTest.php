@@ -17,8 +17,8 @@ class ReportDataValidationTest extends TestCase
 	/** @test */
     public function a_report_cannot_be_created_with_invalid_data()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
 
         $invalid_fields = $this->getInvalidFields();
         $responses = [];
@@ -41,8 +41,8 @@ class ReportDataValidationTest extends TestCase
     /** @test */
     public function a_report_cannot_be_created_without_all_required_data()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
 
         $required_fields = ["title", "visibility"];
         $responses = [];
@@ -65,14 +65,10 @@ class ReportDataValidationTest extends TestCase
     /** @test */
     public function a_report_cannot_be_updated_with_invalid_data()
     {
-        $user = factory(User::class)->create();
-        $user2 = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-        $report->save();
+        $user   = $this->createUser();
+        $user2  = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
         $invalid_fields = $this->getInvalidFields();
         $responses = [];
@@ -102,14 +98,10 @@ class ReportDataValidationTest extends TestCase
     /** @test */
     public function a_report_cannot_be_updated_without_all_required_data()
     {
-        $user = factory(User::class)->create();
-        $user2 = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user);
-        $report->trip()->associate($trip);
-        $report->save();
+        $user   = $this->createUser();
+        $user2  = $this->createUser();
+        $trip   = $this->createTrip($user);
+        $report = $this->createReport($user, $trip);
 
         $required_fields = ["title", "visibility"];
         $responses = [];

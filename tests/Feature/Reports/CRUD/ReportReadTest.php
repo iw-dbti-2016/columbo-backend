@@ -16,14 +16,10 @@ class ReportReadTest extends TestCase
     /** @test */
     public function users_can_retreive_reports()
     {
-        $user = factory(User::class)->create();
-        $user2 = factory(User::class)->create();
-        $trip = $user2->tripsOwner()->save(factory(Trip::class)->make());
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user2);
-        $report->trip()->associate($trip);
-        $report->save();
+        $user   = $this->createUser();
+        $user2  = $this->createUser();
+        $trip   = $this->createTrip($user2);
+        $report = $this->createReport($user2, $trip);
 
         $response = $this->expectJSON()
                          ->actingAs($user)
@@ -36,15 +32,11 @@ class ReportReadTest extends TestCase
     /** @test */
     public function users_cannot_retreive_reports_if_wrong_trip_is_specified()
     {
-        $user = factory(User::class)->create();
-        $user2 = factory(User::class)->create();
-        $trip1 = $user2->tripsOwner()->save(factory(Trip::class)->make());
-        $trip2 = $user2->tripsOwner()->save(factory(Trip::class)->make());
-
-        $report = factory(Report::class)->make();
-        $report->owner()->associate($user2);
-        $report->trip()->associate($trip1);
-        $report->save();
+        $user   = $this->createUser();
+        $user2  = $this->createUser();
+        $trip1  = $this->createTrip($user2);
+        $trip2  = $this->createTrip($user2);
+        $report = $this->createReport($user2, $trip1);
 
         $response = $this->expectJSON()
                          ->actingAs($user)
@@ -57,8 +49,8 @@ class ReportReadTest extends TestCase
     /** @test */
     public function users_can_get_report_list()
     {
-        $user = factory(User::class)->create();
-        $trip = $user->tripsOwner()->save(factory(Trip::class)->make());
+        $user = $this->createUser();
+        $trip = $this->createTrip($user);
 
         $response = $this->expectJSON()
                          ->actingAs($user)

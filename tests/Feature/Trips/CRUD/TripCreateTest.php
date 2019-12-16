@@ -15,7 +15,7 @@ class TripCreateTest extends TestCase
     /** @test */
     public function a_user_can_create_a_trip()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $response = $this->expectJSON()
                          ->actingAs($user)
