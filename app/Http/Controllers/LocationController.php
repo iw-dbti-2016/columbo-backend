@@ -2,11 +2,14 @@
 
 namespace TravelCompanion\Http\Controllers;
 
-use TravelCompanion\Location;
+use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Http\Request;
+use TravelCompanion\Location;
+use TravelCompanion\Traits\APIResponses;
 
 class LocationController extends Controller
 {
+    use APIResponses;
     /**
      * Display a listing of the resource.
      *
@@ -35,7 +38,12 @@ class LocationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request["coordinates"] = new Point($request->coordinates[0], $request->coordinates[1]);
+        $location = new Location($request->all());
+        $location->owner()->associate($request->user());
+        $location->save();
+
+        return $this->okResponse("Location created successfully.", null, 201);
     }
 
     /**

@@ -62,6 +62,10 @@ Route::group(['prefix' => 'v1'], function() {
 			Route::patch('/{section}', 'sectionController@update');
 			Route::delete('/{section}', 'sectionController@destroy');
 		});
+
+		Route::group(['prefix' => 'locations'], function() {
+			Route::post('/create', 'locationController@store');
+		});
 	});
 });
 

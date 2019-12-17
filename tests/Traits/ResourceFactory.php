@@ -88,20 +88,20 @@ trait ResourceFactory
 	}
 
 	/**
-	 * Creats a location. If no user is passed
-	 * 	it is created. If a locationReferencer
-	 * 	is passed, the location is associated
-	 * 	to that referencer.
+	 * Creats a location. If data is passed, it is used
+	 * 	and if no user is passed it is created. If a
+	 * 	locationReferencer is passed, the location is
+	 * 	associated to that referencer.
 	 *
 	 * @param  TravelCompanion\User|null   $user
 	 * @param  Location/POI				   $locationReferencer
 	 * @return TravelCompanion\Location
 	 */
-	protected function createLocation(User $user=null, $locationReferencer=null)
+	protected function createLocation(User $user=null, $locationReferencer=null, $data=[])
 	{
 		if ($user == null) $user = $this->createUser();
 
-		$location = $user->locations()->save(factory(Location::class)->make());
+		$location = $user->locations()->save(factory(Location::class)->make($data));
 
 		if ($locationReferencer != null) {
 			$locationReferencer->locationable()->associate($location);
