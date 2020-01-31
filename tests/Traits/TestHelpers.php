@@ -5,6 +5,7 @@ namespace Tests\Traits;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Crypt;
 use Tests\Traits\ResourceFactory;
+use TravelCompanion\Exceptions\TestException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 trait TestHelpers
@@ -41,42 +42,77 @@ trait TestHelpers
 	// TEST DATA HELPERS //
 	///////////////////////
 
+	protected function getTestData($id=null, $others=[])
+	{
+		return $this->wrapInStructure([], $id, $others);
+	}
+
 	/**
 	 * Returns the test-data with extra keys or
 	 * 	specific keys overwritten.
 	 *
-	 * @param  Array	$replacement
+	 * @param	Array	$replacement
+	 * @param	Integer	$id
+	 * @return	Array
+	 */
+	protected function getTestDataWith($replacement, $id=null, $others=[])
+	{
+		return $this->wrapInStructure($this->getTestAttributesWith($replacement), $id, $others);
+	}
+
+	/**
+	 * Return the test-data without soecified keys.
+	 *
+	 * @param  Array/String $unset
 	 * @return Array
 	 */
-    protected function getTestDataWith($replacement)
-    {
-    	return array_replace($this->getTestData(), $replacement);
-    }
-
-    /**
-     * Return the test-data without soecified keys.
-     *
-     * @param  Array/String $unset
-     * @return Array
-     */
-    protected function getTestDataWithout($unset)
-    {
-        $array = $this->getTestData();
-
-        if (is_array($unset)) {
-            foreach ($unset as $field) {
-                unset($array[$field]);
-            }
-        } else {
-            unset($array[$unset]);
-        }
-
-        return $array;
-    }
+	protected function getTestDataWithout($unset, $id=null, $others=[])
+	{
+		return $this->wrapInStructure($this->getTestAttributesWithout($unset), $id, $others);
+	}
 
 	/** Must be overridden */
-	protected function getTestData()
-    {
-    	return [];
-    }
+	protected function getTestAttributes()
+	{
+		throw new TestException("Method getTestAttributes should be overridden.");
+	}
+
+	protected function getTestAttributesWith($replacement)
+	{
+		return array_replace($this->getTestAttributes(), $replacement);
+	}
+
+	protected function getTestAttributesWithout($unset)
+	{
+		$array = $this->getTestAttributes();
+
+		if (is_array($unset)) {
+			foreach ($unset as $field) {
+				unset($array[$field]);
+			}
+		} else {
+			unset($array[$unset]);
+		}
+
+		return $array;
+	}
+
+	private function wrapInStructure($attributes=[], $id=null, $others=[])
+	{
+		$data = [
+			"type"       => $this->getResourceType(),
+			"attributes" => ($attributes == []) ? $this->getTestAttributes() : $attributes,
+		];
+
+		if ($id != null)	$data = array_merge($data, ["id" => $id]);
+		if ($others != [])	$data = array_merge($data, $others);
+
+		return ["data" => $data];
+	}
+
+	/** Must be overridden */
+	protected function getResourceType()
+	{
+		throw new TestException("Method getResourceType should be overridden.");
+	}
 }

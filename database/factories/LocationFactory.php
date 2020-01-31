@@ -13,7 +13,7 @@ $factory->define(Location::class, function (Faker $faker) {
     	'name' => $faker->text(100),
     	'info' => $faker->text(500),
 
-        'visibility' => $faker->numberBetween(0, 255),
+        'visibility' => $faker->randomElement(array_keys(config("mapping.visibility"))),
     	'published_at' => now(),
     ];
 });

@@ -15,66 +15,58 @@ use TravelCompanion\User;
  */
 class TripAuthenticationTest extends TestCase
 {
-    use RefreshDatabase, APITestHelpers;
+	use RefreshDatabase, APITestHelpers;
 
-    /** @test */
-    public function an_unauthenticated_user_cannot_create_a_trip()
-    {
-        $response = $this->expectJSON()
-                         ->post("/api/v1/trips/create", $this->getTestData());
+	/** @test */
+	public function an_unauthenticated_user_cannot_create_a_trip()
+	{
+		$response = $this->expectJSON()
+						 ->post("/api/v1/trips", $this->getTestData());
 
-        $this->assertUnauthenticated($response);
-        $this->assertDatabaseMissing("trips", ["name" => "Cool trip"]);
-    }
+		$this->assertUnauthenticated($response);
+		$this->assertDatabaseMissing("trips", ["name" => "Cool trip"]);
+	}
 
-    /** @test */
-    public function an_unauthenticated_user_cannot_read_a_trip()
-    {
-        $trip = $this->createTrip();
+	/** @test */
+	public function an_unauthenticated_user_cannot_read_a_trip()
+	{
+		$trip = $this->createTrip();
 
-        $response = $this->expectJSON()
-                         ->get("/api/v1/trips/{$trip->id}");
+		$response = $this->expectJSON()
+						 ->get("/api/v1/trips/{$trip->id}");
 
-        $this->assertUnauthenticated($response);
-    }
+		$this->assertUnauthenticated($response);
+	}
 
-    /** @test */
-    public function an_unauthenticated_user_cannot_update_a_trip()
-    {
-        $trip = $this->createTrip();
+	/** @test */
+	public function an_unauthenticated_user_cannot_update_a_trip()
+	{
+		$trip = $this->createTrip();
 
-        $response = $this->expectJSON()
-        				 ->patch("/api/v1/trips/{$trip->id}", $this->getTestDataWith([
-        			         "name" => "Testname 2",
-        			     ]));
+		$response = $this->expectJSON()
+						 ->patch("/api/v1/trips/{$trip->id}", $this->getTestDataWith([
+							"name" => "Testname 2",
+						 ], $trip->id));
 
-    	$this->assertUnauthenticated($response);
-        $this->assertDatabaseMissing("trips", ["name" => "Testname 2"]);
+		$this->assertUnauthenticated($response);
+		$this->assertDatabaseMissing("trips", ["name" => "Testname 2"]);
+	}
 
-        $response = $this->expectJSON()
-                         ->put("/api/v1/trips/{$trip->id}", $this->getTestDataWith([
-                             "name" => "Testname 2",
-                         ]));
+	/** @test */
+	public function an_unauthenticated_user_cannot_delete_a_trip()
+	{
+		$trip = $this->createTrip();
 
-    	$this->assertUnauthenticated($response);
-        $this->assertDatabaseMissing("trips", ["name" => "Testname 2"]);
-    }
+		$response = $this->expectJSON()
+						 ->delete("/api/v1/trips/{$trip->id}");
 
-    /** @test */
-    public function an_unauthenticated_user_cannot_delete_a_trip()
-    {
-        $trip = $this->createTrip();
+		$this->assertUnauthenticated($response);
+		$this->assertDatabaseHas("trips", ["id" => $trip->id]);
+	}
 
-        $response = $this->expectJSON()
-        				 ->delete("/api/v1/trips/{$trip->id}");
-
-    	$this->assertUnauthenticated($response);
-        $this->assertDatabaseHas("trips", ["id" => $trip->id]);
-    }
-
-    private function getTestData()
-    {
-    	return [
+	protected function getTestAttributes()
+	{
+		return [
 			"name"         => "Cool trip",
 			"synopsis"     => "Chillin' in the Bahamas, duration: 1 month!",
 			"description"  => "Blablablabla description blablabla",
@@ -82,6 +74,11 @@ class TripAuthenticationTest extends TestCase
 			"end_date"     => Carbon::now()->addMonths(1)->format("Y-m-d"),
 			"visibility"   => "friends",
 			"published_at" => Carbon::now()->format("Y-m-d H:i:s"),
-        ];
-    }
+		];
+	}
+
+	protected function getResourceType()
+	{
+		return "trip";
+	}
 }

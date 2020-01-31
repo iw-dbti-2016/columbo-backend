@@ -17,124 +17,134 @@ use TravelCompanion\User;
 
 class SectionController extends Controller
 {
-    use APIResponses;
+	use APIResponses;
 
-    public function list(Trip $trip, Report $report)
-    {
-        $this->ensureUrlCorrectnessOrFail($trip, $report);
+	public function list()
+	{
+		// $this->ensureUrlCorrectnessOrFail($trip, $report);
 
-        $data = $report->sections()
-                    ->noDraft()
-                    ->published()
-                    ->orderRecent()
-                    ->with('locationable:id,coordinates,name,info')
-                    ->with('owner:id,first_name,middle_name,last_name,username')
-                    ->get();
+		$data = Section::noDraft()
+					->published()
+					->orderRecent()
+					->with('locationable:id,coordinates,name,info')
+					->with('owner:id,first_name,middle_name,last_name,username')
+					->get();
 
-        return $this->okResponse(null, $data);
-    }
+		return $this->okResponse(null, $data);
+	}
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function get(Request $request, Trip $trip, Report $report, Section $section)
-    {
-        $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function get(Request $request, Section $section)
+	{
+		// $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
 
-        $data = $section
-                    ->with('locationable:id,is_draft,coordinates,name,info,visibility')
-                    ->with('owner:id,first_name,middle_name,last_name,username')
-                    ->find($section->id);
+		$data = $section
+					->with('locationable:id,is_draft,coordinates,name,info,visibility')
+					->with('owner:id,first_name,middle_name,last_name,username')
+					->find($section->id);
 
-        return $this->okResponse(null, $data);
-    }
+		return $this->okResponse(null, $data);
+	}
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request, Trip $trip, Report $report)
-    {
-        $this->ensureUrlCorrectnessOrFail($trip, $report);
-        $this->ensureUserOwnsResourceOrFail($request->user(), $report);
-        $this->validateData($request->all());
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return \Illuminate\Http\Response
+	 */
+	public function store(Request $request)
+	{
+		// $this->ensureUrlCorrectnessOrFail($trip, $report);
+		// $this->ensureUserOwnsResourceOrFail($request->user(), $report);
+		$report = $this->retrieveReportOrFail($request);
+		$this->ensureUserOwnsResourceOrFail($request->user(), $report);
 
-        $section = new Section($request->all());
+		$this->validateData($request->all());
 
-        $section->owner()->associate($request->user());
-        $section->report()->associate($report);
+		$section = new Section($request->all()["data"]["attributes"]);
 
-        $section->save();
+		$section->owner()->associate($request->user());
+		$section->report()->associate(Report::find($request->all()["data"]["relationships"]["report"]["id"]));
 
-        return $this->okResponse("Section created successfully.", $section, 201);
-    }
+		$section->save();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \TravelCompanion\Section  $section
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Trip $trip, Report $report, Section $section)
-    {
-        $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
-        $this->ensureUserOwnsResourceOrFail($request->user(), $section);
+		return $this->okResponse("Section created successfully.", $section, 201);
+	}
 
-        $this->validateData($request->all());
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \TravelCompanion\Section  $section
+	 * @return \Illuminate\Http\Response
+	 */
+	public function update(Request $request, Section $section)
+	{
+		// $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
+		$this->ensureUserOwnsResourceOrFail($request->user(), $section);
 
-        $section->update($request->all());
+		$this->validateData($request->all());
 
-        return $this->okResponse("Section successfully updated.", $section);
-    }
+		$section->update($request->all()["data"]["attributes"]);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \TravelCompanion\Section  $section
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Request $request, Trip $trip, Report $report, Section $section)
-    {
-        $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
-        $this->ensureUserOwnsResourceOrFail($request->user(), $section);
+		return $this->okResponse("Section successfully updated.", $section);
+	}
 
-        $section->delete();
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \TravelCompanion\Section  $section
+	 * @return \Illuminate\Http\Response
+	 */
+	public function destroy(Request $request, Section $section)
+	{
+		// $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
+		$this->ensureUserOwnsResourceOrFail($request->user(), $section);
 
-        return $this->okResponse("Section removed successfully.");
-    }
+		$section->delete();
 
-    private function validateData($data)
-    {
-        $validator = Validator::make($data, [
-            "content" => "nullable",
-            "image" => "nullable",
-            "time" => "nullable|date_format:H:i",
-            "duration_minutes" => "nullable|integer",
-            "visibility" => ["required", new Visibility()],
-            "published_at" => "nullable|date_format:Y-m-d H:i:s",
-        ]);
+		return $this->okResponse("Section removed successfully.");
+	}
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-    }
+	private function validateData($data)
+	{
+		$validator = Validator::make($data, [
+			"data.type"                        => "required|string|in:section",
+			"data.attributes.content"          => "nullable",
+			"data.attributes.image"            => "nullable",
+			"data.attributes.time"             => "nullable|date_format:H:i",
+			"data.attributes.duration_minutes" => "nullable|integer",
+			"data.attributes.visibility"       => ["required", new Visibility()],
+			"data.attributes.published_at"     => "nullable|date_format:Y-m-d H:i:s",
+		]);
 
-    private function ensureUrlCorrectnessOrFail(Trip $trip, Report $report, Section $section=null)
-    {
-        if ($report->trip_id != $trip->id || ($section != null && $section->report_id != $report->id) ) {
-            throw new ResourceNotFoundException();
-        }
-    }
+		if ($validator->fails()) {
+			throw new ValidationException($validator);
+		}
+	}
 
-    private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
-    {
-        if ($resource->user_id != $user->id) {
-            throw new AuthorizationException();
-        }
-    }
+	private function retrieveReportOrFail($request)
+	{
+		$relationship_object = $request->all()["data"]["relationships"]["report"];
+
+		return Report::findOrFail($relationship_object["id"]);
+	}
+
+	private function ensureUrlCorrectnessOrFail(Trip $trip, Report $report, Section $section=null)
+	{
+		if ($report->trip_id != $trip->id || ($section != null && $section->report_id != $report->id) ) {
+			throw new ResourceNotFoundException();
+		}
+	}
+
+	private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
+	{
+		if ($resource->user_id != $user->id) {
+			throw new AuthorizationException();
+		}
+	}
 }

@@ -10,33 +10,33 @@ use TravelCompanion\User;
 
 class TripReadTest extends TestCase
 {
-    use RefreshDatabase, APITestHelpers;
+	use RefreshDatabase, APITestHelpers;
 
-    /** @test */
-    public function users_can_read_trip_details()
-    {
-        $user = $this->createUser();
-        $trip = $this->createTrip($user);
+	/** @test */
+	public function users_can_read_trip_details()
+	{
+		$user = $this->createUser();
+		$trip = $this->createTrip($user);
 
-        $response = $this->expectJSON()
-                         ->actingAs($user)
-                         ->get("/api/v1/trips/{$trip->id}");
+		$response = $this->expectJSON()
+						 ->actingAs($user)
+						 ->get("/api/v1/trips/{$trip->id}");
 
-        $response->assertStatus(200);
-        $response->assertJSONStructure($this->successStructure(false));
-    }
+		$response->assertStatus(200);
+		$response->assertJSONStructure($this->successStructure(false));
+	}
 
-    /** @test */
-    public function users_can_get_trip_list()
-    {
-        $user = $this->createUser();
-        $trip = $this->createTrip($user);
+	/** @test */
+	public function users_can_get_trip_list()
+	{
+		$user = $this->createUser();
+		$trip = $this->createTrip($user);
 
-        $response = $this->expectJSON()
-                            ->actingAs($user)
-                            ->get("/api/v1/user/trips");
+		$response = $this->expectJSON()
+							->actingAs($user)
+							->get("/api/v1/user/trips");
 
-        $response->assertStatus(200);
-        $response->assertJSONStructure($this->successStructure(false));
-    }
+		$response->assertStatus(200);
+		$response->assertJSONStructure($this->successStructure(false));
+	}
 }

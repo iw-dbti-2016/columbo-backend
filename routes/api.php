@@ -39,32 +39,29 @@ Route::group(['prefix' => 'v1'], function() {
 
 		Route::group(['prefix' => 'trips'], function() {
 			Route::get('/{trip}', 'tripController@get');
-			Route::post('/create', 'tripController@store');
-			Route::put('/{trip}', 'tripController@update');
+			Route::post('/', 'tripController@store');
 			Route::patch('/{trip}', 'tripController@update');
 			Route::delete('/{trip}', 'tripController@destroy');
 		});
 
-		Route::group(['prefix' => 'trips/{trip}/reports'], function() {
+		Route::group(['prefix' => 'reports'], function() {
 			Route::get('/', 'reportController@list');
 			Route::get('/{report}', 'reportController@get');
-			Route::post('/create', 'reportController@store');
-			Route::put('/{report}', 'reportController@update');
+			Route::post('/', 'reportController@store');
 			Route::patch('/{report}', 'reportController@update');
 			Route::delete('/{report}', 'reportController@destroy');
 		});
 
-		Route::group(['prefix' => 'trips/{trip}/reports/{report}/sections'], function() {
+		Route::group(['prefix' => 'sections'], function() {
 			Route::get('/', 'sectionController@list');
 			Route::get('/{section}', 'sectionController@get');
-			Route::post('/create', 'sectionController@store');
-			Route::put('/{section}', 'sectionController@update');
+			Route::post('/', 'sectionController@store');
 			Route::patch('/{section}', 'sectionController@update');
 			Route::delete('/{section}', 'sectionController@destroy');
 		});
 
 		Route::group(['prefix' => 'locations'], function() {
-			Route::post('/create', 'locationController@store');
+			Route::post('/', 'locationController@store');
 		});
 	});
 });

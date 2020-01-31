@@ -38,8 +38,10 @@ class LocationController extends Controller
      */
     public function store(Request $request)
     {
-        $request["coordinates"] = new Point($request->coordinates[0], $request->coordinates[1]);
-        $location = new Location($request->all());
+    	$attributes = $request["data"]["attributes"];
+
+        $attributes["coordinates"] = new Point($attributes["coordinates"][0], $attributes["coordinates"][1]);
+        $location = new Location($attributes);
         $location->owner()->associate($request->user());
         $location->save();
 

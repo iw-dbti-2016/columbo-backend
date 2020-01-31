@@ -13,127 +13,54 @@ use TravelCompanion\User;
 
 class SectionUpdateTest extends TestCase
 {
-    use RefreshDatabase, APITestHelpers;
+	use RefreshDatabase, APITestHelpers;
 
-    /** @test */
-    public function users_can_update_sections_they_own()
-    {
-        $user    = $this->createUser();
-        $trip    = $this->createTrip($user);
-        $report  = $this->createReport($user, $trip);
-        $section = $this->createSection($user, $report);
+	/** @test */
+	public function users_can_update_sections_they_own()
+	{
+		$user    = $this->createUser();
+		$section = $this->createSection($user);
 
-        $response = $this->expectJSON()
-                         ->actingAs($user)
-                         ->put("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}", $this->getTestDataWith([
-                             "content" => "Updated",
-                         ]));
+		$response = $this->expectJSON()
+						 ->actingAs($user)
+						 ->patch("/api/v1/sections/{$section->id}", $this->getTestDataWith([
+							 "content" => "Updated",
+						 ]));
 
-        $response->assertStatus(200);
-        $response->assertJSONStructure($this->successStructure());
+		$response->assertStatus(200);
+		$response->assertJSONStructure($this->successStructure());
 
-        $response = $this->expectJSON()
-                         ->actingAs($user)
-                         ->patch("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}", $this->getTestDataWith([
-                             "content" => "Updated",
-                         ]));
+		$this->assertDatabaseHas("sections", ["content" => "Updated"]);
+	}
 
-        $response->assertStatus(200);
-        $response->assertJSONStructure($this->successStructure());
+	/** @test */
+	public function users_cannot_update_sections_they_do_not_own()
+	{
+		$user    = $this->createUser();
+		$user2   = $this->createUser();
+		$section = $this->createSection($user);
 
-        $this->assertDatabaseHas("sections", ["content" => "Updated"]);
-    }
+		$response = $this->expectJSON()
+						 ->actingAs($user2)
+						 ->patch("/api/v1/sections/{$section->id}", $this->getTestDataWith([
+							 "content" => "Updated",
+						 ]));
 
-    /** @test */
-    public function users_cannot_update_sections_they_do_not_own()
-    {
-        $user    = $this->createUser();
-        $user2   = $this->createUser();
-        $trip    = $this->createTrip($user);
-        $report  = $this->createReport($user, $trip);
-        $section = $this->createSection($user, $report);
+		$this->assertUnAuthorized($response);
+		$this->assertDatabaseMissing("sections", ["content" => "Updated"]);
+	}
 
-        $response = $this->expectJSON()
-                         ->actingAs($user2)
-                         ->put("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}", $this->getTestDataWith([
-                             "content" => "Updated",
-                         ]));
+	protected function getTestAttributes()
+	{
+		return [
+			"content"      => "Updated",
+			"visibility"   => "friends",
+			"published_at" => Carbon::now()->format("Y-m-d H:i:s"),
+		];
+	}
 
-        $this->assertUnAuthorized($response);
-        $this->assertDatabaseMissing("sections", ["content" => "Updated"]);
-
-        $response = $this->expectJSON()
-                         ->actingAs($user2)
-                         ->patch("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}", $this->getTestDataWith([
-                             "content" => "Updated",
-                         ]));
-
-        $this->assertUnAuthorized($response);
-        $this->assertDatabaseMissing("sections", ["content" => "Updated"]);
-    }
-
-    /** @test */
-    public function users_cannot_update_sections_with_wrong_trip()
-    {
-        $user    = $this->createUser();
-        $trip    = $this->createTrip($user);
-        $trip2   = $this->createTrip($user);
-        $report  = $this->createReport($user, $trip);
-        $section = $this->createSection($user, $report);
-
-        $response = $this->expectJSON()
-                         ->actingAs($user)
-                         ->put("/api/v1/trips/{$trip2->id}/reports/{$report->id}/sections/{$section->id}", $this->getTestDataWith([
-                             "content" => "Updated",
-                         ]));
-
-        $this->assertNotFound($response);
-        $this->assertDatabaseMissing("sections", ["content" => "Updated"]);
-
-        $response = $this->expectJSON()
-                         ->actingAs($user)
-                         ->patch("/api/v1/trips/{$trip2->id}/reports/{$report->id}/sections/{$section->id}", $this->getTestDataWith([
-                             "content" => "Updated",
-                         ]));
-
-        $this->assertNotFound($response);
-        $this->assertDatabaseMissing("sections", ["content" => "Updated"]);
-    }
-
-    /** @test */
-    public function users_cannot_update_sections_with_wrong_report()
-    {
-        $user    = $this->createUser();
-        $trip    = $this->createTrip($user);
-        $report  = $this->createReport($user, $trip);
-        $report2 = $this->createReport($user, $trip);
-        $section = $this->createSection($user, $report);
-
-        $response = $this->expectJSON()
-                         ->actingAs($user)
-                         ->put("/api/v1/trips/{$trip->id}/reports/{$report2->id}/sections/{$section->id}", $this->getTestDataWith([
-                             "content" => "Updated",
-                         ]));
-
-        $this->assertNotFound($response);
-        $this->assertDatabaseMissing("sections", ["content" => "Updated"]);
-
-        $response = $this->expectJSON()
-                         ->actingAs($user)
-                         ->patch("/api/v1/trips/{$trip->id}/reports/{$report2->id}/sections/{$section->id}", $this->getTestDataWith([
-                             "content" => "Updated",
-                         ]));
-
-        $this->assertNotFound($response);
-        $this->assertDatabaseMissing("sections", ["content" => "Updated"]);
-    }
-
-    private function getTestData()
-    {
-        return [
-            "content"      => "Updated",
-            "visibility"   => "friends",
-            "published_at" => Carbon::now()->format("Y-m-d H:i:s"),
-        ];
-    }
+	protected function getResourceType()
+	{
+		return "section";
+	}
 }

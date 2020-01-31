@@ -12,69 +12,34 @@ use TravelCompanion\User;
 
 class SectionReadTest extends TestCase
 {
-    use RefreshDatabase, APITestHelpers;
+	use RefreshDatabase, APITestHelpers;
 
-    /** @test */
-    public function users_can_read_section_details()
-    {
-        $user    = $this->createUser();
-        $trip    = $this->createTrip($user);
-        $report  = $this->createReport($user, $trip);
-        $section = $this->createSection($user, $report);
+	/** @test */
+	public function users_can_read_section_details()
+	{
+		$user    = $this->createUser();
+		$section = $this->createSection($user);
 
-        $response = $this->expectJSON()
-                         ->actingAs($user)
-                         ->get("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections/{$section->id}");
+		$response = $this->expectJSON()
+						 ->actingAs($user)
+						 ->get("/api/v1/sections/{$section->id}");
 
-        $response->assertStatus(200);
-        $response->assertJSONStructure($this->successStructure(false));
-    }
+		$response->assertStatus(200);
+		$response->assertJSONStructure($this->successStructure(false));
+	}
 
-    /** @test */
-    public function users_cannot_read_section_details_with_wrong_trip()
-    {
-        $user    = $this->createUser();
-        $trip    = $this->createTrip($user);
-        $trip2   = $this->createTrip($user);
-        $report  = $this->createReport($user, $trip);
-        $section = $this->createSection($user, $report);
+	/** @test */
+	public function users_can_read_section_lists()
+	{
+		$this->withoutExceptionHandling();
+		$user    = $this->createUser();
+		$section = $this->createSection($user);
 
-        $response = $this->expectJSON()
-                         ->actingAs($user)
-                         ->get("/api/v1/trips/{$trip2->id}/reports/{$report->id}/sections/{$section->id}");
+		$response = $this->expectJSON()
+						 ->actingAs($user)
+						 ->get("/api/v1/sections");
 
-        $this->assertNotFound($response);
-    }
-
-    /** @test */
-    public function users_cannot_read_section_details_with_wrong_report()
-    {
-        $user    = $this->createUser();
-        $trip    = $this->createTrip($user);
-        $report  = $this->createReport($user, $trip);
-        $report2 = $this->createReport($user, $trip);
-        $section = $this->createSection($user, $report);
-
-        $response = $this->expectJSON()
-                         ->actingAs($user)
-                         ->get("/api/v1/trips/{$trip->id}/reports/{$report2->id}/sections/{$section->id}");
-
-        $this->assertNotFound($response);
-    }
-
-    /** @test */
-    public function users_can_read_section_lists()
-    {
-        $user    = $this->createUser();
-        $trip    = $this->createTrip($user);
-        $report  = $this->createReport($user, $trip);
-        $section = $this->createSection($user, $report);
-
-        $response = $this->expectJSON()
-                         ->actingAs($user)
-                         ->get("/api/v1/trips/{$trip->id}/reports/{$report->id}/sections");
-
-        $response->assertStatus(200);
-        $response->assertJSONStructure($this->successStructure(false));
-    }
+		$response->assertStatus(200);
+		$response->assertJSONStructure($this->successStructure(false));
+	}
 }

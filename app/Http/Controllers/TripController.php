@@ -15,81 +15,82 @@ use TravelCompanion\User;
 
 class TripController extends Controller
 {
-    use APIResponses;
+	use APIResponses;
 
-    public function get(Trip $trip)
-    {
-        return $this->okResponse(null, $trip->toArray());
-    }
+	public function get(Trip $trip)
+	{
+		return $this->okResponse(null, $trip->toArray());
+	}
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $this->validateData($request->all());
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return \Illuminate\Http\Response
+	 */
+	public function store(Request $request)
+	{
+		$this->validateData($request->all());
 
-        $trip = $request->user()->tripsOwner()->create($request->all());
+		$trip = $request->user()->tripsOwner()->create($request->all()["data"]["attributes"]);
 
-        return $this->okResponse("Trip successfully created.", $trip, 201);
-    }
+		return $this->okResponse("Trip successfully created.", $trip, 201);
+	}
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \TravelCompanion\Trip  $trip
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Trip $trip)
-    {
-        $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
-        $this->validateData($request->all());
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \TravelCompanion\Trip  $trip
+	 * @return \Illuminate\Http\Response
+	 */
+	public function update(Request $request, Trip $trip)
+	{
+		$this->ensureUserOwnsResourceOrFail($request->user(), $trip);
+		$this->validateData($request->all());
 
-        $trip->update($request->all());
+		$trip->update($request->all()["data"]["attributes"]);
 
-        return $this->okResponse("Trip succesfully updated");
-    }
+		return $this->okResponse("Trip succesfully updated");
+	}
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \TravelCompanion\Trip  $trip
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Request $request, Trip $trip)
-    {
-        $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \TravelCompanion\Trip  $trip
+	 * @return \Illuminate\Http\Response
+	 */
+	public function destroy(Request $request, Trip $trip)
+	{
+		$this->ensureUserOwnsResourceOrFail($request->user(), $trip);
 
-        $trip->delete();
+		$trip->delete();
 
-        return $this->okResponse("Trip successfully removed.");
-    }
+		return $this->okResponse("Trip successfully removed.");
+	}
 
-    private function validateData($data)
-    {
-        $validator = Validator::make($data, [
-            "name" => "required|max:100",
-            "synopsis" => "nullable|max:100",
-            "description" => "nullable",
-            "start_date" => "required|date_format:Y-m-d",
-            "end_date" => "required|date_format:Y-m-d",
-            "visibility" => ["required", new Visibility],
-            "published_at" => "nullable|date_format:Y-m-d H:i:s",
-        ]);
+	private function validateData($data)
+	{
+		$validator = Validator::make($data, [
+			"data.type"                    => "required|string|in:trip",
+			"data.attributes.name"         => "required|max:100",
+			"data.attributes.synopsis"     => "nullable|max:100",
+			"data.attributes.description"  => "nullable",
+			"data.attributes.start_date"   => "required|date_format:Y-m-d",
+			"data.attributes.end_date"     => "required|date_format:Y-m-d",
+			"data.attributes.visibility"   => ["required", new Visibility],
+			"data.attributes.published_at" => "nullable|date_format:Y-m-d H:i:s",
+		]);
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-    }
+		if ($validator->fails()) {
+			throw new ValidationException($validator);
+		}
+	}
 
-    private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
-    {
-        if ($resource->user_id != $user->id) {
-            throw new AuthorizationException();
-        }
-    }
+	private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
+	{
+		if ($resource->user_id != $user->id) {
+			throw new AuthorizationException();
+		}
+	}
 }

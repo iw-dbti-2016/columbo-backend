@@ -19,9 +19,9 @@ class ReportController extends Controller
 {
     use APIResponses;
 
-    public function list(Trip $trip)
+    public function list()
     {
-        return $this->okResponse(null, $trip->reports()->get());
+        return $this->okResponse(null, Report::all());
     }
 
     /**
@@ -31,7 +31,7 @@ class ReportController extends Controller
      */
     public function get(Trip $trip, Report $report)
     {
-        $this->ensureUrlCorrectnessOrFail($trip, $report);
+        // $this->ensureUrlCorrectnessOrFail($trip, $report);
 
         return $this->okResponse(null, $report);
     }
@@ -42,12 +42,13 @@ class ReportController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Trip $trip, Request $request)
+    public function store(Request $request)
     {
+    	$trip = $this->retreiveTripOrFail($request);
         $this->ensureUserOwnsResourceOrFail($request->user(), $trip);
         $this->validateDataOrFail($request->all());
 
-        $report = new Report($request->all());
+        $report = new Report($request->all()["data"]["attributes"]);
 
         $report->trip()->associate($trip);
         $report->owner()->associate($request->user());
@@ -64,13 +65,13 @@ class ReportController extends Controller
      * @param  \TravelCompanion\Report  $report
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Trip $trip, Report $report)
+    public function update(Request $request, Report $report)
     {
-        $this->ensureUrlCorrectnessOrFail($trip, $report);
+        // $this->ensureUrlCorrectnessOrFail($trip, $report);
         $this->ensureUserOwnsResourceOrFail($request->user(), $report);
         $this->validateDataOrFail($request->all());
 
-        $report = $report->update($request->all());
+        $report = $report->update($request->all()["data"]["attributes"]);
 
         return $this->okResponse("Report was updated.", $report);
     }
@@ -81,9 +82,9 @@ class ReportController extends Controller
      * @param  \TravelCompanion\Report  $report
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, Trip $trip, Report $report)
+    public function destroy(Request $request, Report $report)
     {
-        $this->ensureUrlCorrectnessOrFail($trip, $report);
+        // $this->ensureUrlCorrectnessOrFail($trip, $report);
         $this->ensureUserOwnsResourceOrFail($request->user(), $report);
 
         $report->delete();
@@ -94,16 +95,23 @@ class ReportController extends Controller
     private function validateDataOrFail($data)
     {
         $validator = Validator::make($data, [
-            "title" => "required|max:100",
-            "date" => "nullable|date_format:Y-m-d",
-            "description" => "nullable|max:5000",
-            "visibility" => ["required", new Visibility()],
-            "published_at" => "nullable|date_format:Y-m-d H:i:s",
+			"data.attributes.title"        => "required|max:100",
+			"data.attributes.date"         => "nullable|date_format:Y-m-d",
+			"data.attributes.description"  => "nullable|max:5000",
+			"data.attributes.visibility"   => ["required", new Visibility()],
+			"data.attributes.published_at" => "nullable|date_format:Y-m-d H:i:s",
         ]);
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
+    }
+
+    private function retreiveTripOrFail($request)
+    {
+    	$relationship_object = $request->all()["data"]["relationships"]["trip"];
+
+		return Trip::findOrFail($relationship_object["id"]);
     }
 
     private function ensureUrlCorrectnessOrFail(Trip $trip, Report $report)
