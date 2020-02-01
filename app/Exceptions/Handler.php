@@ -6,9 +6,11 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use TravelCompanion\Traits\APIResponses;
 
 class Handler extends ExceptionHandler
 {
+	use APIResponses;
     /**
      * A list of the exception types that are not reported.
      *
@@ -49,10 +51,7 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if ($exception instanceof AuthenticationException && $request->expectsJson()) {
-            return response()->json([
-                "success" => false,
-                "message" => $exception->getMessage(),
-            ], 401);
+            return $this->unauthenticatedResponse($exception->getMessage());
         }
 
         return parent::render($request, $exception);

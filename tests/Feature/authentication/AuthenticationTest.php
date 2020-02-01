@@ -25,10 +25,7 @@ class AuthenticationTest extends TestCase
 		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestData());
 
 		$response->assertStatus(201);
-		$response->assertJSONStructure([
-			"success",
-			"data",
-		]);
+		$response->assertJSONStructure($this->successStructure());
 
 		$this->assertDatabaseHas("users", $this->getTestAttributesWithout(["password", "password_confirmation"]));
 	}
@@ -46,11 +43,7 @@ class AuthenticationTest extends TestCase
 
 		foreach ($responses as $i => $response) {
 			$response->assertStatus(422);
-			$response->assertJSONStructure([
-				"success",
-				"message",
-				"errors",
-			]);
+			$response->assertJSONStructure($this->errorStructure());
 
 			$this->assertDatabaseMissing("users", [
 				"username" => "johndoe",
@@ -114,11 +107,7 @@ class AuthenticationTest extends TestCase
 
 		foreach ($responses as $i => $response) {
 			$response->assertStatus(422);
-			$response->assertJSONStructure([
-				"success",
-				"message",
-				"errors",
-			]);
+			$response->assertJSONStructure($this->errorStructure());
 
 			$this->assertDatabaseMissing("users", [
 				"first_name" => "John",
@@ -141,10 +130,7 @@ class AuthenticationTest extends TestCase
 		]));
 
 		$response->assertStatus(201);
-		$response->assertJSONStructure([
-			"success",
-			"data",
-		]);
+		$response->assertJSONStructure($this->successStructure());
 
 		$this->assertDatabaseHas("users", [
 			"username" => "johndoe",
@@ -167,15 +153,7 @@ class AuthenticationTest extends TestCase
 		]);
 
 		$response->assertStatus(200);
-		$response->assertJSONStructure([
-			"success",
-			"data" => [
-				"token",
-				"token_type",
-				"expires_in",
-				"user",
-			],
-		]);
+		$response->assertJSONStructure($this->successStructure());
 	}
 
 	/** @test */
@@ -184,15 +162,7 @@ class AuthenticationTest extends TestCase
 		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestData());
 
 		$response->assertStatus(201);
-		$response->assertJSONStructure([
-			"success",
-			"data" => [
-				"token",
-				"token_type",
-				"expires_in",
-				"user",
-			],
-		]);
+		$response->assertJSONStructure($this->successStructure());
 
 		$this->assertDatabaseHas("users", [
 			"username" => "johndoe",
@@ -202,10 +172,7 @@ class AuthenticationTest extends TestCase
 		$response = $this->expectJSON()->get("/api/v1/user");
 
 		$response->assertStatus(401);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 
 		// Email not verified, authenticated
 		$response = $this->expectJSON()
@@ -213,10 +180,7 @@ class AuthenticationTest extends TestCase
 							->get("/api/v1/user");
 
 		$response->assertStatus(403);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	/** @test */
@@ -230,10 +194,7 @@ class AuthenticationTest extends TestCase
 		]);
 
 		$response->assertStatus(401);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 
 		$response = $this->expectJSON()->post("/api/v1/auth/login", [
 			"email" => "abc@donttryme.com",
@@ -241,10 +202,7 @@ class AuthenticationTest extends TestCase
 		]);
 
 		$response->assertStatus(401);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	/** @test */
@@ -257,26 +215,14 @@ class AuthenticationTest extends TestCase
 		]);
 
 		$response->assertStatus(422);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-			"errors" => [
-				"email",
-			],
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 
 		$response = $this->expectJSON()->post("/api/v1/auth/login", [
 			"email" => $user->email,
 		]);
 
 		$response->assertStatus(422);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-			"errors" => [
-				"password",
-			],
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	/** @test */
@@ -289,18 +235,10 @@ class AuthenticationTest extends TestCase
 			"password" => "password",
 			"birth_date" => "2019-01-01",
 			"additional_resource" => "Recipe for chocolate chip cookies :)",
-	   ]);
+		]);
 
 		$response->assertStatus(200);
-		$response->assertJSONStructure([
-			"success",
-			"data" => [
-				"token",
-				"token_type",
-				"expires_in",
-				"user",
-			],
-		]);
+		$response->assertJSONStructure($this->successStructure());
 	}
 
 	/** @test */
@@ -315,10 +253,7 @@ class AuthenticationTest extends TestCase
 						->get("/api/v1/user");
 
 		$response->assertStatus(401);
-		$response->assertJSONStructure([
-			"success",
-			"message"
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	/** @test */
@@ -329,10 +264,7 @@ class AuthenticationTest extends TestCase
 		$response = $this->expectJSON()->get("/api/v1/user");
 
 		$response->assertStatus(401);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	/** @test */
@@ -343,10 +275,7 @@ class AuthenticationTest extends TestCase
 		$response = $this->actingAs($user)->expectJSON()->get("/api/v1/user");
 
 		$response->assertStatus(200);
-		$response->assertJSONStructure([
-			"success",
-			"data",
-		]);
+		$response->assertJSONStructure($this->successStructure());
 	}
 
 	// REFRESH TOKEN
@@ -358,15 +287,7 @@ class AuthenticationTest extends TestCase
 		$response = $this->expectJSON()->actingAs($user)->patch("/api/v1/auth/refresh");
 
 		$response->assertStatus(200);
-		$response->assertJSONStructure([
-			"success",
-			"data" => [
-				"token",
-				"token_type",
-				"expires_in",
-				"user",
-			],
-		]);
+		$response->assertJSONStructure($this->successStructure());
 	}
 
 	/** @test */
@@ -378,10 +299,7 @@ class AuthenticationTest extends TestCase
 		$response = $this->expectJSON()->actingAs($user)->patch("/api/v1/auth/refresh");
 
 		$response->assertStatus(401);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	/** @test */
@@ -390,14 +308,12 @@ class AuthenticationTest extends TestCase
 		$response = $this->expectJSON()->patch("/api/v1/auth/refresh");
 
 		$response->assertStatus(401);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	// LOGOUT
 	/** @test */
+	// @DEPRICATED (CANNOT LOG OUT USING SWT)
 	public function an_authenticated_user_can_logout()
 	{
 		$user = $this->createUser();
@@ -412,21 +328,20 @@ class AuthenticationTest extends TestCase
 	}
 
 	/** @test */
+	// @DEPRICATED (CANNOT LOG OUT USING SWT)
 	public function an_unauthenticated_user_cannot_logout()
 	{
 		$response = $this->expectJSON()->delete("/api/v1/auth/logout");
 
 		$response->assertStatus(401);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	// FORGOT PASSWORD
 	/** @test */
 	public function an_authenticated_user_cannot_send_a_password_reset_link()
 	{
+		$this->withoutExceptionHandling();
 		$user = $this->createUser();
 
 		$response = $this->expectJSON()
@@ -436,10 +351,7 @@ class AuthenticationTest extends TestCase
 							]);
 
 		$response->assertStatus(403);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	/** @test */
@@ -470,11 +382,7 @@ class AuthenticationTest extends TestCase
 							]);
 
 		$response->assertStatus(422);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-			"errors",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	/** @test */
@@ -486,12 +394,7 @@ class AuthenticationTest extends TestCase
 							]);
 
 		$response->assertStatus(422);
-		$response->assertJSONStructure([
-			"success",
-			"errors" => [
-				"email",
-			],
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	// RESEND EMAIL VALIDATION
@@ -501,15 +404,7 @@ class AuthenticationTest extends TestCase
 		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestData());
 
 		$response->assertStatus(201);
-		$response->assertJSONStructure([
-			"success",
-			"data" => [
-				"token",
-				"token_type",
-				"expires_in",
-				"user",
-			],
-		]);
+		$response->assertJSONStructure($this->successStructure());
 
 		$this->assertDatabaseHas("users", [
 			"username" => "johndoe",
@@ -549,10 +444,7 @@ class AuthenticationTest extends TestCase
 		$response = $this->expectJSON()->post("/api/v1/auth/email/resend");
 
 		$response->assertStatus(401);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	// 404, actually does not belong in this file
@@ -562,10 +454,7 @@ class AuthenticationTest extends TestCase
 		$response = $this->expectJSON()->post("/api/v1/404");
 
 		$response->assertStatus(404);
-		$response->assertJSONStructure([
-			"success",
-			"message",
-		]);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	protected function getTestAttributes()

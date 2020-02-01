@@ -26,7 +26,7 @@ class ReportReadTest extends TestCase
 						 ->get("/api/v1/reports/{$report->id}");
 
 		$response->assertStatus(200);
-		$response->assertJSONStructure($this->successStructure(false));
+		$response->assertJSONStructure($this->successStructure());
 	}
 
 	/** @test */
@@ -40,6 +40,6 @@ class ReportReadTest extends TestCase
 						 ->get("/api/v1/reports");
 
 		$response->assertStatus(200);
-		$response->assertJSONStructure($this->successStructure(false));
+		$response->assertJSONStructure($this->successCollectionStructure());
 	}
 }

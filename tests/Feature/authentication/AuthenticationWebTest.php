@@ -275,6 +275,7 @@ class AuthenticationWebTest extends TestCase
 	/** @test */
 	public function an_authenticated_user_can_refresh_the_valid_token()
 	{
+		$this->withoutExceptionHandling();
 		$user = $this->createUser();
 
 		$response = $this->callAsUser($user, "PATCH", "/api/v1/auth/refresh");

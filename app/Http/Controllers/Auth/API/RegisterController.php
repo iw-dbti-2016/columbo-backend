@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Http\Controllers\Controller;
+use TravelCompanion\Http\Resources\User as UserResource;
 use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Traits\Auth\RegistersUsersWithToken;
 use TravelCompanion\User;
@@ -60,11 +61,15 @@ class RegisterController extends Controller
 
 	protected function registered(Request $request, $user)
 	{
-		return $this->okResponse(null, [
-			"token" => $this->token,
-			"token_type" => 'bearer',
-			"expires_in" => auth()->factory()->getTTL() * 60,
-			"user" => $user,
-		], 201);
+		return (new UserResource($user))
+					->additional([
+						"meta" => [
+							"token" => $this->token,
+							"token_type" => 'bearer',
+							"expires_in" => auth()->factory()->getTTL() * 60,
+						],
+					])
+					->response()
+					->setStatusCode(201);
 	}
 }

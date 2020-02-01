@@ -3,6 +3,8 @@
 namespace TravelCompanion\Http\Controllers;
 
 use Illuminate\Http\Request;
+use TravelCompanion\Http\Resources\TripCollection;
+use TravelCompanion\Http\Resources\User as UserResource;
 use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\User;
 
@@ -18,7 +20,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $this->okResponse(null, $user);
+        return new UserResource($user);
     }
 
     /**
@@ -46,6 +48,6 @@ class UserController extends Controller
 
     public function listTrips(Request $request)
     {
-        return $this->okResponse(null, $request->user()->tripsOwner);
+        return new TripCollection($request->user()->tripsOwner);
     }
 }

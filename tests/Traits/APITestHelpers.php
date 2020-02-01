@@ -27,9 +27,9 @@ trait APITestHelpers
 	 */
 	public function expireTokens($ttl=0)
 	{
-        config(['jwt.ttl' => $ttl]);
+		config(['jwt.ttl' => $ttl]);
 
-        return $this;
+		return $this;
 	}
 
 	/**
@@ -56,53 +56,51 @@ trait APITestHelpers
 	// STRUCTURE AND STATUS ASSERTIONS //
 	/////////////////////////////////////
 
-	protected function successStructure($message=true, $data=true)
+	protected function successStructure()
 	{
-		$array = ["success"];
-
-		if ($message)
-			$array = array_merge($array, ["message"]);
-
-		if ($data)
-			$array = array_merge($array, ["data"]);
-
-		return $array;
+		return [
+			"data" => [
+				"type",
+				"id",
+				"attributes",
+			],
+			"links" => [
+				"self",
+			],
+		];
 	}
 
-	protected function successStructureWithoutData($message=true)
+	protected function successCollectionStructure()
 	{
-		return $this->successStructure($message, false);
+		return [
+			"data",
+			"links",
+		];
 	}
 
-	protected function errorStructure($message=true)
+	protected function errorStructure()
 	{
-		$array = [
-			"success",
-            "errors",
-        ];
-
-        if ($message)
-        	$array = array_merge($array, ["message"]);
-
-       	return $array;
+		return [
+			"errors",
+		];
 	}
 
 	protected function assertUnauthenticated($response)
 	{
-    	$response->assertStatus(401);
-        $response->assertJSONStructure($this->successStructureWithoutData());
+		$response->assertStatus(401);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	protected function assertUnauthorized($response)
 	{
-    	$response->assertStatus(403);
-        $response->assertJSONStructure($this->successStructureWithoutData());
+		$response->assertStatus(403);
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	protected function assertNotFound($response)
 	{
 		$response->assertStatus(404);
-		$response->assertJSONStructure($this->successStructureWithoutData());
+		$response->assertJSONStructure($this->errorStructure());
 	}
 
 	protected function assertValidationFailed($response)

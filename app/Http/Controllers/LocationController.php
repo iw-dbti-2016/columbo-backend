@@ -4,6 +4,7 @@ namespace TravelCompanion\Http\Controllers;
 
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Http\Request;
+use TravelCompanion\Http\Resources\Location as LocationResource;
 use TravelCompanion\Location;
 use TravelCompanion\Traits\APIResponses;
 
@@ -45,7 +46,9 @@ class LocationController extends Controller
         $location->owner()->associate($request->user());
         $location->save();
 
-        return $this->okResponse("Location created successfully.", null, 201);
+        return (new LocationResource($location))
+					->response()
+					->setStatusCode(201);
     }
 
     /**

@@ -6,65 +6,79 @@ use Illuminate\Validation\Validator;
 
 trait APIResponses
 {
-    public function resourceNotFoundResponse()
-    {
-        return response()->json([
-            "success" => false,
-            "message" => "Resource not found.",
-        ], 404);
-    }
+	public function unauthenticatedResponse($msg)
+	{
+		return response()->json([
+			"errors" => [
+				[
+					"status" => "401",
+					"title" => "Unauthenticated",
+					"details"  => $msg,
+				],
+			],
+		], 401);
+	}
 
-    public function unauthorizedResponse()
-    {
-        return response()->json([
-            "success" => false,
-            "message" => "Unauthorized.",
-        ], 403);
-    }
+	public function resourceNotFoundResponse()
+	{
+		return response()->json([
+			"success" => false,
+			"message" => "Resource not found.",
+		], 404);
+	}
 
-    public function validationFailedResponse(Validator $validator)
-    {
-        return response()->json([
-            "success" => false,
-            "message" => "Validation failed.",
-            "errors" => $validator->errors(),
-        ], 422);
-    }
+	public function unauthorizedResponse($msg="You are not authorized to view this.")
+	{
+		return response()->json([
+			"errors" => [
+				[
+					"status" => "403",
+					"title" => "Not authorized",
+					"description" => $msg
+				],
+			],
+		], 403);
+	}
 
-    public function validationFailedManualResponse(array $errors)
-    {
-        return response()->json([
-            "success" => false,
-            "message" => "Validation failed.",
-            "errors" => $errors,
-        ], 422);
-    }
+	public function validationFailedResponse(Validator $validator)
+	{
+		return response()->json([
+			"errors" => $validator->errors(),
+		], 422);
+	}
 
-    public function okResponse($message=null, $data=[], $statusCode=200)
-    {
-        $responseContent = [
-            "success" => true,
-            "data" => $data,
-        ];
+	public function validationFailedManualResponse(array $errors)
+	{
+		return response()->json([
+			"errors" => $errors,
+		], 422);
+	}
 
-        if ($message != null) {
-            $responseContent["message"] = $message;
-        }
+	public function okResponse($message=null, $data=[], $statusCode=200)
+	{
+		$responseContent = [
+			"success" => true,
+			"data" => $data,
+		];
 
-        return response()->json($responseContent, $statusCode);
-    }
+		if ($message != null) {
+			$responseContent["message"] = $message;
+		}
 
-    public function failedResponse($message=null, $data=[], $statusCode=400)
-    {
-        $responseContent = [
-            "success" => false,
-            "data" => $data,
-        ];
+		return response()->json($responseContent, $statusCode);
+	}
 
-        if ($message != null) {
-            $responseContent["message"] = $message;
-        }
+	public function failedResponse($message=null, $data=[], $statusCode=400)
+	{
+		$responseContent = [
+			"success" => false,
+			"data" => $data,
+		];
 
-        return response()->json($responseContent, $statusCode);
-    }
+		if ($message != null) {
+			$responseContent["message"] = $message;
+		}
+
+		return response()->json($responseContent, $statusCode);
+	}
 }

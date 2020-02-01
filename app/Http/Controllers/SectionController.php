@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Exceptions\AuthorizationException;
 use TravelCompanion\Exceptions\ResourceNotFoundException;
 use TravelCompanion\Exceptions\ValidationException;
+use TravelCompanion\Http\Resources\Section as SectionResource;
+use TravelCompanion\Http\Resources\SectionCollection;
 use TravelCompanion\Report;
 use TravelCompanion\Rules\Visibility;
 use TravelCompanion\Section;
@@ -30,7 +32,7 @@ class SectionController extends Controller
 					->with('owner:id,first_name,middle_name,last_name,username')
 					->get();
 
-		return $this->okResponse(null, $data);
+		return new SectionCollection($data);
 	}
 
 	/**
@@ -47,7 +49,7 @@ class SectionController extends Controller
 					->with('owner:id,first_name,middle_name,last_name,username')
 					->find($section->id);
 
-		return $this->okResponse(null, $data);
+		return new SectionResource($data);
 	}
 
 	/**
@@ -72,7 +74,9 @@ class SectionController extends Controller
 
 		$section->save();
 
-		return $this->okResponse("Section created successfully.", $section, 201);
+		return (new SectionResource($section))
+					->response()
+					->setStatusCode(201);
 	}
 
 	/**
@@ -91,7 +95,7 @@ class SectionController extends Controller
 
 		$section->update($request->all()["data"]["attributes"]);
 
-		return $this->okResponse("Section successfully updated.", $section);
+		return new SectionResource($section);
 	}
 
 	/**
@@ -107,7 +111,7 @@ class SectionController extends Controller
 
 		$section->delete();
 
-		return $this->okResponse("Section removed successfully.");
+		return response()->json(["meta" => []], 200);
 	}
 
 	private function validateData($data)

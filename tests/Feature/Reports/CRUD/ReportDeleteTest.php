@@ -25,7 +25,7 @@ class ReportDeleteTest extends TestCase
 						 ->delete("/api/v1/reports/{$report->id}");
 
 		$response->assertStatus(200);
-		$response->assertJSONStructure($this->successStructureWithoutData());
+		$response->assertJSONStructure(["meta"]);
 
 		$this->assertDatabaseHas("reports", [
 			"id" => $report->id,

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use TravelCompanion\Http\Resources\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +27,7 @@ Route::group(['prefix' => 'v1'], function() {
 
 	Route::group(['middleware' => ['auth:api']], function() {
 		Route::get('/user', function(Request $request) {
-			return ["success" => true, "data" => $request->user()];
+			return new User($request->user());
 		})->middleware('verified');
 
 		Route::group(['prefix' => 'user'], function() {
@@ -68,7 +69,11 @@ Route::group(['prefix' => 'v1'], function() {
 
 Route::any('{all}', function() {
 	return response()->json([
-		"success" => false,
-		"message" => "Page not Found.",
+		"errors" => [
+			[
+				"status" => "404",
+				"title" => "Page not found.",
+			]
+		],
 	], 404);
 })->where('all', '.*')->fallback();

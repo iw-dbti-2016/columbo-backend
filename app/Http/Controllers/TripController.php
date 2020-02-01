@@ -8,6 +8,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Exceptions\AuthorizationException;
 use TravelCompanion\Exceptions\ValidationException;
+use TravelCompanion\Http\Resources\Trip as TripResource;
 use TravelCompanion\Rules\Visibility;
 use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Trip;
@@ -19,7 +20,7 @@ class TripController extends Controller
 
 	public function get(Trip $trip)
 	{
-		return $this->okResponse(null, $trip->toArray());
+		return new TripResource($trip);
 	}
 
 	/**
@@ -34,7 +35,9 @@ class TripController extends Controller
 
 		$trip = $request->user()->tripsOwner()->create($request->all()["data"]["attributes"]);
 
-		return $this->okResponse("Trip successfully created.", $trip, 201);
+		return (new TripResource($trip))
+					->response()
+					->setStatusCode(201);
 	}
 
 	/**
@@ -51,7 +54,7 @@ class TripController extends Controller
 
 		$trip->update($request->all()["data"]["attributes"]);
 
-		return $this->okResponse("Trip succesfully updated");
+		return new TripResource($trip);
 	}
 
 	/**
@@ -66,7 +69,7 @@ class TripController extends Controller
 
 		$trip->delete();
 
-		return $this->okResponse("Trip successfully removed.");
+		return response()->json(["meta" => []], 200);
 	}
 
 	private function validateData($data)

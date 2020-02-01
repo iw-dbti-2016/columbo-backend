@@ -26,7 +26,7 @@ class SectionDeleteTest extends TestCase
 						 ->delete("/api/v1/sections/{$section->id}");
 
 		$response->assertStatus(200);
-		$response->assertJSONStructure($this->successStructureWithoutData());
+		$response->assertJSONStructure(["meta"]);
 
 		$this->assertSoftDeleted("sections", ["id" => $section->id]);
 	}

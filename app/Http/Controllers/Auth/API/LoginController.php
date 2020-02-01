@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use TravelCompanion\Http\Controllers\Controller;
+use TravelCompanion\Http\Resources\User as UserResource;
 use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Traits\Auth\AuthenticatesUsersWithToken;
 
@@ -26,12 +27,14 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        return $this->constructResponse($request, [
-            "token" => $this->token,
-            "token_type" => 'bearer',
-            "expires_in" => auth()->factory()->getTTL() * 60,
-            "user" => auth()->user(),
-        ], 200);
+        return (new UserResource($user))
+        			->additional([
+        				"meta" => [
+				            "token" => $this->token,
+				            "token_type" => 'bearer',
+				            "expires_in" => auth()->factory()->getTTL() * 60,
+				        ],
+				    ]);
     }
 
     protected function validationFailed(\Illuminate\Validation\Validator $validator)
@@ -41,7 +44,7 @@ class LoginController extends Controller
 
     protected function sendFailedLoginResponse(Request $request)
     {
-        return $this->failedResponse("Credentials do not match with our records", [], 401);
+        return $this->unauthenticatedResponse("Credentials do not match our records.");
     }
 
     protected function loggedOut(Request $request)

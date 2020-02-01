@@ -23,7 +23,7 @@ class TripReadTest extends TestCase
 						 ->get("/api/v1/trips/{$trip->id}");
 
 		$response->assertStatus(200);
-		$response->assertJSONStructure($this->successStructure(false));
+		$response->assertJSONStructure($this->successStructure());
 	}
 
 	/** @test */
@@ -37,6 +37,6 @@ class TripReadTest extends TestCase
 							->get("/api/v1/user/trips");
 
 		$response->assertStatus(200);
-		$response->assertJSONStructure($this->successStructure(false));
+		$response->assertJSONStructure($this->successCollectionStructure());
 	}
 }

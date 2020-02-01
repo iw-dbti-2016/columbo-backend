@@ -24,7 +24,7 @@ class TripDeleteTest extends TestCase
 						 ->delete("/api/v1/trips/{$trip->id}");
 
 		$response->assertStatus(200);
-		$response->assertJSONStructure($this->successStructureWithoutData());
+		$response->assertJSONStructure(["meta"]);
 
 		$this->assertDatabaseHas("trips", [
 			"id"         => $trip->id,

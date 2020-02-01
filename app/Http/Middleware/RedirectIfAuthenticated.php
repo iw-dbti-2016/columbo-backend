@@ -4,9 +4,11 @@ namespace TravelCompanion\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use TravelCompanion\Traits\APIResponses;
 
 class RedirectIfAuthenticated
 {
+	use APIResponses;
     /**
      * Handle an incoming request.
      *
@@ -19,10 +21,7 @@ class RedirectIfAuthenticated
     {
         if (Auth::guard($guard)->check()) {
             return $request->expectsJSON()
-                    ? response()->json([
-                        "success" => false,
-                        "message" => "You cannot be logged in to make this request.",
-                    ], 403)
+                    ? $this->unauthorizedResponse("You cannot be logged in to make this request.")
                     : redirect()->route('app');
         }
 

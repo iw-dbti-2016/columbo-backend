@@ -17,7 +17,7 @@ class SectionCreateTest extends TestCase
 	/** @test */
 	public function users_can_create_sections_in_their_reports()
 	{
-		$this->withoutExceptionHandling();
+		// $this->withoutExceptionHandling();
 		$user   = $this->createUser();
 		$report = $this->createReport($user);
 
