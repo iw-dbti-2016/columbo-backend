@@ -21,7 +21,14 @@ class TripDataValidationTest extends TestCase
 		foreach($this->getInvalidFields() as $field) {
 			$responses[] = $this->expectJSON()
 								->actingAs($user)
-								->post("/api/v1/trips", $this->getTestDataWith($field));
+								->post("/api/v1/trips", $this->getTestDataWith($field, null, [
+									"relationships" => [
+										"owner" => [
+											"type" => "user",
+											"id"   => $user->id
+										],
+									],
+								]));
 		}
 
 		foreach ($responses as $response) {
@@ -66,7 +73,14 @@ class TripDataValidationTest extends TestCase
 		foreach($required_fields as $field) {
 			$responses[] = $this->expectJSON()
 								->actingAs($user)
-								->post("/api/v1/trips", $this->getTestDataWithout($field));
+								->post("/api/v1/trips", $this->getTestDataWithout($field, null, [
+									"relationships" => [
+										"owner" => [
+											"type" => "user",
+											"id"   => $user->id
+										],
+									],
+								]));
 		}
 
 		foreach ($responses as $response) {

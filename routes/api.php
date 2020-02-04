@@ -64,6 +64,10 @@ Route::group(['prefix' => 'v1'], function() {
 		Route::group(['prefix' => 'locations'], function() {
 			Route::post('/', 'locationController@store');
 		});
+
+		Route::group(['prefix' => 'pois'], function() {
+			//
+		});
 	});
 });
 

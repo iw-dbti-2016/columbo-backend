@@ -13,7 +13,7 @@ trait APIResponses
 				[
 					"status" => "401",
 					"title" => "Unauthenticated",
-					"details"  => $msg,
+					"detail"  => $msg,
 				],
 			],
 		], 401);
@@ -33,11 +33,24 @@ trait APIResponses
 			"errors" => [
 				[
 					"status" => "403",
-					"title" => "Not authorized",
-					"description" => $msg
+					"title"  => "Not authorized",
+					"detail" => $msg
 				],
 			],
 		], 403);
+	}
+
+	public function badRequestResponse($msg="Something was wrong with your request.")
+	{
+		return response()->json([
+			"errors" => [
+				[
+					"status" => "400",
+					"title"  => "Bad Request",
+					"detail" => $msg,
+				],
+			],
+		], 400);
 	}
 
 	public function validationFailedResponse(Validator $validator)

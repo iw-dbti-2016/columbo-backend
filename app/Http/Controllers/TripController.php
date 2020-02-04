@@ -7,16 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Exceptions\AuthorizationException;
+use TravelCompanion\Exceptions\BadRequestException;
+use TravelCompanion\Exceptions\RequestStructureException;
 use TravelCompanion\Exceptions\ValidationException;
 use TravelCompanion\Http\Resources\Trip as TripResource;
 use TravelCompanion\Rules\Visibility;
 use TravelCompanion\Traits\APIResponses;
+use TravelCompanion\Traits\RequestFormat;
 use TravelCompanion\Trip;
 use TravelCompanion\User;
 
 class TripController extends Controller
 {
-	use APIResponses;
+	use APIResponses, RequestFormat;
 
 	public function get(Trip $trip)
 	{
@@ -31,9 +34,15 @@ class TripController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		$this->validateData($request->all());
+		$data = $request->all();
 
-		$trip = $request->user()->tripsOwner()->create($request->all()["data"]["attributes"]);
+		$this->validateRequestStructureOrFail($data);
+		$this->validateRelationshipsPresentOrFail($data, ["owner"]);
+		$this->validateOwnerOrFail($request);
+
+		$this->validateData($data);
+
+		$trip = $request->user()->tripsOwner()->create($data["data"]["attributes"]);
 
 		return (new TripResource($trip))
 					->response()
@@ -88,6 +97,13 @@ class TripController extends Controller
 		if ($validator->fails()) {
 			throw new ValidationException($validator);
 		}
+	}
+
+	private function validateOwnerOrFail(Request $request)
+	{
+		if ($request->all()["data"]["relationships"]["owner"]["type"] != "user" ||
+			$request->all()["data"]["relationships"]["owner"]["id"] != $request->user()->id)
+			throw new BadRequestException("The owner is not correct.");
 	}
 
 	private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
