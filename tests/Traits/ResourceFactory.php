@@ -2,6 +2,7 @@
 
 namespace Tests\Traits;
 
+use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Crypt;
 use TravelCompanion\Location;
@@ -99,14 +100,16 @@ trait ResourceFactory
 	 */
 	protected function createLocation(User $user=null, $locationReferencer=null, $data=[])
 	{
-		if ($user == null) $user = $this->createUser();
+		if ($user               == null) $user               = $this->createUser();
+		if ($locationReferencer == null) $locationReferencer = $this->createSection($user);
+
+		if (isset($data["coordinates"]) &&
+			is_array($data["coordinates"])) $data["coordinates"] = new Point($data["coordinates"][0],$data["coordinates"][1]);
 
 		$location = $user->locations()->save(factory(Location::class)->make($data));
 
-		if ($locationReferencer != null) {
-			$locationReferencer->locationable()->associate($location);
-			$locationReferencer->save();
-		}
+		$locationReferencer->locationable()->associate($location);
+		$locationReferencer->save();
 
 		return $location;
 	}

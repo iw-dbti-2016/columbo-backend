@@ -42,6 +42,13 @@ trait TestHelpers
 	// TEST DATA HELPERS //
 	///////////////////////
 
+	/**
+	 * Returns the testdata.
+	 *
+	 * @param	Integer|null	$id
+	 * @param	Array			$others	Extra items to add to the testdata
+	 * @return	Array
+	 */
 	protected function getTestData($id=null, $others=[])
 	{
 		return $this->wrapInStructure([], $id, $others);
@@ -51,8 +58,9 @@ trait TestHelpers
 	 * Returns the test-data with extra keys or
 	 * 	specific keys overwritten.
 	 *
-	 * @param	Array	$replacement
-	 * @param	Integer	$id
+	 * @param	Array			$replacement
+	 * @param	Integer|null	$id
+	 * @param	Array			$others			Extra items to add to the test-data
 	 * @return	Array
 	 */
 	protected function getTestDataWith($replacement, $id=null, $others=[])
@@ -61,10 +69,12 @@ trait TestHelpers
 	}
 
 	/**
-	 * Return the test-data without soecified keys.
+	 * Return the test-data without specified keys.
 	 *
-	 * @param  Array/String $unset
-	 * @return Array
+	 * @param	Array|String	$unset
+	 * @param	Integer|null	$id
+	 * @param	Array			$others			Extra items to add to the test-data
+	 * @return	Array
 	 */
 	protected function getTestDataWithout($unset, $id=null, $others=[])
 	{
@@ -77,11 +87,24 @@ trait TestHelpers
 		throw new TestException("Method getTestAttributes should be overridden.");
 	}
 
+	/**
+	 * Returns the test-attributes with extra keys or
+	 * 	specific keys overwritten.
+	 *
+	 * @param	Array	$replacement
+	 * @return	Array
+	 */
 	protected function getTestAttributesWith($replacement)
 	{
 		return array_replace($this->getTestAttributes(), $replacement);
 	}
 
+	/**
+	 * Returns the test-attributes without specified keys.
+	 *
+	 * @param	Array|String	$unset
+	 * @return	Array
+	 */
 	protected function getTestAttributesWithout($unset)
 	{
 		$array = $this->getTestAttributes();
@@ -97,6 +120,18 @@ trait TestHelpers
 		return $array;
 	}
 
+	/**
+	 * Wraps the given attributes in the valid
+	 * 	request-structure as specified by JSON:API.
+	 * 	Others are simply appended if specified.
+	 * 	The getTestAttributes-method is used when
+	 * 	no attributes are specified.
+	 *
+	 * @param	Array			$attributes
+	 * @param	Integer|null	$id
+	 * @param	Array			$others		Extra data to merge in the structure.
+	 * @return	Array
+	 */
 	private function wrapInStructure($attributes=[], $id=null, $others=[])
 	{
 		$data = [

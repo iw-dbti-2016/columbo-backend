@@ -62,7 +62,10 @@ Route::group(['prefix' => 'v1'], function() {
 		});
 
 		Route::group(['prefix' => 'locations'], function() {
+			Route::get('/{location}', 'locationController@get');
 			Route::post('/', 'locationController@store');
+			Route::patch('/{location}', 'locationController@update');
+			Route::delete('/{location}', 'locationController@destroy');
 		});
 
 		Route::group(['prefix' => 'pois'], function() {

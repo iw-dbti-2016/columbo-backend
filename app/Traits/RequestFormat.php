@@ -21,7 +21,7 @@ trait RequestFormat
 			foreach ($relationships as $relationship) {
 				if (! isset($relationship["type"]) ||
 					! isset($relationship["id"]))
-					throw new BadRequestException("Relationships require type and id.");
+					throw new BadRequestException("Relationships require at least type and id.");
 			}
 		}
 	}
@@ -53,5 +53,17 @@ trait RequestFormat
 	protected function hasRelationship($data, $name)
 	{
 		return isset($data["data"]["relationships"][$name]);
+	}
+
+	protected function validateOwnerRelationship($data, $user)
+	{
+		$owner = $this->retrieveRelationshipOrFail($data, "owner");
+
+		if (! isset($owner["type"]) ||
+			! isset($owner["id"]))
+			throw new BadRequestException("The owner is not specified correctly.");
+
+		if ($owner["id"] !== $user->id)
+			throw new BadRequestException("The owner does not correspond to the requesting user.");
 	}
 }

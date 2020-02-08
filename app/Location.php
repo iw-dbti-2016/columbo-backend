@@ -5,6 +5,7 @@ namespace TravelCompanion;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use TravelCompanion\Action;
 use TravelCompanion\Plan;
 use TravelCompanion\Section;
@@ -12,7 +13,7 @@ use TravelCompanion\Traits\Visibility;
 
 class Location extends Model
 {
-    use SpatialTrait, Visibility;
+    use SpatialTrait, Visibility, SoftDeletes;
 
     protected $fillable = [
         "is_draft",
