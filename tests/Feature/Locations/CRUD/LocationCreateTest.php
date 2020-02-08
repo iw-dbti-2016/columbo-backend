@@ -51,7 +51,6 @@ class LocationCreateTest extends TestCase
 	/** @test */
 	public function users_can_create_locations()
 	{
-		$this->withoutExceptionHandling();
 		$user = $this->createUser();
 
 		$response = $this->expectJSON()
