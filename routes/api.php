@@ -43,6 +43,9 @@ Route::group(['prefix' => 'v1'], function() {
 			Route::post('/', 'tripController@store');
 			Route::patch('/{trip}', 'tripController@update');
 			Route::delete('/{trip}', 'tripController@destroy');
+
+			Route::post('/{trip}/relationships/members', 'tripController@addMembers');
+			Route::delete('/{trip}/relationships/members', 'tripController@removeMembers');
 		});
 
 		Route::group(['prefix' => 'reports'], function() {

@@ -3,6 +3,7 @@
 namespace TravelCompanion\Exceptions;
 
 use Exception;
+use TravelCompanion\Traits\APIResponses;
 
 class RequestStructureException extends Exception
 {

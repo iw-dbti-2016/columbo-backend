@@ -43,6 +43,10 @@ class TripController extends Controller
 		$this->validateData($data);
 
 		$trip = $request->user()->tripsOwner()->create($data["data"]["attributes"]);
+		$trip->members()->attach($request->user(), [
+			"join_date"		=> $data["data"]["attributes"]["start_date"],
+			"leave_date"	=> $data["data"]["attributes"]["end_date"],
+		]);
 
 		return (new TripResource($trip))
 					->response()
@@ -111,5 +115,37 @@ class TripController extends Controller
 		if ($resource->user_id != $user->id) {
 			throw new AuthorizationException();
 		}
+	}
+
+	public function addMembers(Request $request, Trip $trip)
+	{
+		$data = $this->prepareMembers($request->all()["data"]);
+
+		$trip->members()->syncWithoutDetaching($data);
+	}
+
+	public function removeMembers(Request $request, Trip $trip)
+	{
+		$ids = [];
+
+		foreach ($request->all()["data"] as $member) {
+			$ids[] = $member["id"];
+		}
+
+		$trip->members()->detach($ids);
+	}
+
+	private function prepareMembers($data)
+	{
+		$members = [];
+
+		foreach ($data as $member) {
+			$members[$member["id"]] = [
+				"join_date"		=> $member["join_date"],
+				"leave_date"	=> $member["leave_date"],
+			];
+		}
+
+		return $members;
 	}
 }
