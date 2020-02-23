@@ -43,7 +43,6 @@ class MemberRelationTest extends TestCase
 	/** @test */
 	public function a_user_can_add_a_member()
 	{
-		$this->withoutExceptionHandling();
 		$user = $this->createUser();
 		$user2 = $this->createUser();
 		$user3 = $this->createUser();
@@ -93,7 +92,6 @@ class MemberRelationTest extends TestCase
 	/** @test */
 	public function a_user_can_update_a_member()
 	{
-		$this->withoutExceptionHandling();
 		$user = $this->createUser();
 		$user2 = $this->createUser();
 		$user3 = $this->createUser();
@@ -146,7 +144,6 @@ class MemberRelationTest extends TestCase
 	/** @test */
 	public function a_user_can_remove_a_member()
 	{
-		$this->withoutExceptionHandling();
 		$user = $this->createUser();
 		$user2 = $this->createUser();
 		$user3 = $this->createUser();
@@ -205,13 +202,43 @@ class MemberRelationTest extends TestCase
 	/** @test */
 	public function a_user_can_accept_a_membership_request()
 	{
+		$this->withoutExceptionHandling();
 
+		$user = $this->createUser();
+		$user2 = $this->createUser();
+		$trip = $this->createTrip($user);
+		$this->createTripMember($user2, $trip);
+
+		$response = $this->expectJSON()
+						 ->actingAs($user2)
+						 ->post("/api/v1/trips/{$trip->id}/relationships/members/accept");
+
+
+		$response->assertStatus(200);
+		$this->assertDatabaseHas("trip_user_role_members", [
+			"user_id"             => $user2->id,
+			"invitation_accepted" => true,
+		]);
 	}
 
 	/** @test */
 	public function a_user_can_decline_a_membership_request()
 	{
+		$this->withoutExceptionHandling();
 
+		$user = $this->createUser();
+		$user2 = $this->createUser();
+		$trip = $this->createTrip($user);
+		$this->createTripMember($user2, $trip);
+
+		$response = $this->expectJSON()
+						 ->actingAs($user2)
+						 ->post("/api/v1/trips/{$trip->id}/relationships/members/decline");
+
+		$response->assertStatus(200);
+		$this->assertDatabaseMissing("trip_user_role_members", [
+			"user_id" => $user2->id,
+		]);
 	}
 
 	protected function getTestAttributes()

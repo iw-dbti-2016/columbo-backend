@@ -40,6 +40,14 @@ trait ResourceFactory
 		return $user->tripsOwner()->save(factory(Trip::class)->make($data));
 	}
 
+	protected function createTripMember(User $user, Trip $trip=null, $data=[])
+	{
+		if ($trip == null)	$trip = $this->createTrip($user);
+		if ($data == [])	$data = ["join_date" => "2020-01-01", "leave_date" => "2021-01-01"];
+
+		return $trip->members()->attach($user->id, $data);
+	}
+
 	/**
 	 * Creates a report. If data is passed, it is used
 	 * 	and if no trip is passed, it is created using

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Exceptions\AuthorizationException;
 use TravelCompanion\Exceptions\BadRequestException;
 use TravelCompanion\Exceptions\RequestStructureException;
+use TravelCompanion\Exceptions\ResourceNotFoundException;
 use TravelCompanion\Exceptions\ValidationException;
 use TravelCompanion\Http\Resources\Trip as TripResource;
 use TravelCompanion\Rules\Visibility;
@@ -147,5 +148,23 @@ class TripController extends Controller
 		}
 
 		return $members;
+	}
+
+	public function acceptInvite(Request $request, Trip $trip)
+	{
+		$trip->members()
+			 ->updateExistingPivot(
+			 	$request->user(),
+			 	["invitation_accepted" => true]
+			 );
+
+		return response()->json([], 200);
+	}
+
+	public function declineInvite(Request $request, Trip $trip)
+	{
+		$trip->members()->detach($request->user());
+
+		return response()->json([], 200);
 	}
 }

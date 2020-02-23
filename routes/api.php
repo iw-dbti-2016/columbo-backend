@@ -46,6 +46,8 @@ Route::group(['prefix' => 'v1'], function() {
 
 			Route::post('/{trip}/relationships/members', 'tripController@addMembers');
 			Route::delete('/{trip}/relationships/members', 'tripController@removeMembers');
+			Route::post('/{trip}/relationships/members/accept', 'tripController@acceptInvite');
+			Route::post('/{trip}/relationships/members/decline', 'tripController@declineInvite');
 		});
 
 		Route::group(['prefix' => 'reports'], function() {
