@@ -16,6 +16,6 @@ class PermissionTest extends TestCase
     {
         $permission = factory(Permission::class)->create();
 
-        $this->assertDatabaseHas('permissions', ['id' => $permission->id]);
+        $this->assertDatabaseHas('permissions', ['label' => $permission->label]);
     }
 }

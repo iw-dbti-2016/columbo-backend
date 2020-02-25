@@ -16,7 +16,7 @@ class CreateTripUserMembersTable extends Migration
         Schema::create('trip_user_role_members', function (Blueprint $table) {
             $table->bigInteger('trip_id')->unsigned()->index();
             $table->bigInteger('user_id')->unsigned()->index();
-            $table->bigInteger('role_id')->unsigned()->nullable()->index(); // NOT NULLABLE WHEN FINISHED
+            $table->string('role_label', 50)->nullable()->index(); // NOT NULLABLE WHEN FINISHED
 
             /* DATA */
             $table->boolean('invitation_accepted')->default(false);
@@ -35,8 +35,8 @@ class CreateTripUserMembersTable extends Migration
                     ->on('users')
                     ->onDelete('cascade');
 
-            $table->foreign('role_id')
-                    ->references('id')
+            $table->foreign('role_label')
+                    ->references('label')
                     ->on('roles')
                     ->onDelete('cascade');
 

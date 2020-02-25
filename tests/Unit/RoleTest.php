@@ -16,6 +16,6 @@ class RoleTest extends TestCase
     {
         $role = factory(Role::class)->create();
 
-        $this->assertDatabaseHas('roles', ['id' => $role->id]);
+        $this->assertDatabaseHas('roles', ['label' => $role->label]);
     }
 }

@@ -6,32 +6,31 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreatePermissionsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('permissions', function (Blueprint $table) {
-            $table->bigIncrements('id');
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::create('permissions', function (Blueprint $table) {
+			$table->string('label', 50)->primary();	// Label used in application
 
-            /* DATA */
-            $table->string('name', 100)->unique();   // Name used in application
-            $table->string('label', 100);            // Visual label for clients
-            $table->text('description')->nullable();
+			/* DATA */
+			$table->string('name', 50);				// Name of the permission
+			$table->text('description')->nullable();
 
-            $table->timestamps();
-        });
-    }
+			$table->timestamps();
+		});
+	}
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('permissions');
-    }
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::dropIfExists('permissions');
+	}
 }

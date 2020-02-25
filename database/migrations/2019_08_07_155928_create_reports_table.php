@@ -24,6 +24,7 @@ class CreateReportsTable extends Migration
             $table->string('title', 100);
             $table->date('date')->nullable();
             $table->text('description')->nullable();
+            $table->boolean('is_locked')->default(false);
 
             /* VISIBILITY */
             $table->tinyInteger('visibility')->unsigned()->index();
