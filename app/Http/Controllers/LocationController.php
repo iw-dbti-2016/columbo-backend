@@ -25,6 +25,8 @@ class LocationController extends Controller
      */
     public function get(Location $location)
     {
+    	$this->authorize('view', $location);
+
         return new LocationResource($location);
     }
 
@@ -36,6 +38,8 @@ class LocationController extends Controller
      */
     public function store(Request $request)
     {
+    	$this->authorize('create', Location::class);
+
         $this->validateOwnerRelationship($request->all(), $request->user());
         $this->validateData($request->all());
 
@@ -60,7 +64,8 @@ class LocationController extends Controller
      */
     public function update(Request $request, Location $location)
     {
-        $this->ensureUserOwnsResourceOrFail($request->user(), $location);
+    	$this->authorize('update', $location);
+
         $this->validateData($request->all());
 
         $attributes = $request->all()["data"]["attributes"];
@@ -79,7 +84,7 @@ class LocationController extends Controller
      */
     public function destroy(Request $request, Location $location)
     {
-        $this->ensureUserOwnsResourceOrFail($request->user(), $location);
+		$this->authorize('delete', $location);
 
         $location->delete();
 
@@ -101,13 +106,6 @@ class LocationController extends Controller
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
-        }
-    }
-
-    private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
-    {
-        if ($resource->user_id != $user->id) {
-            throw new AuthorizationException();
         }
     }
 }

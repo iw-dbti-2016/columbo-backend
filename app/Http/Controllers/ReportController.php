@@ -23,6 +23,8 @@ class ReportController extends Controller
 
 	public function list()
 	{
+		$this->authorize('viewAny', Report::class);
+
 		return new ReportCollection(Report::all());
 	}
 
@@ -31,9 +33,9 @@ class ReportController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function get(Trip $trip, Report $report)
+	public function get(Report $report)
 	{
-		// $this->ensureUrlCorrectnessOrFail($trip, $report);
+		$this->authorize('view', $report);
 
 		return new ReportResource($report);
 	}
@@ -47,7 +49,8 @@ class ReportController extends Controller
 	public function store(Request $request)
 	{
 		$trip = $this->retreiveTripOrFail($request);
-		$this->ensureUserOwnsResourceOrFail($request->user(), $trip);
+		$this->authorize('create', [Report::class, $trip]);
+
 		$this->validateDataOrFail($request->all());
 
 		$report = new Report($request->all()["data"]["attributes"]);
@@ -71,8 +74,8 @@ class ReportController extends Controller
 	 */
 	public function update(Request $request, Report $report)
 	{
-		// $this->ensureUrlCorrectnessOrFail($trip, $report);
-		$this->ensureUserOwnsResourceOrFail($request->user(), $report);
+		$this->authorize('update', $report);
+
 		$this->validateDataOrFail($request->all());
 
 		$report->update($request->all()["data"]["attributes"]);
@@ -88,8 +91,7 @@ class ReportController extends Controller
 	 */
 	public function destroy(Request $request, Report $report)
 	{
-		// $this->ensureUrlCorrectnessOrFail($trip, $report);
-		$this->ensureUserOwnsResourceOrFail($request->user(), $report);
+		$this->authorize('delete', $report);
 
 		$report->delete();
 
@@ -116,19 +118,5 @@ class ReportController extends Controller
 		$relationship_object = $request->all()["data"]["relationships"]["trip"];
 
 		return Trip::findOrFail($relationship_object["id"]);
-	}
-
-	private function ensureUrlCorrectnessOrFail(Trip $trip, Report $report)
-	{
-		if ($report->trip_id != $trip->id) {
-			throw new ResourceNotFoundException();
-		}
-	}
-
-	private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
-	{
-		if ($resource->user_id != $user->id) {
-			throw new AuthorizationException();
-		}
 	}
 }

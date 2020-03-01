@@ -17,7 +17,6 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
     use Notifiable;
-    use SpatialTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -49,10 +48,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-    ];
-
-    protected $spatialFields = [
-        'home_location',
     ];
 
     /**

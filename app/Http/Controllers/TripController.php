@@ -24,6 +24,8 @@ class TripController extends Controller
 
 	public function get(Trip $trip)
 	{
+		$this->authorize('view', $trip);
+
 		return new TripResource($trip);
 	}
 
@@ -35,6 +37,8 @@ class TripController extends Controller
 	 */
 	public function store(Request $request)
 	{
+		$this->authorize('create', Trip::class);
+
 		$data = $request->all();
 
 		$this->validateRequestStructureOrFail($data);
@@ -63,7 +67,8 @@ class TripController extends Controller
 	 */
 	public function update(Request $request, Trip $trip)
 	{
-		$this->ensureUserOwnsResourceOrFail($request->user(), $trip);
+		$this->authorize('update', $trip);
+
 		$this->validateData($request->all());
 
 		$trip->update($request->all()["data"]["attributes"]);
@@ -79,7 +84,7 @@ class TripController extends Controller
 	 */
 	public function destroy(Request $request, Trip $trip)
 	{
-		$this->ensureUserOwnsResourceOrFail($request->user(), $trip);
+		$this->authorize('delete', $trip);
 
 		$trip->delete();
 
@@ -111,15 +116,10 @@ class TripController extends Controller
 			throw new BadRequestException("The owner is not correct.");
 	}
 
-	private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
-	{
-		if ($resource->user_id != $user->id) {
-			throw new AuthorizationException();
-		}
-	}
-
 	public function addMembers(Request $request, Trip $trip)
 	{
+		$this->authorize('addMembers', $trip);
+
 		$data = $this->prepareMembers($request->all()["data"]);
 
 		$trip->members()->syncWithoutDetaching($data);
@@ -127,6 +127,8 @@ class TripController extends Controller
 
 	public function removeMembers(Request $request, Trip $trip)
 	{
+		$this->authorize('removeMembers', $trip);
+
 		$ids = [];
 
 		foreach ($request->all()["data"] as $member) {
@@ -152,6 +154,8 @@ class TripController extends Controller
 
 	public function acceptInvite(Request $request, Trip $trip)
 	{
+		$this->authorize('acceptInvite', $trip);
+
 		$trip->members()
 			 ->updateExistingPivot(
 			 	$request->user(),
@@ -163,6 +167,8 @@ class TripController extends Controller
 
 	public function declineInvite(Request $request, Trip $trip)
 	{
+		$this->authorize('declineInvite', $trip);
+
 		$trip->members()->detach($request->user());
 
 		return response()->json([], 200);

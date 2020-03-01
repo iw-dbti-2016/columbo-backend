@@ -23,7 +23,7 @@ class SectionController extends Controller
 
 	public function list()
 	{
-		// $this->ensureUrlCorrectnessOrFail($trip, $report);
+		$this->authorize('viewAny', Section::class);
 
 		$data = Section::noDraft()
 					->published()
@@ -42,7 +42,7 @@ class SectionController extends Controller
 	 */
 	public function get(Request $request, Section $section)
 	{
-		// $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
+		$this->authorize('view', $section);
 
 		$data = $section
 					->with('locationable:id,is_draft,coordinates,name,info,visibility')
@@ -60,10 +60,8 @@ class SectionController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		// $this->ensureUrlCorrectnessOrFail($trip, $report);
-		// $this->ensureUserOwnsResourceOrFail($request->user(), $report);
 		$report = $this->retrieveReportOrFail($request);
-		$this->ensureUserOwnsResourceOrFail($request->user(), $report);
+		$this->authorize('create', [Section::class, $report]);
 
 		$this->validateData($request->all());
 
@@ -88,8 +86,7 @@ class SectionController extends Controller
 	 */
 	public function update(Request $request, Section $section)
 	{
-		// $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
-		$this->ensureUserOwnsResourceOrFail($request->user(), $section);
+		$this->authorize('update', $section);
 
 		$this->validateData($request->all());
 
@@ -106,8 +103,7 @@ class SectionController extends Controller
 	 */
 	public function destroy(Request $request, Section $section)
 	{
-		// $this->ensureUrlCorrectnessOrFail($trip, $report, $section);
-		$this->ensureUserOwnsResourceOrFail($request->user(), $section);
+		$this->authorize('delete', $section);
 
 		$section->delete();
 
@@ -136,19 +132,5 @@ class SectionController extends Controller
 		$relationship_object = $request->all()["data"]["relationships"]["report"];
 
 		return Report::findOrFail($relationship_object["id"]);
-	}
-
-	private function ensureUrlCorrectnessOrFail(Trip $trip, Report $report, Section $section=null)
-	{
-		if ($report->trip_id != $trip->id || ($section != null && $section->report_id != $report->id) ) {
-			throw new ResourceNotFoundException();
-		}
-	}
-
-	private function ensureUserOwnsResourceOrFail(User $user, Model $resource)
-	{
-		if ($resource->user_id != $user->id) {
-			throw new AuthorizationException();
-		}
 	}
 }

@@ -3,6 +3,7 @@
 namespace TravelCompanion\Exceptions;
 
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -52,6 +53,10 @@ class Handler extends ExceptionHandler
     {
         if ($exception instanceof AuthenticationException && $request->expectsJson()) {
             return $this->unauthenticatedResponse($exception->getMessage());
+        }
+
+		if ($exception instanceof AuthorizationException && $request->expectsJson()) {
+            return $this->unauthorizedResponse();
         }
 
         return parent::render($request, $exception);
