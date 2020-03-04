@@ -16,9 +16,9 @@ class LocationPolicy
 	 * @param  \TravelCompanion\User  $user
 	 * @return mixed
 	 */
-	public function viewAny(User $user)
+	public function viewAny(User $user=null)
 	{
-		//
+		return true;
 	}
 
 	/**
@@ -28,7 +28,7 @@ class LocationPolicy
 	 * @param  \TravelCompanion\Location  $location
 	 * @return mixed
 	 */
-	public function view(User $user, Location $location)
+	public function view(User $user=null, Location $location)
 	{
 		return true;
 	}

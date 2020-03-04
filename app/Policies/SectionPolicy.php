@@ -17,7 +17,7 @@ class SectionPolicy
 	 * @param  \TravelCompanion\User  $user
 	 * @return mixed
 	 */
-	public function viewAny(User $user)
+	public function viewAny(User $user=null)
 	{
 		return true;
 	}
@@ -29,7 +29,7 @@ class SectionPolicy
 	 * @param  \TravelCompanion\Section  $section
 	 * @return mixed
 	 */
-	public function view(User $user, Section $section)
+	public function view(User $user=null, Section $section)
 	{
 		return true;
 	}

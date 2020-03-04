@@ -16,9 +16,9 @@ class TripPolicy
 	 * @param  \TravelCompanion\User  $user
 	 * @return mixed
 	 */
-	public function viewAny(User $user)
+	public function viewAny(User $user=null)
 	{
-		//
+		return true;
 	}
 
 	/**
@@ -28,7 +28,7 @@ class TripPolicy
 	 * @param  \TravelCompanion\Trip  $trip
 	 * @return mixed
 	 */
-	public function view(User $user, Trip $trip)
+	public function view(User $user=null, Trip $trip)
 	{
 		return true;
 	}

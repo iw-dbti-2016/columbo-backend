@@ -17,7 +17,7 @@ class ReportPolicy
 	 * @param  \TravelCompanion\User  $user
 	 * @return mixed
 	 */
-	public function viewAny(User $user)
+	public function viewAny(User $user=null)
 	{
 		return true;
 	}
@@ -29,7 +29,7 @@ class ReportPolicy
 	 * @param  \TravelCompanion\Report  $report
 	 * @return mixed
 	 */
-	public function view(User $user, Report $report)
+	public function view(User $user=null, Report $report)
 	{
 		return true;
 	}

@@ -16,9 +16,9 @@ class POIPolicy
 	 * @param  \TravelCompanion\User  $user
 	 * @return mixed
 	 */
-	public function viewAny(User $user)
+	public function viewAny(User $user=null)
 	{
-		//
+		return true;
 	}
 
 	/**
@@ -28,9 +28,9 @@ class POIPolicy
 	 * @param  \TravelCompanion\POI  $pOI
 	 * @return mixed
 	 */
-	public function view(User $user, POI $pOI)
+	public function view(User $user=null, POI $pOI)
 	{
-		//
+		return true;
 	}
 
 	/**
