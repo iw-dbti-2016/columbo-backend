@@ -2,6 +2,7 @@
 
 namespace TravelCompanion\Providers;
 
+use Illuminate\Http\Resources\Json\Resource;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Resource::withoutWrapping();
+
         Schema::defaultStringLength(191);
 
         Blade::directive('clean', function ($string) {

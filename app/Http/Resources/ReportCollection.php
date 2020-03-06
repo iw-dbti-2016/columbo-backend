@@ -14,11 +14,15 @@ class ReportCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return [
-        	"data" => $this->collection,
-        	"links" => [
-        		"self" => url("/reports"),
-        	],
-        ];
+        return
+        // [
+        	// "data" =>
+        	$this->collection
+        	// ,
+        	// "links" => [
+        		// "self" => url("/reports"),
+        	// ],
+        // ];
+        ;
     }
 }

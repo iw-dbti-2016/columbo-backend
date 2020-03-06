@@ -14,11 +14,15 @@ class TripCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return [
-        	"data" => $this->collection,
-        	"links" => [
-        		"self" => url("/trips"),
-        	],
-        ];
+        return
+        // [
+        	// "data" =>
+        	$this->collection
+        	// ,
+        	// "links" => [
+        		// "self" => url("/trips"),
+        	// ],
+        // ];
+        ;
     }
 }

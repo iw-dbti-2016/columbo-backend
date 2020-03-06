@@ -25,12 +25,13 @@ class SectionController extends Controller
 	{
 		$this->authorize('viewAny', Section::class);
 
-		$data = Section::noDraft()
-					->published()
-					->orderRecent()
-					->with('locationable:id,coordinates,name,info')
-					->with('owner:id,first_name,middle_name,last_name,username')
-					->get();
+		$data = Section::all();
+		//noDraft()
+					// ->published()
+					// ->orderRecent()
+					// ->with('locationable:id,coordinates,name,info')
+					// ->with('owner:id,first_name,middle_name,last_name,username')
+					// ->get();
 
 		return new SectionCollection($data);
 	}

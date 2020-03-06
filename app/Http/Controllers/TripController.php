@@ -12,6 +12,7 @@ use TravelCompanion\Exceptions\RequestStructureException;
 use TravelCompanion\Exceptions\ResourceNotFoundException;
 use TravelCompanion\Exceptions\ValidationException;
 use TravelCompanion\Http\Resources\Trip as TripResource;
+use TravelCompanion\Http\Resources\TripCollection;
 use TravelCompanion\Rules\Visibility;
 use TravelCompanion\Traits\APIResponses;
 use TravelCompanion\Traits\RequestFormat;
@@ -21,6 +22,13 @@ use TravelCompanion\User;
 class TripController extends Controller
 {
 	use APIResponses, RequestFormat;
+
+	public function list()
+	{
+		$this->authorize('viewAny', Trip::class);
+
+		return new TripCollection(Trip::all());
+	}
 
 	public function get(Trip $trip)
 	{
