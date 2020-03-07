@@ -19,8 +19,10 @@ class Section extends Model
     protected $fillable = [
         "content",
         "image",
+        "image_caption",
         "start_time",
         "end_time",
+        "temperature",
         "is_draft",
         "visibility",
         "published_at",
@@ -31,8 +33,10 @@ class Section extends Model
         "is_draft",
         "content",
         "image",
+        "image_caption",
         "start_time",
         "end_time",
+        "temperature",
         "visibility", // Sometimes???
         "published_at",
         "deleted_at",

@@ -15,21 +15,23 @@ class Section extends JsonResource
 	public function toArray($request)
 	{
 		return [
-			"data" => [
-				"type"       => "section",
+			// "data" => [
+				// "type"       => "section",
 				"id"         => $this->id,
-				"attributes" => [
+				// "attributes" => [
 					"is_draft"     => $this->is_draft,
 					"content"      => $this->content,
 					"image"        => $this->image,
-					"time"         => $this->time,
-					"duration"     => $this->duration,
+					"image_caption"=> $this->image_caption,
+					"start_time"   => $this->start_time,
+					"end_time"     => $this->end_time,
+					"temperature" => $this->temperature,
 					"published_at" => $this->published_at,
-				],
-			],
-			"links" => [
-				"self" => url("/sections/" . $this->id),
-			],
+				// ],
+			// ],
+			// "links" => [
+				// "self" => url("/sections/" . $this->id),
+			// ],
 		];
 	}
 }
