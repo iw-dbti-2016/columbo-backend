@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-use TravelCompanion\Http\Resources\User;
+use Columbo\Http\Resources\User;
 
 /*
 |--------------------------------------------------------------------------
