@@ -35,6 +35,8 @@ Route::group(['prefix' => 'v1'], function() {
 	Route::get('sections/{section}', 'sectionController@get');
 	Route::get('locations/', 'locationController@list');
 	Route::get('locations/{location}', 'locationController@get');
+	Route::get('pois/', 'poiController@list');
+	Route::get('pois/{poi}', 'poiController@get');
 
 	Route::group(['middleware' => ['auth:api']], function() {
 		Route::get('/user', function(Request $request) {

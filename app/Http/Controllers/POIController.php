@@ -2,20 +2,31 @@
 
 namespace TravelCompanion\Http\Controllers;
 
-use TravelCompanion\POI;
 use Illuminate\Http\Request;
+use TravelCompanion\Http\Resources\POICollection;
+use TravelCompanion\Http\Resources\POI as POIResource;
+use TravelCompanion\POI;
 
 class POIController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
+	public function list()
+	{
+		$this->authorize('viewAny', POI::class);
+
+		return new POICollection(POI::all());
+	}
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function get(POI $poi)
+	{
+		$this->authorize('view', $poi);
+
+		return new POIResource($poi);
+	}
 
     /**
      * Show the form for creating a new resource.
