@@ -25,6 +25,10 @@ class Location extends Model
         "published_at",
     ];
 
+    protected $casts = [
+    	"is_draft" => "boolean",
+    ];
+
     protected $spatialFields = [
     	'coordinates',
     ];
@@ -32,6 +36,10 @@ class Location extends Model
     // public function setCoordinatesAttribute($value) {
     //     $this->coordinates = new Point($value[0], $value[1]);
     // }
+
+    public function getCoordinatesAttribute($coordinates) {
+    	return [$coordinates->getLat(), $coordinates->getLng()];
+    }
 
     public function sections()
     {

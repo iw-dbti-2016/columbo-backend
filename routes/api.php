@@ -33,6 +33,7 @@ Route::group(['prefix' => 'v1'], function() {
 	Route::get('reports/{report}', 'reportController@get');
 	Route::get('sections/', 'sectionController@list');
 	Route::get('sections/{section}', 'sectionController@get');
+	Route::get('locations/', 'locationController@list');
 	Route::get('locations/{location}', 'locationController@get');
 
 	Route::group(['middleware' => ['auth:api']], function() {

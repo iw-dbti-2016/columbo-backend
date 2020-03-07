@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use TravelCompanion\Exceptions\AuthorizationException;
 use TravelCompanion\Exceptions\ValidationException;
 use TravelCompanion\Http\Resources\Location as LocationResource;
+use TravelCompanion\Http\Resources\LocationCollection;
 use TravelCompanion\Location;
 use TravelCompanion\Rules\Visibility;
 use TravelCompanion\Traits\APIResponses;
@@ -18,6 +19,14 @@ use TravelCompanion\User;
 class LocationController extends Controller
 {
     use APIResponses, RequestFormat;
+
+    public function list()
+    {
+    	$this->authorize('viewAny', Location::class);
+
+    	return new LocationCollection(Location::all());
+    }
+
     /**
      * Display a listing of the resource.
      *

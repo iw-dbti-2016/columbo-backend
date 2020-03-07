@@ -15,20 +15,21 @@ class Location extends JsonResource
 	public function toArray($request)
 	{
 		return [
-			"data" => [
-				"type"       => "location",
+			// "data" => [
+				// "type"       => "location",
 				"id"         => $this->id,
-				"attributes" => [
+				// "attributes" => [
 					"is_draft"     => $this->is_draft,
 					"coordinates"  => $this->coordinates,
+					"map_zoom" => $this->map_zoom,
 					"name"         => $this->name,
 					"info"         => $this->info,
 					"published_at" => $this->published_at,
-				],
-			],
-			"links" => [
-				"self" => url("/locations/" . $this->id),
-			],
+				// ],
+			// ],
+			// "links" => [
+				// "self" => url("/locations/" . $this->id),
+			// ],
 		];
 	}
 }
