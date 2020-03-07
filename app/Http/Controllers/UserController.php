@@ -1,12 +1,12 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
 use Illuminate\Http\Request;
-use TravelCompanion\Http\Resources\TripCollection;
-use TravelCompanion\Http\Resources\User as UserResource;
-use TravelCompanion\Traits\APIResponses;
-use TravelCompanion\User;
+use Columbo\Http\Resources\TripCollection;
+use Columbo\Http\Resources\User as UserResource;
+use Columbo\Traits\APIResponses;
+use Columbo\User;
 
 class UserController extends Controller
 {
@@ -15,7 +15,7 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \TravelCompanion\User  $user
+     * @param  \Columbo\User  $user
      * @return \Illuminate\Http\Response
      */
     public function show(User $user)
@@ -27,7 +27,7 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \TravelCompanion\User  $user
+     * @param  \Columbo\User  $user
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, User $user)
@@ -38,7 +38,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \TravelCompanion\User  $user
+     * @param  \Columbo\User  $user
      * @return \Illuminate\Http\Response
      */
     public function destroy(User $user)

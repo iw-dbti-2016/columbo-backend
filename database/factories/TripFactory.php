@@ -4,7 +4,7 @@
 
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
-use TravelCompanion\Trip;
+use Columbo\Trip;
 
 $factory->define(Trip::class, function (Faker $faker) {
     return [

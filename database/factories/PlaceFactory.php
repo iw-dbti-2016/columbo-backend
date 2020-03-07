@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use TravelCompanion\Place;
+use Columbo\Place;
 use Faker\Generator as Faker;
 
 $factory->define(Place::class, function (Faker $faker) {

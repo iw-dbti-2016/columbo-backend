@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Http\Resources;
+namespace Columbo\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

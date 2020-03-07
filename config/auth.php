@@ -67,7 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => TravelCompanion\User::class,
+            'model' => Columbo\User::class,
         ],
 
         // 'users' => [

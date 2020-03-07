@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use Tests\Traits\TestHelpers;
-use TravelCompanion\User;
+use Columbo\User;
 
 class AuthenticationWebTest extends TestCase
 {

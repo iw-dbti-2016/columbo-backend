@@ -1,20 +1,20 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use TravelCompanion\Exceptions\AuthorizationException;
-use TravelCompanion\Exceptions\ValidationException;
-use TravelCompanion\Http\Resources\Location as LocationResource;
-use TravelCompanion\Http\Resources\LocationCollection;
-use TravelCompanion\Location;
-use TravelCompanion\Rules\Visibility;
-use TravelCompanion\Traits\APIResponses;
-use TravelCompanion\Traits\RequestFormat;
-use TravelCompanion\User;
+use Columbo\Exceptions\AuthorizationException;
+use Columbo\Exceptions\ValidationException;
+use Columbo\Http\Resources\Location as LocationResource;
+use Columbo\Http\Resources\LocationCollection;
+use Columbo\Location;
+use Columbo\Rules\Visibility;
+use Columbo\Traits\APIResponses;
+use Columbo\Traits\RequestFormat;
+use Columbo\User;
 
 class LocationController extends Controller
 {
@@ -68,7 +68,7 @@ class LocationController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \TravelCompanion\Location  $location
+     * @param  \Columbo\Location  $location
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Location $location)
@@ -88,7 +88,7 @@ class LocationController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \TravelCompanion\Location  $location
+     * @param  \Columbo\Location  $location
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, Location $location)

@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Traits;
+namespace Columbo\Traits;
 
 use Illuminate\Validation\Validator;
 

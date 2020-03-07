@@ -5,11 +5,12 @@ namespace Tests\Traits;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Crypt;
-use TravelCompanion\Location;
-use TravelCompanion\Report;
-use TravelCompanion\Section;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Location;
+use Columbo\Report;
+use Columbo\Role;
+use Columbo\Section;
+use Columbo\Trip;
+use Columbo\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 trait ResourceFactory
@@ -18,7 +19,7 @@ trait ResourceFactory
 	 * Creates a user. If data is passed, it is used.
 	 *
 	 * @param  array  $data
-	 * @return TravelCompanion\User
+	 * @return Columbo\User
 	 */
 	protected function createUser($data=[])
 	{
@@ -29,9 +30,9 @@ trait ResourceFactory
 	 * Creates a trip. If data is passed, it is used
 	 * 	and if no user is passed, it is created.
 	 *
-	 * @param  TravelCompanion\User|null $user
+	 * @param  Columbo\User|null $user
 	 * @param  array     $data
-	 * @return TravelCompanion\Trip
+	 * @return Columbo\Trip
 	 */
 	protected function createTrip(User $user=null, $data=[])
 	{
@@ -54,10 +55,10 @@ trait ResourceFactory
 	 * 	the user given as first parameter or a new
 	 * 	created user.
 	 *
-	 * @param  TravelCompanion\User|null $user
-	 * @param  TravelCompanion\Trip|null $trip
+	 * @param  Columbo\User|null $user
+	 * @param  Columbo\Trip|null $trip
 	 * @param  array     $data
-	 * @return TravelCompanion\Report
+	 * @return Columbo\Report
 	 */
 	protected function createReport(User $user=null, Trip $trip=null, $data=[])
 	{
@@ -78,10 +79,10 @@ trait ResourceFactory
 	 * 	the used given as first parameter or a new
 	 * 	created user.
 	 *
-	 * @param  TravelCompanion\User|null   $user
-	 * @param  TravelCompanion\Report|null $report
+	 * @param  Columbo\User|null   $user
+	 * @param  Columbo\Report|null $report
 	 * @param  array       $data
-	 * @return TravelCompanion\Section
+	 * @return Columbo\Section
 	 */
 	protected function createSection(User $user=null, Report $report=null, $data=[])
 	{
@@ -102,9 +103,9 @@ trait ResourceFactory
 	 * 	locationReferencer is passed, the location is
 	 * 	associated to that referencer.
 	 *
-	 * @param  TravelCompanion\User|null   $user
+	 * @param  Columbo\User|null   $user
 	 * @param  Location/POI				   $locationReferencer
-	 * @return TravelCompanion\Location
+	 * @return Columbo\Location
 	 */
 	protected function createLocation(User $user=null, $locationReferencer=null, $data=[])
 	{
@@ -120,5 +121,10 @@ trait ResourceFactory
 		$locationReferencer->save();
 
 		return $location;
+	}
+
+	protected function createRole($data=[])
+	{
+		return factory(Role::class)->create($data);
 	}
 }

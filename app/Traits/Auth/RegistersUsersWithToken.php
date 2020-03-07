@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Traits\Auth;
+namespace Columbo\Traits\Auth;
 
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RedirectsUsers;

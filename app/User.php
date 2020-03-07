@@ -1,17 +1,17 @@
 <?php
 
-namespace TravelCompanion;
+namespace Columbo;
 
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use TravelCompanion\Action;
-use TravelCompanion\Currency;
-use TravelCompanion\Location;
-use TravelCompanion\Report;
-use TravelCompanion\Section;
-use TravelCompanion\Trip;
+use Columbo\Action;
+use Columbo\Currency;
+use Columbo\Location;
+use Columbo\Report;
+use Columbo\Section;
+use Columbo\Trip;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail

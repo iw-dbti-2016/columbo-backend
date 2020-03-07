@@ -28,17 +28,17 @@ $app = new Illuminate\Foundation\Application(
 
 $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
-    TravelCompanion\Http\Kernel::class
+    Columbo\Http\Kernel::class
 );
 
 $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
-    TravelCompanion\Console\Kernel::class
+    Columbo\Console\Kernel::class
 );
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    TravelCompanion\Exceptions\Handler::class
+    Columbo\Exceptions\Handler::class
 );
 
 /*

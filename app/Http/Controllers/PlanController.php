@@ -1,8 +1,8 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
-use TravelCompanion\Plan;
+use Columbo\Plan;
 use Illuminate\Http\Request;
 
 class PlanController extends Controller
@@ -41,7 +41,7 @@ class PlanController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \TravelCompanion\Plan  $plan
+     * @param  \Columbo\Plan  $plan
      * @return \Illuminate\Http\Response
      */
     public function show(Plan $plan)
@@ -52,7 +52,7 @@ class PlanController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \TravelCompanion\Plan  $plan
+     * @param  \Columbo\Plan  $plan
      * @return \Illuminate\Http\Response
      */
     public function edit(Plan $plan)
@@ -64,7 +64,7 @@ class PlanController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \TravelCompanion\Plan  $plan
+     * @param  \Columbo\Plan  $plan
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Plan $plan)
@@ -75,7 +75,7 @@ class PlanController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \TravelCompanion\Plan  $plan
+     * @param  \Columbo\Plan  $plan
      * @return \Illuminate\Http\Response
      */
     public function destroy(Plan $plan)

@@ -1,8 +1,8 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
-use TravelCompanion\Currency;
+use Columbo\Currency;
 use Illuminate\Http\Request;
 
 class CurrencyController extends Controller
@@ -41,7 +41,7 @@ class CurrencyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \TravelCompanion\Currency  $currency
+     * @param  \Columbo\Currency  $currency
      * @return \Illuminate\Http\Response
      */
     public function show(Currency $currency)
@@ -52,7 +52,7 @@ class CurrencyController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \TravelCompanion\Currency  $currency
+     * @param  \Columbo\Currency  $currency
      * @return \Illuminate\Http\Response
      */
     public function edit(Currency $currency)
@@ -64,7 +64,7 @@ class CurrencyController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \TravelCompanion\Currency  $currency
+     * @param  \Columbo\Currency  $currency
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Currency $currency)
@@ -75,7 +75,7 @@ class CurrencyController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \TravelCompanion\Currency  $currency
+     * @param  \Columbo\Currency  $currency
      * @return \Illuminate\Http\Response
      */
     public function destroy(Currency $currency)

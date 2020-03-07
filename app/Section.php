@@ -1,16 +1,16 @@
 <?php
 
-namespace TravelCompanion;
+namespace Columbo;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use TravelCompanion\Action;
-use TravelCompanion\Location;
-use TravelCompanion\Report;
-use TravelCompanion\Traits\Visibility;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Action;
+use Columbo\Location;
+use Columbo\Report;
+use Columbo\Traits\Visibility;
+use Columbo\Trip;
+use Columbo\User;
 
 class Section extends Model
 {

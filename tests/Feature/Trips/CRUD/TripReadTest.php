@@ -5,8 +5,8 @@ namespace Tests\Feature\Trips\CRUD;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Trip;
+use Columbo\User;
 
 class TripReadTest extends TestCase
 {

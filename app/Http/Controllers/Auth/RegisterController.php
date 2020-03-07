@@ -1,15 +1,15 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers\Auth;
+namespace Columbo\Http\Controllers\Auth;
 
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use TravelCompanion\Http\Controllers\Controller;
-use TravelCompanion\Traits\Auth\RegistersUsersWithToken;
-use TravelCompanion\User;
+use Columbo\Http\Controllers\Controller;
+use Columbo\Traits\Auth\RegistersUsersWithToken;
+use Columbo\User;
 
 class RegisterController extends Controller
 {
@@ -66,7 +66,7 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \TravelCompanion\User
+     * @return \Columbo\User
      */
     protected function create(array $data)
     {

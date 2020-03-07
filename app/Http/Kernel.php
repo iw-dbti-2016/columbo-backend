@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Http;
+namespace Columbo\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -14,10 +14,10 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        \TravelCompanion\Http\Middleware\TrustProxies::class,
-        \TravelCompanion\Http\Middleware\CheckForMaintenanceMode::class,
+        \Columbo\Http\Middleware\TrustProxies::class,
+        \Columbo\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-        \TravelCompanion\Http\Middleware\TrimStrings::class,
+        \Columbo\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
@@ -28,18 +28,18 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \TravelCompanion\Http\Middleware\EncryptCookies::class,
+            \Columbo\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             // \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \TravelCompanion\Http\Middleware\VerifyCsrfToken::class,
+            \Columbo\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             'cookieToken',
         ],
 
         'api' => [
-            \TravelCompanion\Http\Middleware\EncryptCookies::class,
+            \Columbo\Http\Middleware\EncryptCookies::class,
             'throttle:60,1',
             'bindings',
             'cookieToken',
@@ -54,17 +54,17 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \TravelCompanion\Http\Middleware\Authenticate::class,
+        'auth' => \Columbo\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \TravelCompanion\Http\Middleware\RedirectIfAuthenticated::class,
+        'guest' => \Columbo\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified' => \TravelCompanion\Http\Middleware\EnsureEmailIsVerified::class,
-        'withoutTokenCookies' => \TravelCompanion\Http\Middleware\RedirectWhenTokenCookiesPresent::class,
-        'cookieToken' => \TravelCompanion\Http\Middleware\ConvertCookiesToAuthorizationHeader::class,
+        'verified' => \Columbo\Http\Middleware\EnsureEmailIsVerified::class,
+        'withoutTokenCookies' => \Columbo\Http\Middleware\RedirectWhenTokenCookiesPresent::class,
+        'cookieToken' => \Columbo\Http\Middleware\ConvertCookiesToAuthorizationHeader::class,
     ];
 
     /**
@@ -75,14 +75,14 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewarePriority = [
-        \TravelCompanion\Http\Middleware\EncryptCookies::class,
-        \TravelCompanion\Http\Middleware\ConvertCookiesToAuthorizationHeader::class,
+        \Columbo\Http\Middleware\EncryptCookies::class,
+        \Columbo\Http\Middleware\ConvertCookiesToAuthorizationHeader::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        \TravelCompanion\Http\Middleware\Authenticate::class,
+        \Columbo\Http\Middleware\Authenticate::class,
         \Illuminate\Session\Middleware\AuthenticateSession::class,
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
         \Illuminate\Auth\Middleware\Authorize::class,
-        TravelCompanion\Http\Middleware\EnsureEmailIsVerified::class,
+        Columbo\Http\Middleware\EnsureEmailIsVerified::class,
     ];
 }

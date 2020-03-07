@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
 use Illuminate\Http\Request;
 

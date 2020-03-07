@@ -1,23 +1,23 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
-use TravelCompanion\Exceptions\AuthorizationException;
-use TravelCompanion\Exceptions\BadRequestException;
-use TravelCompanion\Exceptions\RequestStructureException;
-use TravelCompanion\Exceptions\ResourceNotFoundException;
-use TravelCompanion\Exceptions\ValidationException;
-use TravelCompanion\Http\Resources\Trip as TripResource;
-use TravelCompanion\Http\Resources\TripCollection;
-use TravelCompanion\Rules\Visibility;
-use TravelCompanion\Traits\APIResponses;
-use TravelCompanion\Traits\RequestFormat;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Exceptions\AuthorizationException;
+use Columbo\Exceptions\BadRequestException;
+use Columbo\Exceptions\RequestStructureException;
+use Columbo\Exceptions\ResourceNotFoundException;
+use Columbo\Exceptions\ValidationException;
+use Columbo\Http\Resources\Trip as TripResource;
+use Columbo\Http\Resources\TripCollection;
+use Columbo\Rules\Visibility;
+use Columbo\Traits\APIResponses;
+use Columbo\Traits\RequestFormat;
+use Columbo\Trip;
+use Columbo\User;
 
 class TripController extends Controller
 {
@@ -70,7 +70,7 @@ class TripController extends Controller
 	 * Update the specified resource in storage.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \TravelCompanion\Trip  $trip
+	 * @param  \Columbo\Trip  $trip
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request, Trip $trip)
@@ -87,7 +87,7 @@ class TripController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \TravelCompanion\Trip  $trip
+	 * @param  \Columbo\Trip  $trip
 	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy(Request $request, Trip $trip)

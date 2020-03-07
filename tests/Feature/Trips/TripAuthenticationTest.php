@@ -6,8 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Trip;
+use Columbo\User;
 
 /**
  * These tests test if actions are correctly blocked if users are not authorized.

@@ -1,11 +1,11 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers\Auth;
+namespace Columbo\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
-use TravelCompanion\Http\Controllers\Controller;
-use TravelCompanion\Traits\Auth\AuthenticatesUsersWithToken;
+use Columbo\Http\Controllers\Controller;
+use Columbo\Traits\Auth\AuthenticatesUsersWithToken;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LoginController extends Controller

@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Providers;
+namespace Columbo\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Broadcast;

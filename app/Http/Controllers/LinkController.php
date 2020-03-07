@@ -1,8 +1,8 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
-use TravelCompanion\Links;
+use Columbo\Links;
 use Illuminate\Http\Request;
 
 class LinkController extends Controller
@@ -41,7 +41,7 @@ class LinkController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \TravelCompanion\Links  $links
+     * @param  \Columbo\Links  $links
      * @return \Illuminate\Http\Response
      */
     public function show(Links $links)
@@ -52,7 +52,7 @@ class LinkController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \TravelCompanion\Links  $links
+     * @param  \Columbo\Links  $links
      * @return \Illuminate\Http\Response
      */
     public function edit(Links $links)
@@ -64,7 +64,7 @@ class LinkController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \TravelCompanion\Links  $links
+     * @param  \Columbo\Links  $links
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Links $links)
@@ -75,7 +75,7 @@ class LinkController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \TravelCompanion\Links  $links
+     * @param  \Columbo\Links  $links
      * @return \Illuminate\Http\Response
      */
     public function destroy(Links $links)

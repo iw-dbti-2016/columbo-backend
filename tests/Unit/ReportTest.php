@@ -6,11 +6,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tests\Traits\ResourceFactory;
-use TravelCompanion\Currency;
-use TravelCompanion\Report;
-use TravelCompanion\Section;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Currency;
+use Columbo\Report;
+use Columbo\Section;
+use Columbo\Trip;
+use Columbo\User;
 
 class ReportTest extends TestCase
 {

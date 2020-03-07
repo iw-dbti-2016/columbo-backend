@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Exceptions;
+namespace Columbo\Exceptions;
 
 use Exception;
 

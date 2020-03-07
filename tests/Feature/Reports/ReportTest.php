@@ -7,9 +7,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
-use TravelCompanion\Report;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Report;
+use Columbo\Trip;
+use Columbo\User;
 
 class ReportTest extends TestCase
 {

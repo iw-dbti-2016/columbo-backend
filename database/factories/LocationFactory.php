@@ -4,7 +4,7 @@
 
 use Faker\Generator as Faker;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
-use TravelCompanion\Location;
+use Columbo\Location;
 
 $factory->define(Location::class, function (Faker $faker) {
     return [

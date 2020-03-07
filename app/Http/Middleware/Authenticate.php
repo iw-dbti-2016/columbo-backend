@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Http\Middleware;
+namespace Columbo\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 

@@ -1,14 +1,14 @@
 <?php
 
-namespace TravelCompanion;
+namespace Columbo;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use TravelCompanion\Action;
-use TravelCompanion\Report;
-use TravelCompanion\Section;
-use TravelCompanion\Traits\Visibility;
-use TravelCompanion\User;
+use Columbo\Action;
+use Columbo\Report;
+use Columbo\Section;
+use Columbo\Traits\Visibility;
+use Columbo\User;
 
 class Trip extends Model
 {

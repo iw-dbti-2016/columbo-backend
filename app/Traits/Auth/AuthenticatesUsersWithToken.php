@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Traits\Auth;
+namespace Columbo\Traits\Auth;
 
 use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Foundation\Auth\ThrottlesLogins;

@@ -1,9 +1,9 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers\Auth;
+namespace Columbo\Http\Controllers\Auth;
 
-use TravelCompanion\Http\Controllers\Controller;
-use TravelCompanion\Traits\Auth\VerifiesEmailsWithToken;
+use Columbo\Http\Controllers\Controller;
+use Columbo\Traits\Auth\VerifiesEmailsWithToken;
 
 class VerificationController extends Controller
 {

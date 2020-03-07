@@ -6,8 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tests\Traits\ResourceFactory;
-use TravelCompanion\Location;
-use TravelCompanion\User;
+use Columbo\Location;
+use Columbo\User;
 
 class LocationTest extends TestCase
 {

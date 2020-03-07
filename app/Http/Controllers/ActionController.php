@@ -1,8 +1,8 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
-use TravelCompanion\Action;
+use Columbo\Action;
 use Illuminate\Http\Request;
 
 class ActionController extends Controller
@@ -41,7 +41,7 @@ class ActionController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \TravelCompanion\Action  $action
+     * @param  \Columbo\Action  $action
      * @return \Illuminate\Http\Response
      */
     public function show(Action $action)
@@ -52,7 +52,7 @@ class ActionController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \TravelCompanion\Action  $action
+     * @param  \Columbo\Action  $action
      * @return \Illuminate\Http\Response
      */
     public function edit(Action $action)
@@ -64,7 +64,7 @@ class ActionController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \TravelCompanion\Action  $action
+     * @param  \Columbo\Action  $action
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Action $action)
@@ -75,7 +75,7 @@ class ActionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \TravelCompanion\Action  $action
+     * @param  \Columbo\Action  $action
      * @return \Illuminate\Http\Response
      */
     public function destroy(Action $action)

@@ -41,7 +41,7 @@
     },
     "autoload": {
         "psr-4": {
-            "TravelCompanion\\": "app/"
+            "Columbo\\": "app/"
         },
         "classmap": [
             "database/seeds",

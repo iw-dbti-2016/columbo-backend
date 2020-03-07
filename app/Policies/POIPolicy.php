@@ -1,10 +1,10 @@
 <?php
 
-namespace TravelCompanion\Policies;
+namespace Columbo\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use TravelCompanion\POI;
-use TravelCompanion\User;
+use Columbo\POI;
+use Columbo\User;
 
 class POIPolicy
 {
@@ -13,7 +13,7 @@ class POIPolicy
 	/**
 	 * Determine whether the user can view any p o i s.
 	 *
-	 * @param  \TravelCompanion\User  $user
+	 * @param  \Columbo\User  $user
 	 * @return mixed
 	 */
 	public function viewAny(User $user=null)
@@ -24,8 +24,8 @@ class POIPolicy
 	/**
 	 * Determine whether the user can view the p o i.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\POI  $pOI
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\POI  $pOI
 	 * @return mixed
 	 */
 	public function view(User $user=null, POI $pOI)
@@ -36,7 +36,7 @@ class POIPolicy
 	/**
 	 * Determine whether the user can create p o i s.
 	 *
-	 * @param  \TravelCompanion\User  $user
+	 * @param  \Columbo\User  $user
 	 * @return mixed
 	 */
 	public function create(User $user)
@@ -47,8 +47,8 @@ class POIPolicy
 	/**
 	 * Determine whether the user can update the p o i.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\POI  $pOI
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\POI  $pOI
 	 * @return mixed
 	 */
 	public function update(User $user, POI $pOI)
@@ -59,8 +59,8 @@ class POIPolicy
 	/**
 	 * Determine whether the user can delete the p o i.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\POI  $pOI
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\POI  $pOI
 	 * @return mixed
 	 */
 	public function delete(User $user, POI $pOI)
@@ -71,8 +71,8 @@ class POIPolicy
 	/**
 	 * Determine whether the user can restore the p o i.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\POI  $pOI
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\POI  $pOI
 	 * @return mixed
 	 */
 	public function restore(User $user, POI $pOI)
@@ -83,8 +83,8 @@ class POIPolicy
 	/**
 	 * Determine whether the user can permanently delete the p o i.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\POI  $pOI
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\POI  $pOI
 	 * @return mixed
 	 */
 	public function forceDelete(User $user, POI $pOI)

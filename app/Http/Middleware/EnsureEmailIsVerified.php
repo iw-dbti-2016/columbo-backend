@@ -1,11 +1,11 @@
 <?php
 
-namespace TravelCompanion\Http\Middleware;
+namespace Columbo\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Redirect;
-use TravelCompanion\Traits\APIResponses;
+use Columbo\Traits\APIResponses;
 
 class EnsureEmailIsVerified
 {

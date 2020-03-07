@@ -1,14 +1,14 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers\Auth\API;
+namespace Columbo\Http\Controllers\Auth\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
-use TravelCompanion\Http\Controllers\Controller;
-use TravelCompanion\Http\Resources\User as UserResource;
-use TravelCompanion\Traits\APIResponses;
-use TravelCompanion\Traits\Auth\AuthenticatesUsersWithToken;
+use Columbo\Http\Controllers\Controller;
+use Columbo\Http\Resources\User as UserResource;
+use Columbo\Traits\APIResponses;
+use Columbo\Traits\Auth\AuthenticatesUsersWithToken;
 
 class LoginController extends Controller
 {

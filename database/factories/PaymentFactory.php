@@ -4,7 +4,7 @@
 
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
-use TravelCompanion\Payment;
+use Columbo\Payment;
 
 $factory->define(Payment::class, function (Faker $faker) {
     return [

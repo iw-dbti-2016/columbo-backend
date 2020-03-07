@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use TravelCompanion\Permission;
+use Columbo\Permission;
 use Faker\Generator as Faker;
 
 $factory->define(Permission::class, function (Faker $faker) {

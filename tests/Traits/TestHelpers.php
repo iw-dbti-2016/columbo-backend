@@ -5,7 +5,7 @@ namespace Tests\Traits;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Crypt;
 use Tests\Traits\ResourceFactory;
-use TravelCompanion\Exceptions\TestException;
+use Columbo\Exceptions\TestException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 trait TestHelpers

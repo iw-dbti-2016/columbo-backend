@@ -1,12 +1,12 @@
 <?php
 
-namespace TravelCompanion\Traits\Auth;
+namespace Columbo\Traits\Auth;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Http\Request;
-use TravelCompanion\User;
+use Columbo\User;
 
 trait VerifiesEmailsWithToken
 {

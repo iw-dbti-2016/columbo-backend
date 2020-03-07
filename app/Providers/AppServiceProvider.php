@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Providers;
+namespace Columbo\Providers;
 
 use Illuminate\Http\Resources\Json\Resource;
 use Illuminate\Support\Facades\Blade;
@@ -44,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(\Parsedown::class);
 
         Route::bind('user', function ($value) {
-            return \TravelCompanion\User::where('username', $value)->firstOrFail();
+            return \Columbo\User::where('username', $value)->firstOrFail();
         });
     }
 }

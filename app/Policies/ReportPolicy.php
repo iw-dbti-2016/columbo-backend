@@ -1,11 +1,11 @@
 <?php
 
-namespace TravelCompanion\Policies;
+namespace Columbo\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use TravelCompanion\Report;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Report;
+use Columbo\Trip;
+use Columbo\User;
 
 class ReportPolicy
 {
@@ -14,7 +14,7 @@ class ReportPolicy
 	/**
 	 * Determine whether the user can view any reports.
 	 *
-	 * @param  \TravelCompanion\User  $user
+	 * @param  \Columbo\User  $user
 	 * @return mixed
 	 */
 	public function viewAny(User $user=null)
@@ -25,8 +25,8 @@ class ReportPolicy
 	/**
 	 * Determine whether the user can view the report.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\Report  $report
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\Report  $report
 	 * @return mixed
 	 */
 	public function view(User $user=null, Report $report)
@@ -37,7 +37,7 @@ class ReportPolicy
 	/**
 	 * Determine whether the user can create reports.
 	 *
-	 * @param  \TravelCompanion\User  $user
+	 * @param  \Columbo\User  $user
 	 * @return mixed
 	 */
 	public function create(User $user, Trip $trip)
@@ -48,8 +48,8 @@ class ReportPolicy
 	/**
 	 * Determine whether the user can update the report.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\Report  $report
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\Report  $report
 	 * @return mixed
 	 */
 	public function update(User $user, Report $report)
@@ -60,8 +60,8 @@ class ReportPolicy
 	/**
 	 * Determine whether the user can delete the report.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\Report  $report
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\Report  $report
 	 * @return mixed
 	 */
 	public function delete(User $user, Report $report)
@@ -72,8 +72,8 @@ class ReportPolicy
 	/**
 	 * Determine whether the user can restore the report.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\Report  $report
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\Report  $report
 	 * @return mixed
 	 */
 	public function restore(User $user, Report $report)
@@ -84,8 +84,8 @@ class ReportPolicy
 	/**
 	 * Determine whether the user can permanently delete the report.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\Report  $report
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\Report  $report
 	 * @return mixed
 	 */
 	public function forceDelete(User $user, Report $report)

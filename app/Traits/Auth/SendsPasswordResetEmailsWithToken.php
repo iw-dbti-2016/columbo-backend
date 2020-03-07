@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Traits\Auth;
+namespace Columbo\Traits\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;

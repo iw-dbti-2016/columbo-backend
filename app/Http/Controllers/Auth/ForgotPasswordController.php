@@ -1,9 +1,9 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers\Auth;
+namespace Columbo\Http\Controllers\Auth;
 
-use TravelCompanion\Http\Controllers\Controller;
-use TravelCompanion\Traits\Auth\SendsPasswordResetEmailsWithToken;
+use Columbo\Http\Controllers\Controller;
+use Columbo\Traits\Auth\SendsPasswordResetEmailsWithToken;
 
 class ForgotPasswordController extends Controller
 {

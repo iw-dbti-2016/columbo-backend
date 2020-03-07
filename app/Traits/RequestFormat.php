@@ -1,9 +1,9 @@
 <?php
 
-namespace TravelCompanion\Traits;
+namespace Columbo\Traits;
 
-use TravelCompanion\Exceptions\BadRequestException;
-use TravelCompanion\Exceptions\RequestStructureException;
+use Columbo\Exceptions\BadRequestException;
+use Columbo\Exceptions\RequestStructureException;
 
 trait RequestFormat
 {

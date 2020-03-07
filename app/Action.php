@@ -1,9 +1,9 @@
 <?php
 
-namespace TravelCompanion;
+namespace Columbo;
 
 use Illuminate\Database\Eloquent\Model;
-use TravelCompanion\User;
+use Columbo\User;
 
 class Action extends Model
 {

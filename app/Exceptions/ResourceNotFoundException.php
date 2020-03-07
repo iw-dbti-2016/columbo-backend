@@ -1,9 +1,9 @@
 <?php
 
-namespace TravelCompanion\Exceptions;
+namespace Columbo\Exceptions;
 
 use Exception;
-use TravelCompanion\Traits\APIResponses;
+use Columbo\Traits\APIResponses;
 
 class ResourceNotFoundException extends Exception
 {

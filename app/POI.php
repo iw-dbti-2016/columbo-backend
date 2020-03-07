@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion;
+namespace Columbo;
 
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Illuminate\Database\Eloquent\Model;

@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers\Auth;
+namespace Columbo\Http\Controllers\Auth;
 
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Http\Request;
@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use TravelCompanion\Http\Controllers\Controller;
-use TravelCompanion\Http\Resources\User as UserResource;
-use TravelCompanion\Traits\Auth\AuthenticatesUsersWithToken;
-use TravelCompanion\Traits\Auth\RegistersUsersWithToken;
-use TravelCompanion\User;
+use Columbo\Http\Controllers\Controller;
+use Columbo\Http\Resources\User as UserResource;
+use Columbo\Traits\Auth\AuthenticatesUsersWithToken;
+use Columbo\Traits\Auth\RegistersUsersWithToken;
+use Columbo\User;
 
 class APIAuthController extends Controller
 {

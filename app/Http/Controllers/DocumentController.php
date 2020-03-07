@@ -1,8 +1,8 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
-use TravelCompanion\Document;
+use Columbo\Document;
 use Illuminate\Http\Request;
 
 class DocumentController extends Controller
@@ -41,7 +41,7 @@ class DocumentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \TravelCompanion\Document  $document
+     * @param  \Columbo\Document  $document
      * @return \Illuminate\Http\Response
      */
     public function show(Document $document)
@@ -52,7 +52,7 @@ class DocumentController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \TravelCompanion\Document  $document
+     * @param  \Columbo\Document  $document
      * @return \Illuminate\Http\Response
      */
     public function edit(Document $document)
@@ -64,7 +64,7 @@ class DocumentController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \TravelCompanion\Document  $document
+     * @param  \Columbo\Document  $document
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Document $document)
@@ -75,7 +75,7 @@ class DocumentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \TravelCompanion\Document  $document
+     * @param  \Columbo\Document  $document
      * @return \Illuminate\Http\Response
      */
     public function destroy(Document $document)

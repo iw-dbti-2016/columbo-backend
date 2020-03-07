@@ -4,7 +4,7 @@
 
 use Faker\Generator as Faker;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
-use TravelCompanion\POI;
+use Columbo\POI;
 
 $factory->define(POI::class, function (Faker $faker) {
 	return [

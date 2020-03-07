@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Providers;
+namespace Columbo\Providers;
 
 use Laravel\Telescope\Telescope;
 use Illuminate\Support\Facades\Gate;

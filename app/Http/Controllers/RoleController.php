@@ -1,8 +1,8 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
-use TravelCompanion\Role;
+use Columbo\Role;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -41,7 +41,7 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \TravelCompanion\Role  $role
+     * @param  \Columbo\Role  $role
      * @return \Illuminate\Http\Response
      */
     public function show(Role $role)
@@ -52,7 +52,7 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \TravelCompanion\Role  $role
+     * @param  \Columbo\Role  $role
      * @return \Illuminate\Http\Response
      */
     public function edit(Role $role)
@@ -64,7 +64,7 @@ class RoleController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \TravelCompanion\Role  $role
+     * @param  \Columbo\Role  $role
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Role $role)
@@ -75,7 +75,7 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \TravelCompanion\Role  $role
+     * @param  \Columbo\Role  $role
      * @return \Illuminate\Http\Response
      */
     public function destroy(Role $role)

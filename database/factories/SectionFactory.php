@@ -4,7 +4,7 @@
 
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
-use TravelCompanion\Section;
+use Columbo\Section;
 
 $factory->define(Section::class, function (Faker $faker) {
     return [

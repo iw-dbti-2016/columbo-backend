@@ -1,10 +1,10 @@
 <?php
 
-namespace TravelCompanion\Http\Middleware;
+namespace Columbo\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
-use TravelCompanion\Traits\APIResponses;
+use Columbo\Traits\APIResponses;
 
 class RedirectIfAuthenticated
 {

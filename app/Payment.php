@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion;
+namespace Columbo;
 
 use Illuminate\Database\Eloquent\Model;
 

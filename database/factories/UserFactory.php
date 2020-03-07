@@ -4,7 +4,7 @@
 use Faker\Generator as Faker;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Support\Str;
-use TravelCompanion\User;
+use Columbo\User;
 
 /*
 |--------------------------------------------------------------------------

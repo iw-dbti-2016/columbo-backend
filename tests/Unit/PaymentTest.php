@@ -5,12 +5,12 @@ namespace Tests\Unit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use TravelCompanion\Currency;
-use TravelCompanion\Payment;
-use TravelCompanion\Report;
-use TravelCompanion\Section;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Currency;
+use Columbo\Payment;
+use Columbo\Report;
+use Columbo\Section;
+use Columbo\Trip;
+use Columbo\User;
 
 class PaymentTest extends TestCase
 {

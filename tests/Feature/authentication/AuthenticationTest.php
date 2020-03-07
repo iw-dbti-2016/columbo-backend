@@ -9,8 +9,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
-use TravelCompanion\Currency;
-use TravelCompanion\User;
+use Columbo\Currency;
+use Columbo\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthenticationTest extends TestCase

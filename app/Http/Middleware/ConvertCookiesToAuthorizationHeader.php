@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Http\Middleware;
+namespace Columbo\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Hash;

@@ -1,21 +1,21 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
-use TravelCompanion\Exceptions\AuthorizationException;
-use TravelCompanion\Exceptions\ResourceNotFoundException;
-use TravelCompanion\Exceptions\ValidationException;
-use TravelCompanion\Http\Resources\Report as ReportResource;
-use TravelCompanion\Http\Resources\ReportCollection;
-use TravelCompanion\Report;
-use TravelCompanion\Rules\Visibility;
-use TravelCompanion\Traits\APIResponses;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Exceptions\AuthorizationException;
+use Columbo\Exceptions\ResourceNotFoundException;
+use Columbo\Exceptions\ValidationException;
+use Columbo\Http\Resources\Report as ReportResource;
+use Columbo\Http\Resources\ReportCollection;
+use Columbo\Report;
+use Columbo\Rules\Visibility;
+use Columbo\Traits\APIResponses;
+use Columbo\Trip;
+use Columbo\User;
 
 class ReportController extends Controller
 {
@@ -69,7 +69,7 @@ class ReportController extends Controller
 	 * Update the specified resource in storage.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \TravelCompanion\Report  $report
+	 * @param  \Columbo\Report  $report
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request, Report $report)
@@ -86,7 +86,7 @@ class ReportController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \TravelCompanion\Report  $report
+	 * @param  \Columbo\Report  $report
 	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy(Request $request, Report $report)

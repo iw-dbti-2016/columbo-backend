@@ -1,15 +1,15 @@
 <?php
 
-namespace TravelCompanion;
+namespace Columbo;
 
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use TravelCompanion\Action;
-use TravelCompanion\Plan;
-use TravelCompanion\Section;
-use TravelCompanion\Traits\Visibility;
+use Columbo\Action;
+use Columbo\Plan;
+use Columbo\Section;
+use Columbo\Traits\Visibility;
 
 class Location extends Model
 {

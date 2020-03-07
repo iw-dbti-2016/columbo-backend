@@ -1,11 +1,11 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
 use Illuminate\Http\Request;
-use TravelCompanion\Http\Resources\POICollection;
-use TravelCompanion\Http\Resources\POI as POIResource;
-use TravelCompanion\POI;
+use Columbo\Http\Resources\POICollection;
+use Columbo\Http\Resources\POI as POIResource;
+use Columbo\POI;
 
 class POIController extends Controller
 {
@@ -52,7 +52,7 @@ class POIController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \TravelCompanion\POI  $pOI
+     * @param  \Columbo\POI  $pOI
      * @return \Illuminate\Http\Response
      */
     public function show(POI $pOI)
@@ -63,7 +63,7 @@ class POIController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \TravelCompanion\POI  $pOI
+     * @param  \Columbo\POI  $pOI
      * @return \Illuminate\Http\Response
      */
     public function edit(POI $pOI)
@@ -75,7 +75,7 @@ class POIController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \TravelCompanion\POI  $pOI
+     * @param  \Columbo\POI  $pOI
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, POI $pOI)
@@ -86,7 +86,7 @@ class POIController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \TravelCompanion\POI  $pOI
+     * @param  \Columbo\POI  $pOI
      * @return \Illuminate\Http\Response
      */
     public function destroy(POI $pOI)

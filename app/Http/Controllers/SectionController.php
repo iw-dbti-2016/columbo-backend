@@ -1,21 +1,21 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers;
+namespace Columbo\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use TravelCompanion\Exceptions\AuthorizationException;
-use TravelCompanion\Exceptions\ResourceNotFoundException;
-use TravelCompanion\Exceptions\ValidationException;
-use TravelCompanion\Http\Resources\Section as SectionResource;
-use TravelCompanion\Http\Resources\SectionCollection;
-use TravelCompanion\Report;
-use TravelCompanion\Rules\Visibility;
-use TravelCompanion\Section;
-use TravelCompanion\Traits\APIResponses;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Exceptions\AuthorizationException;
+use Columbo\Exceptions\ResourceNotFoundException;
+use Columbo\Exceptions\ValidationException;
+use Columbo\Http\Resources\Section as SectionResource;
+use Columbo\Http\Resources\SectionCollection;
+use Columbo\Report;
+use Columbo\Rules\Visibility;
+use Columbo\Section;
+use Columbo\Traits\APIResponses;
+use Columbo\Trip;
+use Columbo\User;
 
 class SectionController extends Controller
 {
@@ -82,7 +82,7 @@ class SectionController extends Controller
 	 * Update the specified resource in storage.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \TravelCompanion\Section  $section
+	 * @param  \Columbo\Section  $section
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request, Section $section)
@@ -99,7 +99,7 @@ class SectionController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \TravelCompanion\Section  $section
+	 * @param  \Columbo\Section  $section
 	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy(Request $request, Section $section)

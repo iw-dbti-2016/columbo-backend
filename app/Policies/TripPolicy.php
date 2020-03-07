@@ -1,10 +1,10 @@
 <?php
 
-namespace TravelCompanion\Policies;
+namespace Columbo\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Trip;
+use Columbo\User;
 
 class TripPolicy
 {
@@ -13,7 +13,7 @@ class TripPolicy
 	/**
 	 * Determine whether the user can view any trips.
 	 *
-	 * @param  \TravelCompanion\User  $user
+	 * @param  \Columbo\User  $user
 	 * @return mixed
 	 */
 	public function viewAny(User $user=null)
@@ -24,8 +24,8 @@ class TripPolicy
 	/**
 	 * Determine whether the user can view the trip.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\Trip  $trip
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\Trip  $trip
 	 * @return mixed
 	 */
 	public function view(User $user=null, Trip $trip)
@@ -36,7 +36,7 @@ class TripPolicy
 	/**
 	 * Determine whether the user can create trips.
 	 *
-	 * @param  \TravelCompanion\User  $user
+	 * @param  \Columbo\User  $user
 	 * @return mixed
 	 */
 	public function create(User $user)
@@ -67,8 +67,8 @@ class TripPolicy
 	/**
 	 * Determine whether the user can update the trip.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\Trip  $trip
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\Trip  $trip
 	 * @return mixed
 	 */
 	public function update(User $user, Trip $trip)
@@ -79,8 +79,8 @@ class TripPolicy
 	/**
 	 * Determine whether the user can delete the trip.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\Trip  $trip
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\Trip  $trip
 	 * @return mixed
 	 */
 	public function delete(User $user, Trip $trip)
@@ -91,8 +91,8 @@ class TripPolicy
 	/**
 	 * Determine whether the user can restore the trip.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\Trip  $trip
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\Trip  $trip
 	 * @return mixed
 	 */
 	public function restore(User $user, Trip $trip)
@@ -103,8 +103,8 @@ class TripPolicy
 	/**
 	 * Determine whether the user can permanently delete the trip.
 	 *
-	 * @param  \TravelCompanion\User  $user
-	 * @param  \TravelCompanion\Trip  $trip
+	 * @param  \Columbo\User  $user
+	 * @param  \Columbo\Trip  $trip
 	 * @return mixed
 	 */
 	public function forceDelete(User $user, Trip $trip)

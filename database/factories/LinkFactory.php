@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use TravelCompanion\Links;
+use Columbo\Links;
 use Faker\Generator as Faker;
 
 $factory->define(Links::class, function (Faker $faker) {

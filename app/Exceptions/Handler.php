@@ -1,13 +1,13 @@
 <?php
 
-namespace TravelCompanion\Exceptions;
+namespace Columbo\Exceptions;
 
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use TravelCompanion\Traits\APIResponses;
+use Columbo\Traits\APIResponses;
 
 class Handler extends ExceptionHandler
 {

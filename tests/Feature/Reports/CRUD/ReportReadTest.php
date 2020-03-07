@@ -5,9 +5,9 @@ namespace Tests\Feature\Reports\CRUD;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
-use TravelCompanion\Report;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Report;
+use Columbo\Trip;
+use Columbo\User;
 
 class ReportReadTest extends TestCase
 {

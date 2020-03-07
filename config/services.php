@@ -35,7 +35,7 @@ return [
     ],
 
     'stripe' => [
-        'model' => TravelCompanion\User::class,
+        'model' => Columbo\User::class,
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
         'webhook' => [

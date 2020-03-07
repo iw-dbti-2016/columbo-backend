@@ -6,10 +6,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
+use Tests\Traits\PermissionHelpers;
 
 class MemberRelationTest extends TestCase
 {
-	use RefreshDatabase, APITestHelpers;
+	use RefreshDatabase, APITestHelpers, PermissionHelpers;
 
 	/** @test */
 	public function a_trip_creator_is_owning_member()

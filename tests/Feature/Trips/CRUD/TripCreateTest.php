@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
-use TravelCompanion\User;
+use Columbo\User;
 
 class TripCreateTest extends TestCase
 {

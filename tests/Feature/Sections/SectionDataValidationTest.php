@@ -6,9 +6,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
-use TravelCompanion\Report;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Report;
+use Columbo\Trip;
+use Columbo\User;
 
 class SectionDataValidationTest extends TestCase
 {

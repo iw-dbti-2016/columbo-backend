@@ -1,6 +1,6 @@
 <?php
 
-namespace TravelCompanion\Rules;
+namespace Columbo\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Str;

@@ -169,12 +169,12 @@ return [
         /*
          * Application Service Providers...
          */
-        TravelCompanion\Providers\AppServiceProvider::class,
-        TravelCompanion\Providers\AuthServiceProvider::class,
-        // TravelCompanion\Providers\BroadcastServiceProvider::class,
-        TravelCompanion\Providers\EventServiceProvider::class,
-        TravelCompanion\Providers\TelescopeServiceProvider::class,
-        TravelCompanion\Providers\RouteServiceProvider::class,
+        Columbo\Providers\AppServiceProvider::class,
+        Columbo\Providers\AuthServiceProvider::class,
+        // Columbo\Providers\BroadcastServiceProvider::class,
+        Columbo\Providers\EventServiceProvider::class,
+        Columbo\Providers\TelescopeServiceProvider::class,
+        Columbo\Providers\RouteServiceProvider::class,
 
     ],
 

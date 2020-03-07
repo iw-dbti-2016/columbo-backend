@@ -4,7 +4,7 @@
 
 use Faker\Generator as Faker;
 use Illuminate\Support\Str;
-use TravelCompanion\Currency;
+use Columbo\Currency;
 
 $factory->define(Currency::class, function (Faker $faker) {
     return [

@@ -1,10 +1,10 @@
 <?php
 
-namespace TravelCompanion\Http\Controllers\Auth\API;
+namespace Columbo\Http\Controllers\Auth\API;
 
-use TravelCompanion\Http\Controllers\Controller;
-use TravelCompanion\Traits\APIResponses;
-use TravelCompanion\Traits\Auth\VerifiesEmailsWithToken;
+use Columbo\Http\Controllers\Controller;
+use Columbo\Traits\APIResponses;
+use Columbo\Traits\Auth\VerifiesEmailsWithToken;
 
 class VerificationController extends Controller
 {

@@ -1,19 +1,19 @@
 <?php
 
-namespace TravelCompanion\Providers;
+namespace Columbo\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use TravelCompanion\Location;
-use TravelCompanion\POI;
-use TravelCompanion\Policies\LocationPolicy;
-use TravelCompanion\Policies\POIPolicy;
-use TravelCompanion\Policies\ReportPolicy;
-use TravelCompanion\Policies\SectionPolicy;
-use TravelCompanion\Policies\TripPolicy;
-use TravelCompanion\Report;
-use TravelCompanion\Section;
-use TravelCompanion\Trip;
+use Columbo\Location;
+use Columbo\POI;
+use Columbo\Policies\LocationPolicy;
+use Columbo\Policies\POIPolicy;
+use Columbo\Policies\ReportPolicy;
+use Columbo\Policies\SectionPolicy;
+use Columbo\Policies\TripPolicy;
+use Columbo\Report;
+use Columbo\Section;
+use Columbo\Trip;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -23,7 +23,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        // 'TravelCompanion\Model' => 'TravelCompanion\Policies\ModelPolicy',
+        // 'Columbo\Model' => 'Columbo\Policies\ModelPolicy',
         //
         // Auto-discovery should do just fine, but here's the mapping if not:
         // Trip::class => TripPolicy::class,

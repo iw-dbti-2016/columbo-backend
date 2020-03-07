@@ -1,10 +1,10 @@
 <?php
 
-namespace TravelCompanion\Exceptions;
+namespace Columbo\Exceptions;
 
 use Exception;
 use Illuminate\Validation\Validator;
-use TravelCompanion\Traits\APIResponses;
+use Columbo\Traits\APIResponses;
 
 class ValidationException extends Exception
 {

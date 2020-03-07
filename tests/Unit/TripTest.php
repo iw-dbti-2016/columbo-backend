@@ -6,11 +6,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tests\Traits\ResourceFactory;
-use TravelCompanion\Currency;
-use TravelCompanion\Report;
-use TravelCompanion\Section;
-use TravelCompanion\Trip;
-use TravelCompanion\User;
+use Columbo\Currency;
+use Columbo\Report;
+use Columbo\Section;
+use Columbo\Trip;
+use Columbo\User;
 
 class TripTest extends TestCase
 {
@@ -50,15 +50,16 @@ class TripTest extends TestCase
     /** @test */
     public function a_trip_can_have_members()
     {
-        $user1 = factory(User::class)->create();
-        $user2 = factory(User::class)->create();
-        $user3 = factory(User::class)->create();
+        $user1 = $this->createUser();
+        $user2 = $this->createUser();
+        $user3 = $this->createUser();
+        $role = $this->createRole();
 
         $trip = $this->createTrip($user1);
 
-        $trip->members()->attach($user1);
-        $trip->members()->attach($user2);
-        $trip->members()->attach($user3);
+        $trip->members()->attach($user1, ["role_label" => $role->label]);
+        $trip->members()->attach($user2, ["role_label" => $role->label]);
+        $trip->members()->attach($user3, ["role_label" => $role->label]);
         $trip->save();
 
         $this->assertEquals($user1->tripsMember()->first()->id, $trip->id);
