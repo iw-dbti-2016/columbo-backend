@@ -25,17 +25,14 @@ class LoginController extends Controller
     	$this->middleware('guest:api')->only('login');
     }
 
-    protected function authenticated(Request $request, $user)
-    {
-        return (new UserResource($user))
-        			->additional([
-        				"meta" => [
-				            "token" => $this->token,
-				            "token_type" => 'bearer',
-				            "expires_in" => auth()->factory()->getTTL() * 60,
-				        ],
-				    ]);
-    }
+	protected function authenticated(Request $request, $user)
+	{
+		return new UserResource($user, [
+				"token"      => $this->token,
+				"token_type" => 'bearer',
+				"expires_in" => auth()->factory()->getTTL() * 60,
+			]);
+	}
 
     protected function validationFailed(\Illuminate\Validation\Validator $validator)
     {
