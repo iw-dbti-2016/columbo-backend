@@ -22,7 +22,7 @@ class EnsureEmailIsVerified
         if (! $request->user()) {
             return $request->expectsJson()
                     ? $this->unauthenticatedResponse()
-                    : Redirect::route('login');
+                    : Redirect::route('home');
         }
 
         if ($request->user() instanceof MustVerifyEmail &&

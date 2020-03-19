@@ -24,6 +24,7 @@ trait APIResponses
 		return response()->json([
 			"success" => false,
 			"message" => "Resource not found.",
+			"errors" => [],
 		], 404);
 	}
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Columbo\Http\Controllers\Auth\API;
+namespace Columbo\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Validator;

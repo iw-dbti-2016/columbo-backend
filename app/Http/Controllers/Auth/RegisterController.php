@@ -1,6 +1,6 @@
 <?php
 
-namespace Columbo\Http\Controllers\Auth\API;
+namespace Columbo\Http\Controllers\Auth;
 
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Http\Request;

@@ -35,6 +35,6 @@ class ResetPasswordController extends Controller
     public function __construct()
     {
     	$this->redirectTo = route('home');
-        $this->middleware('withoutTokenCookies');
+        $this->middleware('guest:airlock');
     }
 }

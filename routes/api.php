@@ -1,31 +1,17 @@
 <?php
 
-use Illuminate\Http\Request;
-use Columbo\Http\Resources\User;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
 Route::group(['prefix' => 'v1'], function() {
 	Route::group(['prefix' => 'auth'], function() {
-		Route::post('/register', 'Auth\API\RegisterController@register')->name('api.auth.register');
-		Route::post('/login', 'Auth\API\LoginController@login')->name('api.auth.login');
+		Route::post('/register', 'Auth\RegisterController@register')->name('api.auth.register');
+		Route::post('/login', 'Auth\LoginController@login')->name('api.auth.login');
 		Route::patch('/refresh', 'Auth\APIAuthController@refresh')->name('api.auth.refresh');
-		Route::delete('/logout', 'Auth\API\LoginController@logout')->name('api.auth.logout');
+		Route::delete('/logout', 'Auth\LoginController@logout')->name('api.auth.logout');
 
-		Route::post('/password/email', 'Auth\API\ForgotPasswordController@sendResetLinkEmail')->name('api.auth.forgot-password');
-		Route::post('/email/resend', 'Auth\API\VerificationController@resend')->name('api.auth.resend');
+		Route::post('/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('api.auth.forgot-password');
+		Route::post('/email/resend', 'Auth\VerificationController@resend')->name('api.auth.resend');
 	});
 
-	// Retreiving of entities made public for now (faster appdev)
+	// Retrieving of entities made public for now (faster appdev)
 	Route::get('users/{user}/', 'UserController@show');
 	Route::get('trips', 'tripController@list');
 	Route::get('trips/{trip}', 'tripController@get');
@@ -38,10 +24,8 @@ Route::group(['prefix' => 'v1'], function() {
 	Route::get('pois/', 'poiController@list');
 	Route::get('pois/{poi}', 'poiController@get');
 
-	Route::group(['middleware' => ['auth:airlock']], function() {
-		Route::get('/user', function(Request $request) {
-			return new User($request->user());
-		})->middleware('verified');
+	Route::group(['middleware' => ['auth:airlock', 'verified']], function() {
+		Route::get('/user', 'BaseController@showUserData');
 
 		Route::get('user/trips', 'UserController@listTrips');
 
@@ -80,13 +64,6 @@ Route::group(['prefix' => 'v1'], function() {
 	});
 });
 
-Route::any('{all}', function() {
-	return response()->json([
-		"errors" => [
-			[
-				"status" => "404",
-				"title" => "Page not found.",
-			]
-		],
-	], 404);
-})->where('all', '.*')->fallback();
+Route::any('{all?}', 'BaseController@pageNotFound')
+		->where('all', '.*')
+		->fallback();

@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Airlock\Airlock;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthenticationTest extends TestCase
 {

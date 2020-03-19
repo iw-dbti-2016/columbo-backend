@@ -35,14 +35,12 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \Columbo\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            'cookieToken',
         ],
 
         'api' => [
             \Columbo\Http\Middleware\EncryptCookies::class,
             'throttle:60,1',
             'bindings',
-            'cookieToken',
         ],
     ];
 
@@ -63,8 +61,6 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Columbo\Http\Middleware\EnsureEmailIsVerified::class,
-        'withoutTokenCookies' => \Columbo\Http\Middleware\RedirectWhenTokenCookiesPresent::class,
-        'cookieToken' => \Columbo\Http\Middleware\ConvertCookiesToAuthorizationHeader::class,
     ];
 
     /**

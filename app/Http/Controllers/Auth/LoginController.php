@@ -1,6 +1,6 @@
 <?php
 
-namespace Columbo\Http\Controllers\Auth\API;
+namespace Columbo\Http\Controllers\Auth;
 
 use Columbo\Http\Controllers\Controller;
 use Columbo\Http\Resources\User as UserResource;

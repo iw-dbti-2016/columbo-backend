@@ -22,7 +22,7 @@ class RedirectIfAuthenticated
         if (Auth::guard($guard)->check()) {
             return $request->expectsJSON()
                     ? $this->unauthorizedResponse("You cannot be logged in to make this request.")
-                    : redirect()->route('app');
+                    : redirect()->route('home');
         }
 
         return $next($request);
