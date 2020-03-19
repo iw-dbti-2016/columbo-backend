@@ -23,8 +23,8 @@ class RegisterController extends Controller
 	 */
 	function __construct()
 	{
-		$this->middleware('auth:api')->except('register');
-		$this->middleware('guest:api')->only('login');
+		$this->middleware('auth:airlock')->except('login', 'register');
+		$this->middleware('guest:airlock')->only('login', 'register');
 	}
 
 	protected function validator(array $data)
@@ -37,6 +37,7 @@ class RegisterController extends Controller
 			"data.attributes.username"    => "required|min:4|max:40|regex:/^[A-Za-z0-9-.]+$/|unique:users,username",
 			"data.attributes.email"       => "required|max:80|email|unique:users,email",
 			"data.attributes.password"    => "required|min:6|confirmed",
+			"device_name" => "required",
 		]);
 	}
 
@@ -61,14 +62,9 @@ class RegisterController extends Controller
 
 	protected function registered(Request $request, $user)
 	{
-		return (new UserResource($user))
-					->additional([
-						"meta" => [
-							"token" => $this->token,
-							"token_type" => 'bearer',
-							"expires_in" => auth()->factory()->getTTL() * 60,
-						],
-					])
+		$token = $user->createToken($request->device_name)->plainTextToken;
+
+		return (new UserResource($user, $this->token))
 					->response()
 					->setStatusCode(201);
 	}

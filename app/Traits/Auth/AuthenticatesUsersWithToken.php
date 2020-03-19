@@ -54,8 +54,9 @@ trait AuthenticatesUsersWithToken
             return $this->sendLockoutResponse($request);
         }
 
-        if ($this->attemptLogin($request)) {
-            return $this->sendLoginResponse($request);
+        $user = $this->attemptLogin($request);
+        if ($user) {
+            return $this->sendLoginResponse($request, $user);
         }
 
         // If the login attempt was unsuccessful we will increment the number of attempts
@@ -77,8 +78,9 @@ trait AuthenticatesUsersWithToken
     protected function validateLogin(Request $request)
     {
         return Validator::make($request->all(), [
-            $this->username() => 'required|string',
-            'password' => 'required|string',
+			$this->username() => 'required|string',
+			'password'        => 'required|string',
+			'device_name'     => 'required',
         ]);
     }
 
@@ -127,11 +129,11 @@ trait AuthenticatesUsersWithToken
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    protected function sendLoginResponse(Request $request)
+    protected function sendLoginResponse(Request $request, $user)
     {
         $this->clearLoginAttempts($request);
 
-        return $this->authenticated($request, $this->guard()->user())
+        return $this->authenticated($request, $user)
                 ?: redirect()->intended($this->redirectPath());
     }
 

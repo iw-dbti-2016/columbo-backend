@@ -6,12 +6,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class User extends JsonResource
 {
-	private $token_data;
+	private $token;
 
-	public function __construct($resource, $token_data)
+	public function __construct($resource, $token=null)
 	{
 		$this->resource = $resource;
-		$this->token_data = $token_data;
+		$this->token = $token;
 	}
 
 	/**
@@ -37,9 +37,9 @@ class User extends JsonResource
 					"birth_date"       => $this->birth_date,
 					"description"      => $this->description,
 					"language"         => $this->language,
-					"token"            => $this->when($this->token_data != null, $this->token_data["token"]),
-					"token_type"       => $this->when($this->token_data != null, $this->token_data["token_type"]),
-					"token_expires_in" => $this->when($this->token_data != null, $this->token_data["expires_in"]),
+					"token"            => $this->when($this->token != null, $this->token),
+					// "token_type"       => $this->when($this->token_data != null, $this->token_data["token_type"]),
+					// "token_expires_in" => $this->when($this->token_data != null, $this->token_data["expires_in"]),
 				// ],
 			// ],
 			// "links" => [

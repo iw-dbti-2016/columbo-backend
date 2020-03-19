@@ -30,7 +30,7 @@ class ForgotPasswordController extends Controller
      */
     function __construct()
     {
-    	$this->middleware('guest:api');
+    	$this->middleware('guest:airlock');
     }
 
     /**

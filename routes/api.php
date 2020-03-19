@@ -38,7 +38,7 @@ Route::group(['prefix' => 'v1'], function() {
 	Route::get('pois/', 'poiController@list');
 	Route::get('pois/{poi}', 'poiController@get');
 
-	Route::group(['middleware' => ['auth:api']], function() {
+	Route::group(['middleware' => ['auth:airlock']], function() {
 		Route::get('/user', function(Request $request) {
 			return new User($request->user());
 		})->middleware('verified');

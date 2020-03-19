@@ -2,64 +2,50 @@
 
 namespace Columbo\Http\Controllers\Auth;
 
+use Columbo\Http\Controllers\Controller;
+use Columbo\Http\Resources\User as UserResource;
+use Columbo\Traits\APIResponses;
+use Columbo\Traits\Auth\AuthenticatesUsersWithToken;
+use Columbo\Traits\Auth\RegistersUsersWithToken;
+use Columbo\User;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Columbo\Http\Controllers\Controller;
-use Columbo\Http\Resources\User as UserResource;
-use Columbo\Traits\Auth\AuthenticatesUsersWithToken;
-use Columbo\Traits\Auth\RegistersUsersWithToken;
-use Columbo\User;
 
 class APIAuthController extends Controller
 {
+	use APIResponses;
+
 	function __construct()
 	{
-		$this->middleware('auth:api');
+		$this->middleware('auth:airlock');
 	}
 
 	public function refresh(Request $request)
 	{
-		$token = auth()->refresh();
+		$validator = Validator::make($request->all(), [
+			'device_name'     => 'required',
+		]);
 
-		return $this->constructResponse($request,
-										array_merge(
-											(new UserResource(auth()->user()))
-											->toArray($request),
-											[
-												"meta" => [
-													"token"      => $token,
-													"token_type" => 'bearer',
-													"expires_in" => auth()->factory()->getTTL() * 60,
-												],
-											])
-										, 200);
-	}
-
-	private function constructResponse(Request $request, $responseData, $responseCode)
-	{
-		$token = explode(".", $responseData["meta"]["token"]);
-
-		if ($this->isBrowserRequest($request)) {
-			$responseData["data"] = array_merge($responseData["meta"], ["token" => "/"]);
-
-			$signCookie = Cookie::make('jwt_sign', $token[2], 0, $path=null, $domain=null, $secure=false, $httpOnly=true, $raw=false, $sameSite='strict');
-			$payloadCookie = Cookie::make('jwt_payload', $token[0] . '.' . $token[1], 0, $path=null, $domain=null, $secure=false, $httpOnly=false, $raw=false, $sameSite='strict');
-		} else {
-			$signCookie = Cookie::forget('jwt_sign');
-			$payloadCookie = Cookie::forget('jwt_payload');
+		if ($validator->fails()) {
+			return $this->validationFailedResponse($validator);
 		}
 
-		return response()->json($responseData, $responseCode)
-						->cookie($signCookie)
-						->cookie($payloadCookie);
-	}
+		$tokens = $request->user()->tokens()->where('name', $request->device_name);
 
-	private function isBrowserRequest(Request $request)
-	{
-		return Hash::check("true", $request->header('web'));
+		if ($tokens->count() == 0) {
+			return $this->unauthorizedResponse("No token in existence for this device.");
+		}
+
+		$tokens->delete();
+
+		$token = $request->user()->createToken($request->device_name)->plainTextToken;
+
+		return (new UserResource($request->user(), $token))
+					->response()
+					->setStatusCode(200);
 	}
 }

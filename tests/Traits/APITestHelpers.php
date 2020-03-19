@@ -56,6 +56,16 @@ trait APITestHelpers
 	// STRUCTURE AND STATUS ASSERTIONS //
 	/////////////////////////////////////
 
+	protected function userResourceStructure()
+	{
+		return [
+			"email",
+			"username",
+			"first_name",
+			"last_name",
+		];
+	}
+
 	protected function successStructure()
 	{
 		return [

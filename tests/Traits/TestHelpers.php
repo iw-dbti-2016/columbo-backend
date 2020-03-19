@@ -142,7 +142,7 @@ trait TestHelpers
 		if ($id != null)	$data = array_merge($data, ["id" => $id]);
 		if ($others != [])	$data = array_merge($data, $others);
 
-		return ["data" => $data];
+		return ["data" => $data, "device_name" => "test-device-name"];
 	}
 
 	/** Must be overridden */
