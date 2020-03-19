@@ -12,7 +12,13 @@
 */
 
 Route::group(['prefix' => 'auth'], function() {
-	Auth::routes(['verify' => true]);
+	// Only auth things happening in the browser are:
+	// Verification of email-address after registration.
+	Route::get('/email/verify/{id}/{hash}', 'Auth\VerificationController@verify')->name('verification.verify');
+	// Showing password reset form after requesting it via app.
+	Route::get('/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+	// Resetting of password after submitting password reset form.
+	Route::post('/password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
 });
 
 Route::get('/', function() {

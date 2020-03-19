@@ -23,6 +23,11 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body class="h-full font-sans">
+	@if(session()->has('message'))
+		<div class="bg-green-300 p-8 max-w-md text-gray rounded-lg right-0 bottom-0 mr-6 ml-6 fixed mb-6 shadow-md z-20">
+			<p>{{ session()->get('message') }}</p>
+		</div>
+	@endif
     <div id="app" class="h-full">
         {{-- <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">

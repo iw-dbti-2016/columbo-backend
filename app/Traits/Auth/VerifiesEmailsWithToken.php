@@ -79,7 +79,7 @@ trait VerifiesEmailsWithToken
 
     protected function correctResponse()
     {
-        return redirect($this->redirectPath())->with('verified', true);
+        return redirect($this->redirectPath())->with('message', 'Your email has now been verified. You can continue in the app.');
     }
 
     protected function OKResendResponse()
