@@ -2,13 +2,8 @@
 
 namespace Tests\Feature;
 
-use Columbo\Currency;
 use Columbo\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Airlock\Airlock;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
@@ -26,12 +21,12 @@ class AuthenticationTest extends TestCase
 	public function a_user_can_register_with_basic_information()
 	{
 		$this->withoutExceptionHandling();
-		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestData());
+		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestAttributes());
 
 		$response->assertStatus(201);
 		$response->assertJSONStructure($this->userResourceStructure());
 
-		$this->assertDatabaseHas("users", $this->getTestAttributesWithout(["password", "password_confirmation"]));
+		$this->assertDatabaseHas("users", $this->getTestAttributesWithout(["password", "password_confirmation", "device_name"]));
 		$this->assertDatabaseHas("personal_access_tokens", [
 			"name" => "test-device-name",
 		]);
@@ -45,7 +40,7 @@ class AuthenticationTest extends TestCase
 		$responses = [];
 
 		foreach ($required_fields as $field) {
-			$responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWithout($field));
+			$responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestAttributesWithout($field));
 		}
 
 		foreach ($responses as $i => $response) {
@@ -113,7 +108,7 @@ class AuthenticationTest extends TestCase
 		$responses = [];
 
 		foreach($wrong_data_fields as $field) {
-			$responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith($field));
+			$responses[] = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestAttributesWith($field));
 		}
 
 		foreach ($responses as $i => $response) {
@@ -136,7 +131,7 @@ class AuthenticationTest extends TestCase
 	/** @test */
 	public function additional_field_are_ignored_on_registration()
 	{
-		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestDataWith([
+		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestAttributesWith([
 			"birth_date" => "2019-01-01",
 			"grandfather_last_name" => "Doedoe",
 			"grandmother_favorite_color" => "yellow, but not yellow yellow, rather yellow-red-ish",
@@ -162,12 +157,12 @@ class AuthenticationTest extends TestCase
 	public function a_user_cannot_register_when_logged_in()
 	{
 		Airlock::actingAs($this->createUser());
-		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestData());
+		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestAttributes());
 
 		$response->assertStatus(403);
 		$response->assertJSONStructure($this->errorStructure());
 
-		$this->assertDatabaseMissing("users", $this->getTestAttributesWithout(["password", "password_confirmation"]));
+		$this->assertDatabaseMissing("users", $this->getTestAttributesWithout(["password", "password_confirmation", "device_name"]));
 		$this->assertDatabaseMissing("personal_access_tokens", [
 			"name" => "test-device-name",
 		]);
@@ -300,16 +295,11 @@ class AuthenticationTest extends TestCase
 	/** @test */
 	public function authenticated_users_can_refresh_their_active_token()
 	{
-		$this->withoutExceptionHandling();
-		// LOG IN
-		$user = $this->createUser();
-		$response = $this->expectJSON()->post("/api/v1/auth/login", [
-			"email" => $user->email,
-			"password" => "password",
-			"device_name" => "test-device-name",
+		$this->assertDatabaseMissing("personal_access_tokens", [
+			"name" => "test-device-name",
 		]);
 
-		// REFRESH TOKEN
+		$user = $this->createUser();
 		Airlock::actingAs($user);
 		$response = $this->expectJSON()->patch("/api/v1/auth/refresh", ["device_name" => "test-device-name"]);
 
@@ -320,35 +310,10 @@ class AuthenticationTest extends TestCase
 		]);
 	}
 
-	public function authenticated_users_cannot_refresh_an_unexisting_token()
-	{
-		$this->withoutExceptionHandling();
-		// LOG IN
-		$user = $this->createUser();
-		$response = $this->expectJSON()->post("/api/v1/auth/login", [
-			"email" => $user->email,
-			"password" => "password",
-			"device_name" => "test-device-name",
-		]);
-
-		// REFRESH TOKEN
-		Airlock::actingAs($user);
-		$response = $this->expectJSON()->patch("/api/v1/auth/refresh", ["device_name" => "test-device-name-2"]);
-
-		$response->assertStatus(401);
-		$response->assertJSONStructure($this->errorStructure());
-		$this->assertDatabaseHas("personal_access_tokens", [
-			"name" => "test-device-name",
-		]);
-		$this->assertDatabaseMissing("personal_access_tokens", [
-			"name" => "test-device-name-2",
-		]);
-	}
-
 	/** @test */
 	public function unauthenticated_users_cannot_refresh_a_token()
 	{
-		$response = $this->expectJSON()->patch("/api/v1/auth/refresh");
+		$response = $this->expectJSON()->patch("/api/v1/auth/refresh", ["device_name" => "test-device-name"]);
 
 		$response->assertStatus(401);
 		$response->assertJSONStructure($this->errorStructure());
@@ -367,14 +332,9 @@ class AuthenticationTest extends TestCase
 	{
 		$this->withoutExceptionHandling();
 		$user = $this->createUser();
-		$response = $this->expectJSON()->post("/api/v1/auth/login", [
-			"email" => $user->email,
-			"password" => "password",
-			"device_name" => "test-device-name",
-		]);
-
 		Airlock::actingAs($user);
-		$response = $this->expectJSON()->delete("/api/v1/auth/logout", ["device_name" => "test-device-name"]);
+
+		$response = $this->expectJSON()->delete("/api/v1/auth/logout");
 
 		$response->assertStatus(200);
 		$response->assertJSONStructure([
@@ -382,15 +342,12 @@ class AuthenticationTest extends TestCase
 			"message",
 			"data",
 		]);
-		$this->assertDatabaseMissing("personal_access_tokens", [
-			"name" => "test-device-name",
-		]);
 	}
 
 	/** @test */
 	public function an_unauthenticated_user_cannot_logout()
 	{
-		$response = $this->expectJSON()->delete("/api/v1/auth/logout", ["device_name" => "test-device-name"]);
+		$response = $this->expectJSON()->delete("/api/v1/auth/logout");
 
 		$response->assertStatus(401);
 		$response->assertJSONStructure($this->errorStructure());
@@ -466,7 +423,7 @@ class AuthenticationTest extends TestCase
 	/** @test */
 	public function an_authenticated_user_without_validated_email_can_resend_a_verification_email()
 	{
-		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestData());
+		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestAttributes());
 
 		$response->assertStatus(201);
 		$response->assertJSONStructure($this->userResourceStructure());
@@ -489,6 +446,7 @@ class AuthenticationTest extends TestCase
 	/** @test */
 	public function an_authenticated_user_with_validated_email_cannot_resend_a_verification_email_but_receives_a_confirmation_of_validation()
 	{
+		$this->withoutExceptionHandling();
 		$user = $this->createUser();
 		Airlock::actingAs($user);
 
@@ -531,7 +489,7 @@ class AuthenticationTest extends TestCase
 	/** @test */
 	public function a_user_cannot_get_data_after_registration_without_email_verification()
 	{
-		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestData());
+		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestAttributes());
 
 		$response->assertStatus(201);
 		$response->assertJSONStructure($this->userResourceStructure());
@@ -584,6 +542,7 @@ class AuthenticationTest extends TestCase
 			"email"                 => "john@example.com",
 			"password"              => "password",
 			"password_confirmation" => "password",
+			"device_name"			=> "test-device-name",
 		];
 	}
 

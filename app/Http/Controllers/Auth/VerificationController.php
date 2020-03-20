@@ -5,49 +5,62 @@ namespace Columbo\Http\Controllers\Auth;
 use Columbo\Http\Controllers\Controller;
 use Columbo\Traits\APIResponses;
 use Columbo\Traits\Auth\VerifiesEmailsWithToken;
+use Columbo\User;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Foundation\Auth\RedirectsUsers;
+use Illuminate\Http\Request;
 
 class VerificationController extends Controller
 {
-	/*
-	|--------------------------------------------------------------------------
-	| Email Verification Controller
-	|--------------------------------------------------------------------------
-	|
-	| This controller is responsible for handling email verification for any
-	| user that recently registered with the application. Emails may also
-	| be re-sent if the user didn't receive the original email message.
-	|
-	*/
+	use RedirectsUsers, APIResponses;
 
-	use VerifiesEmailsWithToken, APIResponses;
-
-	/**
-	 * Where to redirect users after verification.
-	 *
-	 * @var string
-	 */
 	protected $redirectTo = '/';
 
-	/**
-	 * Create a new controller instance.
-	 *
-	 * @return void
-	 */
 	public function __construct()
 	{
-		$this->redirectTo = route('home');
 		$this->middleware('auth:airlock')->except('verify');
-		$this->middleware('signed,guest:airlock')->only('verify');
+		$this->middleware(['signed', 'guest:airlock'])->only('verify');
 		$this->middleware('throttle:6,1')->only('verify', 'resend');
 	}
 
-	protected function alreadyVerifiedResponse()
+	public function verify(Request $request)
 	{
-		return $this->okResponse("Your email is already verified.");
+		$user = User::find($request->route('id'));
+
+		if (! $user) {
+			return abort(403, "This link is invalid");
+		}
+
+		if ($user->hasVerifiedEmail()) {
+			return $this->alreadyVerifiedResponse($request);
+		}
+
+		if ($user->markEmailAsVerified()) {
+			event(new Verified($user));
+		}
+
+		return redirect($this->redirectPath())
+				->with('message', 'Your email has now been verified. You can continue in the app.');
 	}
 
-	protected function OKResendResponse()
+	public function resend(Request $request)
 	{
+		if ($request->user()->hasVerifiedEmail()) {
+			return $this->alreadyVerifiedResponse($request);
+		}
+
+		$request->user()->sendEmailVerificationNotification();
+
 		return $this->okResponse("The email has been re-sent.");
+	}
+
+	private function alreadyVerifiedResponse(Request $request)
+	{
+		if ($request->expectsJSON()) {
+			return $this->okResponse("Your email is already verified.");
+		} else {
+			return redirect($this->redirectPath())
+					->with('message', 'Your email is already verified. You can continue in the app.');
+		}
 	}
 }

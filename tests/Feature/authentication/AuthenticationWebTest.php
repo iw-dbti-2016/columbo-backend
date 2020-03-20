@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Columbo\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Airlock\Airlock;
@@ -78,6 +77,7 @@ class AuthenticationWebTest extends TestCase
 	/** @test */
 	public function unauthenticated_user_with_valid_token_can_reset_password()
 	{
+		$this->withoutExceptionHandling();
 		$user = $this->createUser();
 
 		$response = $this->post("/api/v1/auth/password/email", [
@@ -110,7 +110,13 @@ class AuthenticationWebTest extends TestCase
 	//    EMAIL VERIFICATION    //
 	//////////////////////////////
 
-	//...
+	/** @test */
+	public function an_invalid_token_results_in_an_error()
+	{
+		$response = $this->get('/auth/email/verify/10000/token_that_is_invalid');
+
+		$response->assertStatus(403);
+	}
 
 	// 404, actually does not belong in this file
 	/** @test */

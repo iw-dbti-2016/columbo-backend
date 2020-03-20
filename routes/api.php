@@ -4,8 +4,8 @@ Route::group(['prefix' => 'v1'], function() {
 	Route::group(['prefix' => 'auth'], function() {
 		Route::post('/register', 'Auth\RegisterController@register')->name('api.auth.register');
 		Route::post('/login', 'Auth\LoginController@login')->name('api.auth.login');
-		Route::patch('/refresh', 'Auth\APIAuthController@refresh')->name('api.auth.refresh');
-		Route::delete('/logout', 'Auth\LoginController@logout')->name('api.auth.logout');
+		Route::patch('/refresh', 'Auth\TokenController@refresh')->name('api.auth.refresh');
+		Route::delete('/logout', 'Auth\LogoutController@logout')->name('api.auth.logout');
 
 		Route::post('/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('api.auth.forgot-password');
 		Route::post('/email/resend', 'Auth\VerificationController@resend')->name('api.auth.resend');

@@ -3,19 +3,12 @@
 namespace Columbo\Http\Controllers\Auth;
 
 use Columbo\Http\Controllers\Controller;
-use Columbo\Http\Resources\User as UserResource;
+use Columbo\Http\Resources\User;
 use Columbo\Traits\APIResponses;
-use Columbo\Traits\Auth\AuthenticatesUsersWithToken;
-use Columbo\Traits\Auth\RegistersUsersWithToken;
-use Columbo\User;
-use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class APIAuthController extends Controller
+class TokenController extends Controller
 {
 	use APIResponses;
 
@@ -34,17 +27,13 @@ class APIAuthController extends Controller
 			return $this->validationFailedResponse($validator);
 		}
 
-		$tokens = $request->user()->tokens()->where('name', $request->device_name);
+		// Remove the current access token.
+		$request->user()->currentAccessToken()->delete();
 
-		if ($tokens->count() == 0) {
-			return $this->unauthorizedResponse("No token in existence for this device.");
-		}
-
-		$tokens->delete();
-
+		// Create new token for device.
 		$token = $request->user()->createToken($request->device_name)->plainTextToken;
 
-		return (new UserResource($request->user(), $token))
+		return (new User($request->user(), $token))
 					->response()
 					->setStatusCode(200);
 	}

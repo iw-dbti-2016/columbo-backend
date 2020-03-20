@@ -5,29 +5,60 @@ namespace Columbo\Http\Controllers\Auth;
 use Columbo\Http\Controllers\Controller;
 use Columbo\Http\Resources\User as UserResource;
 use Columbo\Traits\APIResponses;
-use Columbo\Traits\Auth\AuthenticatesUsersWithToken;
 use Columbo\User;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
-	use AuthenticatesUsersWithToken, APIResponses;
+	use ThrottlesLogins, APIResponses;
 
-	/**
-	 * Create a new controller instance.
-	 *
-	 * @return void
-	 */
+	private $token;
+
 	function __construct()
 	{
 		$this->middleware('auth:airlock')->except('login');
 		$this->middleware('guest:airlock')->only('login');
 	}
 
-	protected function attemptLogin(Request $request)
+	public function login(Request $request)
+	{
+		$validator = Validator::make($request->all(), [
+			$this->username() => 'required|string|email',
+			'password'        => 'required|string',
+			'device_name'     => 'required',
+		]);
+
+		if ($validator->fails()) {
+			return $this->validationFailedResponse($validator);
+		}
+
+		// If the class is using the ThrottlesLogins trait, we can automatically throttle
+		// the login attempts for this application. We'll key this by the username and
+		// the IP address of the client making these requests into this application.
+		if (method_exists($this, 'hasTooManyLoginAttempts') &&
+			$this->hasTooManyLoginAttempts($request)) {
+			$this->fireLockoutEvent($request);
+
+			return $this->unauthenticatedResponse("Too many wrong attempts, you can temporarily not login.");
+		}
+
+		$user = $this->attemptLogin($request);
+		if ($user) {
+			return $this->sendLoginResponse($request, $user);
+		}
+
+		// If the login attempt was unsuccessful we will increment the number of attempts
+		// to login and redirect the user back to the login form. Of course, when this
+		// user surpasses their maximum number of attempts they will get locked out.
+		$this->incrementLoginAttempts($request);
+
+		return $this->unauthenticatedResponse("Credentials do not match our records.");
+	}
+
+	private function attemptLogin(Request $request)
 	{
 		$user = User::where('email', $request->email)->first();
 
@@ -39,55 +70,15 @@ class LoginController extends Controller
 		return $user;
 	}
 
-	protected function authenticated(Request $request, $user)
+	private function sendLoginResponse(Request $request, $user)
 	{
+		$this->clearLoginAttempts($request);
+
 		return new UserResource($user, $this->token);
 	}
 
-	protected function validationFailed(\Illuminate\Validation\Validator $validator)
+	protected function username()
 	{
-		return $this->validationFailedResponse($validator);
-	}
-
-	protected function sendFailedLoginResponse(Request $request)
-	{
-		return $this->unauthenticatedResponse("Credentials do not match our records.");
-	}
-
-	public function logout(Request $request)
-	{
-		$validator = Validator::make($request->all(), [
-			'device_name'     => 'required',
-		]);
-
-		if ($validator->fails()) {
-			return $this->validationFailedResponse($validator);
-		}
-
-		$request->user()->tokens()->where('name', $request->device_name)->delete();
-
-		return $this->loggedOut($request) ?: redirect('/');
-	}
-
-	protected function loggedOut(Request $request)
-	{
-		$signCookie = Cookie::forget(config("api.jwt_payload_cookie_name"));
-		$payloadCookie = Cookie::forget(config("api.jwt_sign_cookie_name"));
-
-		return $this->okResponse("Logged out successfully")
-					->cookie($signCookie)
-					->cookie($payloadCookie);
-	}
-
-	private function constructResponse(Request $request, $responseData, $responseCode)
-	{
-		$token = explode(".", $responseData["token"]);
-
-		$signCookie = Cookie::forget('jwt_sign');
-		$payloadCookie = Cookie::forget('jwt_payload');
-
-		return $this->okResponse(null, $responseData, $responseCode)
-					->cookie($signCookie)
-					->cookie($payloadCookie);
+		return 'email';
 	}
 }

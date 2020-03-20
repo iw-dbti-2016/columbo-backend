@@ -4,37 +4,27 @@ namespace Columbo\Http\Controllers\Auth;
 
 use Columbo\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ResetPasswordController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Password Reset Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller is responsible for handling password reset requests
-    | and uses a simple trait to include this behavior. You're free to
-    | explore this trait and override any methods you wish to tweak.
-    |
-    */
+	use ResetsPasswords;
 
-    use ResetsPasswords;
+	protected $redirectTo = '/';
 
-    /**
-     * Where to redirect users after resetting their password.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/';
+	public function __construct()
+	{
+		$this->middleware('guest:airlock');
+	}
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-    	$this->redirectTo = route('home');
-        $this->middleware('guest:airlock');
-    }
+	protected function sendResetResponse(Request $request, $response)
+	{
+		if ($request->wantsJson()) {
+			return new JsonResponse(['message' => trans($response)], 200);
+		}
+
+		return redirect($this->redirectPath())
+				->with('message', 'Your password has been reset. You can go to the app and log in.');
+	}
 }
