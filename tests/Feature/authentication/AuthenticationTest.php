@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use Columbo\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Airlock\Airlock;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
 
@@ -156,7 +156,7 @@ class AuthenticationTest extends TestCase
 	/** @test */
 	public function a_user_cannot_register_when_logged_in()
 	{
-		Airlock::actingAs($this->createUser());
+		Sanctum::actingAs($this->createUser());
 		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestAttributes());
 
 		$response->assertStatus(403);
@@ -271,7 +271,7 @@ class AuthenticationTest extends TestCase
 	public function a_user_cannot_login_when_logged_in()
 	{
 		$user = $this->createUser();
-		Airlock::actingAs($this->createUser());
+		Sanctum::actingAs($this->createUser());
 
 		$response = $this->expectJSON()->post("/api/v1/auth/login", [
 			"email" => $user->email,
@@ -300,7 +300,7 @@ class AuthenticationTest extends TestCase
 		]);
 
 		$user = $this->createUser();
-		Airlock::actingAs($user);
+		Sanctum::actingAs($user);
 		$response = $this->expectJSON()->patch("/api/v1/auth/refresh", ["device_name" => "test-device-name"]);
 
 		$response->assertStatus(200);
@@ -332,7 +332,7 @@ class AuthenticationTest extends TestCase
 	{
 		$this->withoutExceptionHandling();
 		$user = $this->createUser();
-		Airlock::actingAs($user);
+		Sanctum::actingAs($user);
 
 		$response = $this->expectJSON()->delete("/api/v1/auth/logout");
 
@@ -364,7 +364,7 @@ class AuthenticationTest extends TestCase
 		$this->withoutExceptionHandling();
 		$user = $this->createUser();
 
-		Airlock::actingAs($user);
+		Sanctum::actingAs($user);
 		$response = $this->expectJSON()
 							->post("/api/v1/auth/password/email", [
 								"email" => $user->email,
@@ -432,7 +432,7 @@ class AuthenticationTest extends TestCase
 			"username" => "johndoe",
 		]);
 
-		Airlock::actingAs(User::where('username', 'johndoe')->first());
+		Sanctum::actingAs(User::where('username', 'johndoe')->first());
 		$response = $this->expectJSON()
 							->post("/api/v1/auth/email/resend");
 
@@ -448,7 +448,7 @@ class AuthenticationTest extends TestCase
 	{
 		$this->withoutExceptionHandling();
 		$user = $this->createUser();
-		Airlock::actingAs($user);
+		Sanctum::actingAs($user);
 
 		$response = $this->expectJSON()
 							->post("/api/v1/auth/email/resend");
@@ -478,7 +478,7 @@ class AuthenticationTest extends TestCase
 	public function an_authenticated_user_can_retrieve_their_data()
 	{
 		$user = $this->createUser();
-		Airlock::actingAs($user);
+		Sanctum::actingAs($user);
 
 		$response = $this->expectJSON()->get("/api/v1/user");
 
@@ -502,7 +502,7 @@ class AuthenticationTest extends TestCase
 		]);
 
 		// Email not verified, authenticated
-		Airlock::actingAs(User::where('username', 'johndoe')->first());
+		Sanctum::actingAs(User::where('username', 'johndoe')->first());
 		$response = $this->expectJSON()
 							->get("/api/v1/user");
 

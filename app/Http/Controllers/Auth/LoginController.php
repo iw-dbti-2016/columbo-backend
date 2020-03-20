@@ -19,8 +19,8 @@ class LoginController extends Controller
 
 	function __construct()
 	{
-		$this->middleware('auth:airlock')->except('login');
-		$this->middleware('guest:airlock')->only('login');
+		$this->middleware('auth:sanctum')->except('login');
+		$this->middleware('guest:sanctum')->only('login');
 	}
 
 	public function login(Request $request)

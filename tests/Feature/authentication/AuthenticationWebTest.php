@@ -6,7 +6,7 @@ use Columbo\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Airlock\Airlock;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use Tests\Traits\TestHelpers;
 
@@ -25,7 +25,7 @@ class AuthenticationWebTest extends TestCase
 		$this->withoutExceptionHandling();
 		$user = $this->createUser();
 
-		Airlock::actingAs($user);
+		Sanctum::actingAs($user);
 		$response = $this->get("/auth/password/reset/token");
 
 		$response->assertRedirect("/");
@@ -36,7 +36,7 @@ class AuthenticationWebTest extends TestCase
 	{
 		$user = $this->createUser();
 
-		Airlock::actingAs($user);
+		Sanctum::actingAs($user);
 		$response = $this->post("/auth/password/reset", [
 						"token" => "abcdef",
 						"email" => $user->email,

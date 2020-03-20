@@ -19,8 +19,8 @@ class RegisterController extends Controller
 
 	function __construct()
 	{
-		$this->middleware('auth:airlock')->except('register');
-		$this->middleware('guest:airlock')->only('register');
+		$this->middleware('auth:sanctum')->except('register');
+		$this->middleware('guest:sanctum')->only('register');
 	}
 
 	public function register(Request $request)

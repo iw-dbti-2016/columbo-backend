@@ -18,8 +18,8 @@ class VerificationController extends Controller
 
 	public function __construct()
 	{
-		$this->middleware('auth:airlock')->except('verify');
-		$this->middleware(['signed', 'guest:airlock'])->only('verify');
+		$this->middleware('auth:sanctum')->except('verify');
+		$this->middleware(['signed', 'guest:sanctum'])->only('verify');
 		$this->middleware('throttle:6,1')->only('verify', 'resend');
 	}
 

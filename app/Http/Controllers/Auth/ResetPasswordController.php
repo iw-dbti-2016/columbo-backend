@@ -15,7 +15,7 @@ class ResetPasswordController extends Controller
 
 	public function __construct()
 	{
-		$this->middleware('guest:airlock');
+		$this->middleware('guest:sanctum');
 	}
 
 	protected function sendResetResponse(Request $request, $response)

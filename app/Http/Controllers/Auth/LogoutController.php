@@ -13,7 +13,7 @@ class LogoutController extends Controller
 
 	function __construct()
 	{
-		$this->middleware('auth:airlock');
+		$this->middleware('auth:sanctum');
 	}
 
 	public function logout(Request $request)

@@ -24,7 +24,7 @@ Route::group(['prefix' => 'v1'], function() {
 	Route::get('pois/', 'poiController@list');
 	Route::get('pois/{poi}', 'poiController@get');
 
-	Route::group(['middleware' => ['auth:airlock', 'verified']], function() {
+	Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
 		Route::get('/user', 'BaseController@showUserData');
 
 		Route::get('user/trips', 'UserController@listTrips');

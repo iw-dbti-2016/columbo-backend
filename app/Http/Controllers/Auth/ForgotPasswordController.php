@@ -14,7 +14,7 @@ class ForgotPasswordController extends Controller
 
 	function __construct()
 	{
-		$this->middleware('guest:airlock');
+		$this->middleware('guest:sanctum');
 	}
 
 	public function sendResetLinkEmail(Request $request)
