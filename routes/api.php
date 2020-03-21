@@ -24,8 +24,11 @@ Route::group(['prefix' => 'v1'], function() {
 	Route::get('pois/', 'poiController@list');
 	Route::get('pois/{poi}', 'poiController@get');
 
+	// You can always retrieve your own data
+	Route::get('/user', 'BaseController@showUserData')->middleware('auth:sanctum');
+
+	// Other data required email verification
 	Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
-		Route::get('/user', 'BaseController@showUserData');
 
 		Route::get('user/trips', 'UserController@listTrips');
 

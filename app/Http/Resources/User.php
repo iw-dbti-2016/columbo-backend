@@ -38,8 +38,7 @@ class User extends JsonResource
 					"description"      => $this->description,
 					"language"         => $this->language,
 					"token"            => $this->when($this->token != null, $this->token),
-					// "token_type"       => $this->when($this->token_data != null, $this->token_data["token_type"]),
-					// "token_expires_in" => $this->when($this->token_data != null, $this->token_data["expires_in"]),
+					"email_verified_at"=> $this->email_verified_at,
 				// ],
 			// ],
 			// "links" => [
