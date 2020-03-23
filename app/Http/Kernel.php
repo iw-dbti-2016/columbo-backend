@@ -39,7 +39,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            \Columbo\Http\Middleware\EncryptCookies::class,
+            // \Columbo\Http\Middleware\EncryptCookies::class,
             EnsureFrontendRequestsAreStateful::class,
             'throttle:60,1',
             'bindings',

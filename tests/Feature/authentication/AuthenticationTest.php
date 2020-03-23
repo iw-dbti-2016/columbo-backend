@@ -487,31 +487,6 @@ class AuthenticationTest extends TestCase
 	}
 
 	/** @test */
-	public function a_user_cannot_get_data_after_registration_without_email_verification()
-	{
-		$response = $this->expectJSON()->post("/api/v1/auth/register", $this->getTestAttributes());
-
-		$response->assertStatus(201);
-		$response->assertJSONStructure($this->userResourceStructure());
-
-		$this->assertDatabaseHas("users", [
-			"username" => "johndoe",
-		]);
-		$this->assertDatabaseHas("personal_access_tokens", [
-			"name" => "test-device-name",
-		]);
-
-		// Email not verified, authenticated
-		Sanctum::actingAs(User::where('username', 'johndoe')->first());
-		$response = $this->expectJSON()
-							->get("/api/v1/user");
-
-		$response->assertStatus(403);
-		$response->assertJSONStructure($this->errorStructure());
-	}
-
-
-	/** @test */
 	public function an_unauthenticated_user_cannot_retrieve_their_data()
 	{
 		$user = $this->createUser();

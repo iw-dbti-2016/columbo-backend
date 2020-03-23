@@ -41,7 +41,11 @@ class RegisterController extends Controller
 
         event(new Registered($user = $this->create($request->all())));
 
-        $this->token = $user->createToken($request->device_name)->plainTextToken;
+        if ($request->attributes->get('sanctum') === true) {
+        	auth('web')->login($user);
+        } else {
+        	$this->token = $user->createToken($request->device_name)->plainTextToken;
+        }
 
         return (new UserResource($user, $this->token))
 					->response()

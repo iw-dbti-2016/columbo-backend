@@ -16,6 +16,10 @@ Route::group(['prefix' => 'auth'], function() {
 			->name('password.update');
 });
 
+Route::get('/app/{all?}', function() {
+	return view('app');
+})->where('all', '.*');
+
 Route::get('/', 'BaseController@home')
 		->name('home');
 

@@ -8,6 +8,7 @@ use Columbo\Traits\APIResponses;
 use Columbo\User;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -47,6 +48,12 @@ class LoginController extends Controller
 
 		$user = $this->attemptLogin($request);
 		if ($user) {
+			if ($request->attributes->get('sanctum') === true) {
+				Auth::login($user);
+			} else {
+				$this->token = $user->createToken($request->device_name)->plainTextToken;
+			}
+
 			return $this->sendLoginResponse($request, $user);
 		}
 
@@ -66,7 +73,6 @@ class LoginController extends Controller
 			return false;
 		}
 
-		$this->token = $user->createToken($request->device_name)->plainTextToken;
 		return $user;
 	}
 

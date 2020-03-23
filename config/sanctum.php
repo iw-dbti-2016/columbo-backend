@@ -40,7 +40,7 @@ return [
     */
 
     'middleware' => [
-        'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
+        'verify_csrf_token' => \Columbo\Http\Middleware\VerifyCsrfToken::class,
     ],
 
 ];

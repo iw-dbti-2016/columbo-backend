@@ -18,7 +18,11 @@ class LogoutController extends Controller
 
 	public function logout(Request $request)
 	{
-		$request->user()->currentAccessToken()->delete();
+		if ($request->attributes->get('sanctum') === true) {
+			auth('web')->logout();
+		} else {
+			$request->user()->currentAccessToken()->delete();
+		}
 
 		return $this->okResponse("Logged out successfully.");
 	}
