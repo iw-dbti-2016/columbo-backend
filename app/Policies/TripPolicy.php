@@ -2,13 +2,14 @@
 
 namespace Columbo\Policies;
 
-use Illuminate\Auth\Access\HandlesAuthorization;
+use Columbo\Traits\PolicyInformationPoint;
 use Columbo\Trip;
 use Columbo\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class TripPolicy
 {
-	use HandlesAuthorization;
+	use HandlesAuthorization, PolicyInformationPoint;
 
 	/**
 	 * Determine whether the user can view any trips.
@@ -28,7 +29,7 @@ class TripPolicy
 	 * @param  \Columbo\Trip  $trip
 	 * @return mixed
 	 */
-	public function view(User $user=null, Trip $trip)
+	public function view(User $user, Trip $trip)
 	{
 		return true;
 	}

@@ -22,12 +22,12 @@ class CreateSectionsTable extends Migration
 
             /* DATA */
             $table->boolean('is_draft')->default(true);
-            $table->text('content')->nullable();
+            $table->text('content');
 
             $table->string('image', 100)->nullable();
             $table->string('image_caption', 100)->nullable();
-            $table->time('start_time')->nullable();
-            $table->time('end_time')->nullable();
+            $table->time('start_time');
+            $table->time('end_time');
             $table->integer('temperature')->nullable();
 
             /* VISIBILITY */

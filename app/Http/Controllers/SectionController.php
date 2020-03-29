@@ -2,20 +2,21 @@
 
 namespace Columbo\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Columbo\Exceptions\AuthorizationException;
 use Columbo\Exceptions\ResourceNotFoundException;
 use Columbo\Exceptions\ValidationException;
 use Columbo\Http\Resources\Section as SectionResource;
 use Columbo\Http\Resources\SectionCollection;
+use Columbo\Location;
+use Columbo\POI;
 use Columbo\Report;
 use Columbo\Rules\Visibility;
 use Columbo\Section;
 use Columbo\Traits\APIResponses;
 use Columbo\Trip;
 use Columbo\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SectionController extends Controller
 {
@@ -25,13 +26,16 @@ class SectionController extends Controller
 	{
 		$this->authorize('viewAny', Section::class);
 
-		$data = Section::all();
-		//noDraft()
-					// ->published()
-					// ->orderRecent()
-					// ->with('locationable:id,coordinates,name,info')
-					// ->with('owner:id,first_name,middle_name,last_name,username')
-					// ->get();
+		$data = Section::orderBy('start_time', 'asc')
+				->with(
+					'report',//:id,date,trip_id',
+					'report.trip',//:id,name',
+					'owner',//:id,username',
+					'locationable'
+				)->get();
+			// ->noDraft()
+			// ->published()
+			// ->orderRecent()
 
 		return new SectionCollection($data);
 	}

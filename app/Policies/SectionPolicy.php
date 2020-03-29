@@ -2,14 +2,15 @@
 
 namespace Columbo\Policies;
 
-use Illuminate\Auth\Access\HandlesAuthorization;
 use Columbo\Report;
 use Columbo\Section;
+use Columbo\Traits\PolicyInformationPoint;
 use Columbo\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class SectionPolicy
 {
-	use HandlesAuthorization;
+	use HandlesAuthorization, PolicyInformationPoint;
 
 	/**
 	 * Determine whether the user can view any sections.

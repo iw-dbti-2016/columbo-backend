@@ -2,13 +2,14 @@
 
 namespace Columbo\Policies;
 
-use Illuminate\Auth\Access\HandlesAuthorization;
 use Columbo\Location;
+use Columbo\Traits\PolicyInformationPoint;
 use Columbo\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class LocationPolicy
 {
-	use HandlesAuthorization;
+	use HandlesAuthorization, PolicyInformationPoint;
 
 	/**
 	 * Determine whether the user can view any locations.

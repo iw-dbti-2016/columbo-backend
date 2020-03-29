@@ -15,21 +15,13 @@ class Trip extends JsonResource
 	public function toArray($request)
 	{
 		return [
-			// "data" => [
-				// "type"       => "trip",
-				"id"         => $this->id,
-				// "attributes" => [
-					"name"         => $this->name,
-					"synopsis"     => $this->synopsis,
-					"description"  => $this->description,
-					"start_date"   => $this->start_date,
-					"end_date"     => $this->end_date,
-					"published_at" => $this->published_at,
-				// ],
-			// ],
-			// "links" => [
-			// 	"self" => url("/trips/" . $this->id),
-			// ],
+			"id"           => $this->id,
+			"name"         => $this->name,
+			"synopsis"     => $this->synopsis,
+			"description"  => $this->description,
+			"start_date"   => $this->start_date,
+			"end_date"     => $this->end_date,
+			"published_at" => $this->published_at,
 		];
 	}
 }

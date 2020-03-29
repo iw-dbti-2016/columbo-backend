@@ -2,13 +2,14 @@
 
 namespace Columbo\Policies;
 
-use Illuminate\Auth\Access\HandlesAuthorization;
 use Columbo\POI;
+use Columbo\Traits\PolicyInformationPoint;
 use Columbo\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class POIPolicy
 {
-	use HandlesAuthorization;
+	use HandlesAuthorization, PolicyInformationPoint;
 
 	/**
 	 * Determine whether the user can view any p o i s.

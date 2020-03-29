@@ -11,25 +11,22 @@ Route::group(['prefix' => 'v1'], function() {
 		Route::post('/email/resend', 'Auth\VerificationController@resend')->name('api.auth.resend');
 	});
 
-	// Retrieving of entities made public for now (faster appdev)
-	Route::get('users/{user}/', 'UserController@show');
-	Route::get('trips', 'tripController@list');
-	Route::get('trips/{trip}', 'tripController@get');
-	Route::get('reports/', 'reportController@list');
-	Route::get('reports/{report}', 'reportController@get');
-	Route::get('sections/', 'sectionController@list');
-	Route::get('sections/{section}', 'sectionController@get');
-	Route::get('locations/', 'locationController@list');
-	Route::get('locations/{location}', 'locationController@get');
-	Route::get('pois/', 'poiController@list');
-	Route::get('pois/{poi}', 'poiController@get');
-
 	// You can always retrieve your own data
 	Route::get('/user', 'BaseController@showUserData')->middleware('auth:sanctum');
 
 	// Other data required email verification
 	Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
-
+		Route::get('users/{user}/', 'UserController@show');
+		Route::get('trips', 'tripController@list');
+		Route::get('trips/{trip}', 'tripController@get');
+		Route::get('reports/', 'reportController@list');
+		Route::get('reports/{report}', 'reportController@get');
+		Route::get('sections/', 'sectionController@list');
+		Route::get('sections/{section}', 'sectionController@get');
+		Route::get('locations/', 'locationController@list');
+		Route::get('locations/{location}', 'locationController@get');
+		Route::get('pois/', 'poiController@list');
+		Route::get('pois/{poi}', 'poiController@get');
 		Route::get('user/trips', 'UserController@listTrips');
 
 		Route::group(['prefix' => 'trips'], function() {

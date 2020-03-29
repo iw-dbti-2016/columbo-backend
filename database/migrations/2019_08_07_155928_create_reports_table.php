@@ -22,7 +22,7 @@ class CreateReportsTable extends Migration
 
             /* DATA */
             $table->string('title', 100);
-            $table->date('date')->nullable();
+            $table->date('date');
             $table->text('description')->nullable();
             $table->boolean('is_locked')->default(false);
 

@@ -2,10 +2,6 @@
 
 namespace Columbo\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Validator;
 use Columbo\Exceptions\AuthorizationException;
 use Columbo\Exceptions\BadRequestException;
 use Columbo\Exceptions\RequestStructureException;
@@ -18,12 +14,15 @@ use Columbo\Traits\APIResponses;
 use Columbo\Traits\RequestFormat;
 use Columbo\Trip;
 use Columbo\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class TripController extends Controller
 {
 	use APIResponses, RequestFormat;
 
-	public function list()
+	public function list(Request $request)
 	{
 		$this->authorize('viewAny', Trip::class);
 

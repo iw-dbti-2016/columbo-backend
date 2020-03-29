@@ -2,6 +2,9 @@
 
 namespace Columbo\Http\Resources;
 
+use Columbo\Http\Resources\Section;
+use Columbo\Http\Resources\Trip;
+use Columbo\Http\Resources\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class Report extends JsonResource
@@ -15,19 +18,15 @@ class Report extends JsonResource
 	public function toArray($request)
 	{
 		return [
-			// "data" => [
-				// "type"       => "report",
-				"id"         => $this->id,
-				// "attributes" => [
-					"title"        => $this->title,
-					"date"         => $this->date,
-					"description"  => $this->description,
-					"published_at" => $this->published_at,
-				// ],
-			// ],
-			// "links" => [
-				// "self" => url("/reports/" . $this->id),
-			// ],
+			"id"           => $this->id,
+			"title"        => $this->title,
+			"date"         => $this->date,
+			"description"  => $this->description,
+			"published_at" => $this->published_at,
+			"sections"     => Section::collection($this->whenLoaded('sections')),
+			// "plan"         => new Plan($this->whenLoaded('plan')),
+			"owner"        => new User($this->whenLoaded('owner')),
+			"trip"         => new Trip($this->whenLoaded('trip')),
 		];
 	}
 }

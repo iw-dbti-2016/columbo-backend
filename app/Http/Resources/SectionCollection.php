@@ -14,15 +14,6 @@ class SectionCollection extends ResourceCollection
 	 */
 	public function toArray($request)
 	{
-		return
-		// [
-			// "data" =>
-			$this->collection
-			// ,
-			// "links" => [
-				// "self" => url("/sections"),
-			// ],
-		// ];
-		;
+		return $this->collection;
 	}
 }

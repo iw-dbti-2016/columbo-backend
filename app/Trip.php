@@ -2,13 +2,14 @@
 
 namespace Columbo;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Columbo\Action;
 use Columbo\Report;
 use Columbo\Section;
 use Columbo\Traits\Visibility;
+use Columbo\TripUserRoleMember;
 use Columbo\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Trip extends Model
 {
@@ -24,6 +25,12 @@ class Trip extends Model
         "published_at",
     ];
 
+    protected $casts = [
+		"start_date"   => "date",
+		"end_date"     => "date",
+		"published_at" => "datetime",
+    ];
+
     public function owner()
     {
     	return $this->belongsTo(User::class, 'user_id');
@@ -36,7 +43,8 @@ class Trip extends Model
 
     public function members()
     {
-    	return $this->belongsToMany(User::class, 'trip_user_role_members');
+    	return $this->belongsToMany(User::class, TripUserRoleMember::class)
+    				->using(TripUserRoleMember::class);
     }
 
     public function actions()

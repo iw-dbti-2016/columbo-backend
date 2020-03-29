@@ -25,7 +25,13 @@ class ReportController extends Controller
 	{
 		$this->authorize('viewAny', Report::class);
 
-		return new ReportCollection(Report::all());
+		$reports = Report::with(
+			'sections',
+			'sections.locationable',
+			'trip'
+		)->get();
+
+		return new ReportCollection($reports);
 	}
 
 	/**

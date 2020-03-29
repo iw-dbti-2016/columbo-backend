@@ -2,14 +2,15 @@
 
 namespace Columbo\Policies;
 
-use Illuminate\Auth\Access\HandlesAuthorization;
 use Columbo\Report;
+use Columbo\Traits\PolicyInformationPoint;
 use Columbo\Trip;
 use Columbo\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ReportPolicy
 {
-	use HandlesAuthorization;
+	use HandlesAuthorization, PolicyInformationPoint;
 
 	/**
 	 * Determine whether the user can view any reports.
