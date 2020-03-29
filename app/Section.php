@@ -2,17 +2,18 @@
 
 namespace Columbo;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Carbon;
 use Columbo\Action;
+use Columbo\Interfaces\TrackedByActions;
 use Columbo\Location;
 use Columbo\Report;
 use Columbo\Traits\Visibility;
 use Columbo\Trip;
 use Columbo\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
-class Section extends Model
+class Section extends Model implements TrackedByActions
 {
     use SoftDeletes, Visibility;
 

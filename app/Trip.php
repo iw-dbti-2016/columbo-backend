@@ -3,6 +3,7 @@
 namespace Columbo;
 
 use Columbo\Action;
+use Columbo\Interfaces\TrackedByActions;
 use Columbo\Report;
 use Columbo\Section;
 use Columbo\Traits\Visibility;
@@ -11,7 +12,7 @@ use Columbo\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Trip extends Model
+class Trip extends Model implements TrackedByActions
 {
     use SoftDeletes, Visibility;
 

@@ -4,6 +4,7 @@ namespace Columbo;
 
 use Columbo\Action;
 use Columbo\Currency;
+use Columbo\Interfaces\TrackedByActions;
 use Columbo\Location;
 use Columbo\Report;
 use Columbo\Section;
@@ -14,7 +15,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, TrackedByActions
 {
     use HasApiTokens, Notifiable;
 

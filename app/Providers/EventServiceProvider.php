@@ -20,6 +20,10 @@ class EventServiceProvider extends ServiceProvider
         ],
     ];
 
+    protected $subscribe = [
+    	'Columbo\Listeners\ActionEventSubscriber',
+    ];
+
     /**
      * Register any events for your application.
      *

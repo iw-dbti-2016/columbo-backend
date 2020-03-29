@@ -23,7 +23,7 @@ class CreateActionsTable extends Migration
             $table->tinyInteger('action')->unsigned()->index(); // CREATE,UPDATE,DELETE,RESTORE
             $table->morphs('actionable'); // Object to which action was applied
 
-            $table->timestamps();
+            $table->timestamp('executed_at');
 
             $table->foreign('user_id')
                     ->references('id')

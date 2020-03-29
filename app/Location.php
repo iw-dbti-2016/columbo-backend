@@ -2,16 +2,17 @@
 
 namespace Columbo;
 
+use Columbo\Action;
+use Columbo\Interfaces\TrackedByActions;
+use Columbo\Plan;
+use Columbo\Section;
+use Columbo\Traits\Visibility;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Columbo\Action;
-use Columbo\Plan;
-use Columbo\Section;
-use Columbo\Traits\Visibility;
 
-class Location extends Model
+class Location extends Model implements TrackedByActions
 {
     use SpatialTrait, Visibility, SoftDeletes;
 
