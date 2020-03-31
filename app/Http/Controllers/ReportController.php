@@ -2,28 +2,25 @@
 
 namespace Columbo\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Validator;
-use Columbo\Exceptions\AuthorizationException;
-use Columbo\Exceptions\ResourceNotFoundException;
-use Columbo\Exceptions\ValidationException;
+use Columbo\Events\ResourceCreated;
+use Columbo\Events\ResourceDeleted;
+use Columbo\Events\ResourceUpdated;
+use Columbo\Http\Requests\StoreReport;
+use Columbo\Http\Requests\UpdateReport;
 use Columbo\Http\Resources\Report as ReportResource;
 use Columbo\Http\Resources\ReportCollection;
 use Columbo\Report;
-use Columbo\Rules\Visibility;
 use Columbo\Traits\APIResponses;
 use Columbo\Trip;
-use Columbo\User;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
 	use APIResponses;
 
-	public function list()
+	public function index(Trip $trip)
 	{
-		$this->authorize('viewAny', Report::class);
+		$this->authorize('viewAny', [Report::class, $trip]);
 
 		$reports = Report::with(
 			'sections',
@@ -34,95 +31,45 @@ class ReportController extends Controller
 		return new ReportCollection($reports);
 	}
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function get(Report $report)
+	public function show(Trip $trip, Report $report)
 	{
-		$this->authorize('view', $report);
+		$this->authorize('view', [$report, $trip]);
 
 		return new ReportResource($report);
 	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(Request $request)
+	public function store(StoreReport $request, Trip $trip)
 	{
-		$trip = $this->retreiveTripOrFail($request);
-		$this->authorize('create', [Report::class, $trip]);
-
-		$this->validateDataOrFail($request->all());
-
-		$report = new Report($request->all()["data"]["attributes"]);
+		$report = new Report($request->all());
 
 		$report->trip()->associate($trip);
 		$report->owner()->associate($request->user());
 
 		$report->save();
 
+		event(new ResourceCreated($request->user(), $report));
+
 		return (new ReportResource($report))
 					->response()
 					->setStatusCode(201);
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \Columbo\Report  $report
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(Request $request, Report $report)
+	public function update(UpdateReport $request, Trip $trip, Report $report)
 	{
-		$this->authorize('update', $report);
+		$report->update($request->all());
 
-		$this->validateDataOrFail($request->all());
-
-		$report->update($request->all()["data"]["attributes"]);
+		event(new ResourceUpdated($request->user(), $report));
 
 		return new ReportResource($report);
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \Columbo\Report  $report
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy(Request $request, Report $report)
+	public function destroy(Request $request, Trip $trip, Report $report)
 	{
-		$this->authorize('delete', $report);
+		$this->authorize('delete', [$report, $trip]);
 
 		$report->delete();
+		event(new ResourceDeleted($request->user(), $report));
 
 		return response()->json(["meta" => []], 200);
-	}
-
-	private function validateDataOrFail($data)
-	{
-		$validator = Validator::make($data, [
-			"data.attributes.title"        => "required|max:100",
-			"data.attributes.date"         => "nullable|date_format:Y-m-d",
-			"data.attributes.description"  => "nullable|max:5000",
-			"data.attributes.visibility"   => ["required", new Visibility()],
-			"data.attributes.published_at" => "nullable|date_format:Y-m-d H:i:s",
-		]);
-
-		if ($validator->fails()) {
-			throw new ValidationException($validator);
-		}
-	}
-
-	private function retreiveTripOrFail($request)
-	{
-		$relationship_object = $request->all()["data"]["relationships"]["trip"];
-
-		return Trip::findOrFail($relationship_object["id"]);
 	}
 }

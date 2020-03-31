@@ -12,85 +12,46 @@ class ReportPolicy
 {
 	use HandlesAuthorization, PolicyInformationPoint;
 
-	/**
-	 * Determine whether the user can view any reports.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @return mixed
-	 */
-	public function viewAny(User $user=null)
+	public function viewAny(User $user, Trip $trip)
 	{
-		return true;
+		return $this->authorize('report:all:view', $user, $trip);
 	}
 
-	/**
-	 * Determine whether the user can view the report.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @param  \Columbo\Report  $report
-	 * @return mixed
-	 */
-	public function view(User $user=null, Report $report)
+	public function view(User $user, Report $report, Trip $trip)
 	{
-		return true;
+		return $this->authorize('report:all:view', $user, $trip);
 	}
 
-	/**
-	 * Determine whether the user can create reports.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @return mixed
-	 */
 	public function create(User $user, Trip $trip)
 	{
-		return $trip->user_id == $user->id;
+		return $this->authorize('report:create', $user, $trip);
 	}
 
-	/**
-	 * Determine whether the user can update the report.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @param  \Columbo\Report  $report
-	 * @return mixed
-	 */
-	public function update(User $user, Report $report)
+	public function update(User $user, Report $report, Trip $trip)
 	{
-		return $report->user_id == $user->id;
+		if ($report->user_id == $user->id) {
+			return $this->authorize('report:own:edit', $user, $trip);
+		}
+
+		return $this->authorize('report:all:edit', $user, $trip);
 	}
 
-	/**
-	 * Determine whether the user can delete the report.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @param  \Columbo\Report  $report
-	 * @return mixed
-	 */
-	public function delete(User $user, Report $report)
+	public function delete(User $user, Report $report, Trip $trip)
 	{
-		return $report->user_id == $user->id;
+		if ($report->user_id == $user->id) {
+			return $this->authorize('report:own:remove', $user, $trip);
+		}
+
+		return $this->authorize('report:all:remove', $user, $trip);
 	}
 
-	/**
-	 * Determine whether the user can restore the report.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @param  \Columbo\Report  $report
-	 * @return mixed
-	 */
 	public function restore(User $user, Report $report)
 	{
-		//
+		return false;
 	}
 
-	/**
-	 * Determine whether the user can permanently delete the report.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @param  \Columbo\Report  $report
-	 * @return mixed
-	 */
 	public function forceDelete(User $user, Report $report)
 	{
-		//
+		return false;
 	}
 }

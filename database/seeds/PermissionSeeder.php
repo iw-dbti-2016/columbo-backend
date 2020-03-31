@@ -53,12 +53,16 @@ class PermissionSeeder extends Seeder
 				"label" => "members:add",
 			],
 			[
+				"name" => "add admin members",
+				"label" => "members:add-admin",
+			],
+			[
 				"name" => "edit admin roles",
 				"label" => "members:edit-admin",
 			],
 			[
 				"name" => "edit basic roles",
-				"label" => "members:edit-roles",
+				"label" => "members:edit",
 			],
 			[
 				"name" => "remove basic members",
@@ -69,8 +73,8 @@ class PermissionSeeder extends Seeder
 				"label" => "members:remove-admin",
 			],
 			[
-				"name" => "update members",
-				"label" => "members:update",
+				"name" => "edit the owning member",
+				"label" => "members:edit-owner",
 			],
 			[
 				"name" => "change all payment divisions",

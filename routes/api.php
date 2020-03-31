@@ -14,13 +14,9 @@ Route::group(['prefix' => 'v1'], function() {
 	// You can always retrieve your own data
 	Route::get('/user', 'BaseController@showUserData')->middleware('auth:sanctum');
 
-	// Other data required email verification
+	// Other data requires email verification
 	Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
 		Route::get('users/{user}/', 'UserController@show');
-		Route::get('trips', 'tripController@list');
-		Route::get('trips/{trip}', 'tripController@get');
-		Route::get('reports/', 'reportController@list');
-		Route::get('reports/{report}', 'reportController@get');
 		Route::get('sections/', 'sectionController@list');
 		Route::get('sections/{section}', 'sectionController@get');
 		Route::get('locations/', 'locationController@list');
@@ -29,22 +25,16 @@ Route::group(['prefix' => 'v1'], function() {
 		Route::get('pois/{poi}', 'poiController@get');
 		Route::get('user/trips', 'UserController@listTrips');
 
-		Route::group(['prefix' => 'trips'], function() {
-			Route::post('/', 'tripController@store');
-			Route::patch('/{trip}', 'tripController@update');
-			Route::delete('/{trip}', 'tripController@destroy');
-
-			Route::post('/{trip}/relationships/members', 'tripController@addMembers');
-			Route::delete('/{trip}/relationships/members', 'tripController@removeMembers');
-			Route::post('/{trip}/relationships/members/accept', 'tripController@acceptInvite');
-			Route::post('/{trip}/relationships/members/decline', 'tripController@declineInvite');
+		Route::group(['prefix' => 'trips/{trip}'], function() {
+			Route::post('/relationships/members', 'MemberController@addMembers');
+			Route::delete('/relationships/members', 'MemberController@removeMembers');
+			Route::post('/relationships/members/accept', 'MemberController@acceptInvite');
+			Route::post('/relationships/members/decline', 'MemberController@declineInvite');
 		});
 
-		Route::group(['prefix' => 'reports'], function() {
-			Route::post('/', 'reportController@store');
-			Route::patch('/{report}', 'reportController@update');
-			Route::delete('/{report}', 'reportController@destroy');
-		});
+		Route::apiResource('trips', 'TripController');
+		Route::apiResource('trips.reports', 'ReportController')
+				->parameters(['reports' => 'report:id']);
 
 		Route::group(['prefix' => 'sections'], function() {
 			Route::post('/', 'sectionController@store');

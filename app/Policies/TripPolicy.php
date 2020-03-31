@@ -11,48 +11,67 @@ class TripPolicy
 {
 	use HandlesAuthorization, PolicyInformationPoint;
 
-	/**
-	 * Determine whether the user can view any trips.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @return mixed
-	 */
-	public function viewAny(User $user=null)
+	public function viewAny(?User $user)
 	{
 		return true;
 	}
 
-	/**
-	 * Determine whether the user can view the trip.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @param  \Columbo\Trip  $trip
-	 * @return mixed
-	 */
 	public function view(User $user, Trip $trip)
 	{
-		return true;
+		return $this->authorize('trip:view', $user, $trip);
 	}
 
-	/**
-	 * Determine whether the user can create trips.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @return mixed
-	 */
 	public function create(User $user)
 	{
 		return true;
 	}
 
-	public function addMembers(User $user, Trip $trip)
+	public function addMembers(User $user, Trip $trip, String $role)
 	{
-		return true;
+		if ($role === "owner") {
+			return false;
+		} else if ($role === "admin") {
+			return $this->authorize('members:add-admin', $user, $trip);
+		}
+
+		return $this->authorize('members:add', $user, $trip);
 	}
 
-	public function removeMembers(User $user, Trip $trip)
+	public function updateMembers(User $user, Trip $trip, String $role)
 	{
-		return true;
+		if ($role === "owner") {
+			return $this->authorize('members:edit-owner', $user, $trip);
+		} else if ($role === "admin") {
+			return $this->authorize('members:edit-admin', $user, $trip);
+		}
+
+		return $this->authorize('members:edit', $user, $trip);
+	}
+
+	public function removeMembers(User $user, Trip $trip, String $role)
+	{
+		if ($role === "owner") {
+			return false;
+		} else if ($role === "admin") {
+			return $this->authorize('members:remove-admin', $user, $trip);
+		}
+
+		return $this->authorize('members:remove', $user, $trip);
+	}
+
+	public function addVisitors(User $user, Trip $trip)
+	{
+		return $this->authorize('visitors:add', $user, $trip);
+	}
+
+	public function updateVisitors(User $user, Trip $trip)
+	{
+		return $this->authorize('visitors:update', $user, $trip);
+	}
+
+	public function removeVisitors(User $user, Trip $trip)
+	{
+		return $this->authorize('visitors:remove', $user, $trip);
 	}
 
 	public function acceptInvite(User $user, Trip $trip)
@@ -65,51 +84,23 @@ class TripPolicy
 		return true;
 	}
 
-	/**
-	 * Determine whether the user can update the trip.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @param  \Columbo\Trip  $trip
-	 * @return mixed
-	 */
 	public function update(User $user, Trip $trip)
 	{
-		return $trip->user_id == $user->id;
+		return $this->authorize('trip:edit', $user, $trip);
 	}
 
-	/**
-	 * Determine whether the user can delete the trip.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @param  \Columbo\Trip  $trip
-	 * @return mixed
-	 */
 	public function delete(User $user, Trip $trip)
 	{
-		return $trip->user_id == $user->id;
+		return $this->authorize('trip:remove', $user, $trip);
 	}
 
-	/**
-	 * Determine whether the user can restore the trip.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @param  \Columbo\Trip  $trip
-	 * @return mixed
-	 */
 	public function restore(User $user, Trip $trip)
 	{
-		//
+		return false;
 	}
 
-	/**
-	 * Determine whether the user can permanently delete the trip.
-	 *
-	 * @param  \Columbo\User  $user
-	 * @param  \Columbo\Trip  $trip
-	 * @return mixed
-	 */
 	public function forceDelete(User $user, Trip $trip)
 	{
-		//
+		return false;
 	}
 }
