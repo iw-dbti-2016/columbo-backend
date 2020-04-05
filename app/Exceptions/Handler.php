@@ -2,12 +2,13 @@
 
 namespace Columbo\Exceptions;
 
-use Throwable;
+use Columbo\Traits\APIResponses;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use Columbo\Traits\APIResponses;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -57,6 +58,10 @@ class Handler extends ExceptionHandler
 
 		if ($exception instanceof AuthorizationException && $request->expectsJson()) {
             return $this->unauthorizedResponse();
+        }
+
+        if ($exception instanceof ModelNotFoundException && $request->expectsJson()) {
+        	return $this->resourceNotFoundResponse();
         }
 
         return parent::render($request, $exception);

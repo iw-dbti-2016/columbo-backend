@@ -2,37 +2,34 @@
 
 namespace Columbo\Http\Controllers;
 
-use Columbo\Exceptions\AuthorizationException;
-use Columbo\Exceptions\ResourceNotFoundException;
-use Columbo\Exceptions\ValidationException;
+use Columbo\Events\ResourceCreated;
+use Columbo\Events\ResourceDeleted;
+use Columbo\Events\ResourceUpdated;
+use Columbo\Http\Requests\StoreReport;
+use Columbo\Http\Requests\UpdateSection;
 use Columbo\Http\Resources\Section as SectionResource;
 use Columbo\Http\Resources\SectionCollection;
-use Columbo\Location;
-use Columbo\POI;
 use Columbo\Report;
-use Columbo\Rules\Visibility;
 use Columbo\Section;
 use Columbo\Traits\APIResponses;
 use Columbo\Trip;
-use Columbo\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class SectionController extends Controller
 {
 	use APIResponses;
 
-	public function list()
+	public function index()
 	{
 		$this->authorize('viewAny', Section::class);
 
 		$data = Section::orderBy('start_time', 'asc')
-				->with(
-					'report',//:id,date,trip_id',
-					'report.trip',//:id,name',
-					'owner',//:id,username',
-					'locationable'
-				)->get();
+			->with(
+				'report',//:id,date,trip_id',
+				'report.trip',//:id,name',
+				'owner',//:id,username',
+				'locationable'
+			)->get();
 			// ->noDraft()
 			// ->published()
 			// ->orderRecent()
@@ -41,101 +38,73 @@ class SectionController extends Controller
 	}
 
 	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function get(Request $request, Section $section)
+	* Display a listing of the resource.
+	*
+	* @return \Illuminate\Http\Response
+	*/
+	public function show(Request $request, Trip $trip, Report $report, Section $section)
 	{
 		$this->authorize('view', $section);
 
 		$data = $section
-					->with('locationable:id,is_draft,coordinates,name,info,visibility')
-					->with('owner:id,first_name,middle_name,last_name,username')
-					->find($section->id);
+			->with('locationable:id,is_draft,coordinates,name,info,visibility')
+			->with('owner:id,first_name,middle_name,last_name,username')
+			->find($section->id);
 
 		return new SectionResource($data);
 	}
 
 	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(Request $request)
+	* Store a newly created resource in storage.
+	*
+	* @param  StoreReport  $request
+	* @return \Illuminate\Http\Response
+	*/
+	public function store(StoreReport $request, Trip $trip, Report $report)
 	{
-		$report = $this->retrieveReportOrFail($request);
-		$this->authorize('create', [Section::class, $report]);
-
-		$this->validateData($request->all());
-
-		$section = new Section($request->all()["data"]["attributes"]);
+		$section = new Section($request->all());
 
 		$section->owner()->associate($request->user());
-		$section->report()->associate(Report::find($request->all()["data"]["relationships"]["report"]["id"]));
+		$section->report()->associate(Report::find($request->all()["report"]["id"]));
 
 		$section->save();
 
+		event(new ResourceCreated($request->user(), $section));
+
 		return (new SectionResource($section))
-					->response()
-					->setStatusCode(201);
+				->response()
+				->setStatusCode(201);
 	}
 
 	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \Columbo\Section  $section
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(Request $request, Section $section)
+	* Update the specified resource in storage.
+	*
+	* @param  UpdateSection  $request
+	* @param  \Columbo\Section  $section
+	* @return \Illuminate\Http\Response
+	*/
+	public function update(UpdateSection $request, Trip $trip, Report $report, Section $section)
 	{
-		$this->authorize('update', $section);
+		$section->update($request->all());
 
-		$this->validateData($request->all());
-
-		$section->update($request->all()["data"]["attributes"]);
+		event(new ResourceUpdated($request->user(), $section));
 
 		return new SectionResource($section);
 	}
 
 	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \Columbo\Section  $section
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy(Request $request, Section $section)
+	* Remove the specified resource from storage.
+	*
+	* @param  \Columbo\Section  $section
+	* @return \Illuminate\Http\Response
+	*/
+	public function destroy(Request $request, Trip $trip, Report $report, Section $section)
 	{
 		$this->authorize('delete', $section);
 
 		$section->delete();
+		event(new ResourceDeleted($request->user(), $section));
 
 		return response()->json(["meta" => []], 200);
-	}
-
-	private function validateData($data)
-	{
-		$validator = Validator::make($data, [
-			"data.type"                        => "required|string|in:section",
-			"data.attributes.content"          => "nullable",
-			"data.attributes.image"            => "nullable",
-			"data.attributes.time"             => "nullable|date_format:H:i",
-			"data.attributes.duration_minutes" => "nullable|integer",
-			"data.attributes.visibility"       => ["required", new Visibility()],
-			"data.attributes.published_at"     => "nullable|date_format:Y-m-d H:i:s",
-		]);
-
-		if ($validator->fails()) {
-			throw new ValidationException($validator);
-		}
-	}
-
-	private function retrieveReportOrFail($request)
-	{
-		$relationship_object = $request->all()["data"]["relationships"]["report"];
-
-		return Report::findOrFail($relationship_object["id"]);
 	}
 }

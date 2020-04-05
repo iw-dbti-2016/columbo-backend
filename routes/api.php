@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 Route::group(['prefix' => 'v1'], function() {
 	Route::group(['prefix' => 'auth'], function() {
 		Route::post('/register', 'Auth\RegisterController@register')->name('api.auth.register');
@@ -17,8 +19,6 @@ Route::group(['prefix' => 'v1'], function() {
 	// Other data requires email verification
 	Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
 		Route::get('users/{user}/', 'UserController@show');
-		Route::get('sections/', 'sectionController@list');
-		Route::get('sections/{section}', 'sectionController@get');
 		Route::get('locations/', 'locationController@list');
 		Route::get('locations/{location}', 'locationController@get');
 		Route::get('pois/', 'poiController@list');
@@ -32,15 +32,19 @@ Route::group(['prefix' => 'v1'], function() {
 			Route::post('/relationships/members/decline', 'MemberController@declineInvite');
 		});
 
-		Route::apiResource('trips', 'TripController');
-		Route::apiResource('trips.reports', 'ReportController')
-				->parameters(['reports' => 'report:id']);
-
-		Route::group(['prefix' => 'sections'], function() {
-			Route::post('/', 'sectionController@store');
-			Route::patch('/{section}', 'sectionController@update');
-			Route::delete('/{section}', 'sectionController@destroy');
-		});
+		Route::apiResources([
+			'trips'                  => 'TripController',
+			'trips.reports'          => 'ReportController',
+			'trips.reports.sections' => 'SectionController',
+			// 'trips.plans'
+			// 'trips.payments'
+			// 'trips.reports.sections.payments'
+		], [ // For automatic scoping
+			"parameters" => [
+				'reports'  => 'report:id',
+				'sections' => 'section:id',
+			],
+		]);
 
 		Route::group(['prefix' => 'locations'], function() {
 			Route::post('/', 'locationController@store');
