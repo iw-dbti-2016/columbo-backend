@@ -18,11 +18,13 @@ Route::group(['prefix' => 'v1'], function() {
 
 	// Other data requires email verification
 	Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
+		Route::get('permissions', 'BaseController@getPermissions');
+
 		Route::get('users/{user}/', 'UserController@show');
-		Route::get('locations/', 'locationController@list');
-		Route::get('locations/{location}', 'locationController@get');
-		Route::get('pois/', 'poiController@list');
-		Route::get('pois/{poi}', 'poiController@get');
+		Route::get('locations/', 'LocationController@list');
+		Route::get('locations/{location}', 'LocationController@get');
+		Route::get('pois/', 'POIController@list');
+		Route::get('pois/{poi}', 'POIController@get');
 		Route::get('user/trips', 'UserController@listTrips');
 
 		Route::group(['prefix' => 'trips/{trip}'], function() {
@@ -31,6 +33,8 @@ Route::group(['prefix' => 'v1'], function() {
 			Route::post('/relationships/members/accept', 'MemberController@acceptInvite');
 			Route::post('/relationships/members/decline', 'MemberController@declineInvite');
 		});
+
+		Route::apiResource('users', 'UserController')->only(['show', 'update', 'destroy']);
 
 		Route::apiResources([
 			'trips'                  => 'TripController',

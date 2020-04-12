@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Cache;
 
 trait PolicyInformationPoint
 {
-	private static String $PERMISSION_GLUE  = ",";
-	private static String $CACHE_PREFIX = "permissions:";
+	private static $PERMISSION_GLUE = ",";
+	private static $CACHE_PREFIX = "permissions:";
 
 
 	protected function authorize(String $permission, User $user, Trip $trip)

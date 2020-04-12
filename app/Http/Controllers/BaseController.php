@@ -3,6 +3,7 @@
 namespace Columbo\Http\Controllers;
 
 use Columbo\Http\Resources\User;
+use Columbo\Role;
 use Columbo\Traits\APIResponses;
 use Illuminate\Http\Request;
 
@@ -27,5 +28,10 @@ class BaseController extends Controller
     public function showUserData(Request $request)
     {
     	return new User($request->user());
+    }
+
+    public function getPermissions()
+    {
+    	return Role::select('label','name','description')->with('permissions:label,name,description')->get();
     }
 }

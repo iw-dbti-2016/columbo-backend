@@ -2,6 +2,7 @@
 
 namespace Columbo\Http\Controllers;
 
+use Columbo\Trip;
 use Illuminate\Http\Request;
 
 class MemberController extends Controller
@@ -18,7 +19,7 @@ class MemberController extends Controller
 	public function updateMember(Request $request, Trip $trip)
 	{
 		// TODO
-		return abort();
+		return abort(405);
 	}
 
 	public function removeMembers(Request $request, Trip $trip)

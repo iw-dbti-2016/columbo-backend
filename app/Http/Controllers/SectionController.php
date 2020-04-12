@@ -5,7 +5,7 @@ namespace Columbo\Http\Controllers;
 use Columbo\Events\ResourceCreated;
 use Columbo\Events\ResourceDeleted;
 use Columbo\Events\ResourceUpdated;
-use Columbo\Http\Requests\StoreReport;
+use Columbo\Http\Requests\StoreSection;
 use Columbo\Http\Requests\UpdateSection;
 use Columbo\Http\Resources\Section as SectionResource;
 use Columbo\Http\Resources\SectionCollection;
@@ -60,12 +60,12 @@ class SectionController extends Controller
 	* @param  StoreReport  $request
 	* @return \Illuminate\Http\Response
 	*/
-	public function store(StoreReport $request, Trip $trip, Report $report)
+	public function store(StoreSection $request, Trip $trip, Report $report)
 	{
 		$section = new Section($request->all());
 
 		$section->owner()->associate($request->user());
-		$section->report()->associate(Report::find($request->all()["report"]["id"]));
+		$section->report()->associate($report);
 
 		$section->save();
 

@@ -52,7 +52,7 @@ class TripController extends Controller
 	{
 		$trip->update($request->all());
 
-		event(new ResourceUpdated($request->user(), $user));
+		event(new ResourceUpdated($request->user(), $trip));
 
 		return new TripResource($trip);
 	}

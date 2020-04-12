@@ -2,6 +2,7 @@
 
 namespace Columbo\Providers;
 
+use Columbo\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
@@ -24,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
                 return base_path() . '/../public_html';
             });
         }
+
+        Route::bind('users', function($value) {
+            return User::where('username', $value)->firstOrFail();
+        });
     }
 
     /**

@@ -9,18 +9,18 @@ class UpdateSection extends FormRequest
 {
 	public function authorize()
 	{
-		return $this->authorize('update', $this->section);
+		return $this->user()->can('update', $this->section);
 	}
 
 	public function rules()
 	{
 		return [
-			"content"          => "required",
-			"image"            => "nullable",
-			"time"             => "nullable|date_format:H:i",
-			"duration_minutes" => "nullable|integer",
-			"visibility"       => ["required", new Visibility],
-			"published_at"     => "nullable|date_format:Y-m-d H:i:s",
+			"content"      => "required",
+			"image"        => "nullable",
+			"start_time"   => "required|date_format:H:i",
+			"end_time"     => "required|date_format:H:i",
+			"visibility"   => ["required", new Visibility],
+			"published_at" => "nullable|date_format:Y-m-d H:i:s",
 		];
 	}
 }
