@@ -9,7 +9,7 @@ use Columbo\POI;
 
 class POIController extends Controller
 {
-	public function list()
+	public function index()
 	{
 		$this->authorize('viewAny', POI::class);
 
@@ -21,7 +21,7 @@ class POIController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function get(POI $poi)
+	public function show(POI $poi)
 	{
 		$this->authorize('view', $poi);
 
@@ -45,17 +45,6 @@ class POIController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \Columbo\POI  $pOI
-     * @return \Illuminate\Http\Response
-     */
-    public function show(POI $pOI)
     {
         //
     }

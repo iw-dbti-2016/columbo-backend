@@ -15,6 +15,7 @@ class CreatePoisTable extends Migration
     {
         Schema::create('pois', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->uuid('uuid')->unique();
 
             /* DATA */
             $table->point('coordinates');

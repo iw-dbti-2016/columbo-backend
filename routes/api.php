@@ -20,11 +20,12 @@ Route::group(['prefix' => 'v1'], function() {
 	Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
 		Route::get('permissions', 'BaseController@getPermissions');
 
+		// POI is completely independent of trip whatsoever
+		Route::apiResource('pois', 'POIController')->only(['index', 'show']);
+
 		Route::get('users/{user}/', 'UserController@show');
 		Route::get('locations/', 'LocationController@list');
 		Route::get('locations/{location}', 'LocationController@get');
-		Route::get('pois/', 'POIController@list');
-		Route::get('pois/{poi}', 'POIController@get');
 		Route::get('user/trips', 'UserController@listTrips');
 
 		Route::group(['prefix' => 'trips/{trip}'], function() {

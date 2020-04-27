@@ -8,6 +8,7 @@ use Columbo\POI;
 
 $factory->define(POI::class, function (Faker $faker) {
 	return [
+		"uuid"		  => $faker->uuid(),
 		"coordinates" => new Point($faker->latitude(-90, 90), $faker->longitude(-180, 180)),
 		"map_zoom"    => $faker->randomFloat(6, 0, 20),
 		"name"        => $faker->text(100),

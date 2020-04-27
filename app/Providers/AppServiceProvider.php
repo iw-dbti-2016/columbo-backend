@@ -2,6 +2,7 @@
 
 namespace Columbo\Providers;
 
+use Columbo\POI;
 use Columbo\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Blade;
@@ -28,6 +29,9 @@ class AppServiceProvider extends ServiceProvider
 
         Route::bind('users', function($value) {
             return User::where('username', $value)->firstOrFail();
+        });
+        Route::bind('pois', function($value) {
+        	return POI::where('uuid', $value)->firstOrFail();
         });
     }
 
