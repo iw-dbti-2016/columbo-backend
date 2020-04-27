@@ -15,6 +15,7 @@ class CreateLocationsTable extends Migration
     {
         Schema::create('locations', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('trip_id')->unsigned()->index();
             // Owner
             $table->bigInteger('user_id')->unsigned()->index();
 
@@ -31,6 +32,11 @@ class CreateLocationsTable extends Migration
 
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('trip_id')
+                    ->references('id')
+                    ->on('trips')
+                    ->onDelete('set null');
 
             $table->foreign('user_id')
                     ->references('id')

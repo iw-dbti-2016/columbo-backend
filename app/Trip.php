@@ -4,6 +4,7 @@ namespace Columbo;
 
 use Columbo\Action;
 use Columbo\Interfaces\TrackedByActions;
+use Columbo\Location;
 use Columbo\Report;
 use Columbo\Section;
 use Columbo\Traits\Visibility;
@@ -40,6 +41,11 @@ class Trip extends Model implements TrackedByActions
     public function reports()
     {
     	return $this->hasMany(Report::class);
+    }
+
+    public function locations()
+    {
+    	return $this->hasMany(Location::class);
     }
 
     public function members()

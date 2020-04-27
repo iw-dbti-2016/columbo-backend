@@ -7,6 +7,7 @@ use Columbo\Interfaces\TrackedByActions;
 use Columbo\Plan;
 use Columbo\Section;
 use Columbo\Traits\Visibility;
+use Columbo\Trip;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Database\Eloquent\Model;
@@ -34,12 +35,17 @@ class Location extends Model implements TrackedByActions
     	'coordinates',
     ];
 
-    // public function setCoordinatesAttribute($value) {
-    //     $this->coordinates = new Point($value[0], $value[1]);
-    // }
+    public function setCoordinatesAttribute($value) {
+        $this->attributes["coordinates"] = new Point($value[0], $value[1]);
+    }
 
     public function getCoordinatesAttribute($coordinates) {
     	return [$coordinates->getLat(), $coordinates->getLng()];
+    }
+
+    public function trip()
+    {
+    	return $this->belongsTo(Trip::class);
     }
 
     public function sections()

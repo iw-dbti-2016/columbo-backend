@@ -11,14 +11,11 @@ use Columbo\Http\Resources\Section as SectionResource;
 use Columbo\Http\Resources\SectionCollection;
 use Columbo\Report;
 use Columbo\Section;
-use Columbo\Traits\APIResponses;
 use Columbo\Trip;
 use Illuminate\Http\Request;
 
 class SectionController extends Controller
 {
-	use APIResponses;
-
 	public function index()
 	{
 		$this->authorize('viewAny', Section::class);

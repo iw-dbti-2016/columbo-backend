@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 Route::group(['prefix' => 'v1'], function() {
 	Route::group(['prefix' => 'auth'], function() {
 		Route::post('/register', 'Auth\RegisterController@register')->name('api.auth.register');
@@ -19,47 +17,36 @@ Route::group(['prefix' => 'v1'], function() {
 	// Other data requires email verification
 	Route::group(['middleware' => ['auth:sanctum', 'verified']], function() {
 		Route::get('permissions', 'BaseController@getPermissions');
-
-		// POI is completely independent of trip whatsoever
-		Route::apiResource('pois', 'POIController')->only(['index', 'show']);
-
 		Route::get('users/{user}/', 'UserController@show');
-		Route::get('locations/', 'LocationController@list');
-		Route::get('locations/{location}', 'LocationController@get');
 		Route::get('user/trips', 'UserController@listTrips');
 
-		Route::group(['prefix' => 'trips/{trip}'], function() {
-			Route::post('/relationships/members', 'MemberController@addMembers');
-			Route::delete('/relationships/members', 'MemberController@removeMembers');
-			Route::post('/relationships/members/accept', 'MemberController@acceptInvite');
-			Route::post('/relationships/members/decline', 'MemberController@declineInvite');
+		Route::group(['prefix' => 'trips/{trip}/relationships/members'], function() {
+			Route::post('/', 'MemberController@addMembers');
+			Route::delete('/', 'MemberController@removeMembers');
+			Route::post('/accept', 'MemberController@acceptInvite');
+			Route::post('/decline', 'MemberController@declineInvite');
 		});
 
+		// POIs and users are completely independent of trips whatsoever
+		Route::apiResource('pois', 'POIController')->only(['index', 'show']);
 		Route::apiResource('users', 'UserController')->only(['show', 'update', 'destroy']);
 
+		// Trip-related resources
 		Route::apiResources([
 			'trips'                  => 'TripController',
 			'trips.reports'          => 'ReportController',
 			'trips.reports.sections' => 'SectionController',
+			'trips.locations'        => 'LocationController',
 			// 'trips.plans'
 			// 'trips.payments'
 			// 'trips.reports.sections.payments'
 		], [ // For automatic scoping
 			"parameters" => [
-				'reports'  => 'report:id',
-				'sections' => 'section:id',
+				'reports'   => 'report:id',
+				'sections'  => 'section:id',
+				'locations' => 'location:id',
 			],
 		]);
-
-		Route::group(['prefix' => 'locations'], function() {
-			Route::post('/', 'locationController@store');
-			Route::patch('/{location}', 'locationController@update');
-			Route::delete('/{location}', 'locationController@destroy');
-		});
-
-		Route::group(['prefix' => 'pois'], function() {
-			//
-		});
 	});
 });
 
