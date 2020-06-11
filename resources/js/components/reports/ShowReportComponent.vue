@@ -1,10 +1,13 @@
 <template>
-	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<router-link :to="{name: 'showTrip', params: {tripId: $route.params.tripId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Close this report"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
-		<router-link :to="{name: 'editReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-12 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Edit this report"><font-awesome-icon :icon="['fas', 'edit']" /></router-link>
-        <div @click.prevent="removeReport" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-24 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Remove this report"><font-awesome-icon :icon="['fas', 'trash-alt']" /></div>
+	<div class="m-auto pl-8 pr-24 w-full">
+		<ActionBarComponent
+				:backLink="{name: 'showTrip', params: {tripId: $route.params.tripId}}"
+				:editLink="{name: 'editReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}"
+				:showRemoveLink="true"
+				v-on:removeclick="removeReport"
+				:title="report.title">
+		</ActionBarComponent>
 		<div>
-			<h1 class="text-6xl tracking-wide uppercase">{{ report.title }}</h1> <!-- TITLE -->
 			<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
 			<span class="block ml-2 mt-4 text-2xl">{{ report.date }}</span> <!-- DATE -->
             <MarkdownOutputComponent v-bind:content="report.description"></MarkdownOutputComponent>
@@ -12,9 +15,9 @@
 		<div class="mt-8 flex flex-row justify-between">
 			<div class="flex-grow mr-4 w-2/3"> <!-- SECTIONS -->
 				<span class="block text-2xl">Report</span>
-				<div class="-ml-20 h-0 rotate-270 sticky text-6xl text-right top-0 uppercase">
+				<!-- <div class="-ml-20 h-0 rotate-270 sticky text-6xl text-right top-0 uppercase">
 					<span class="pr-8">{{ report.title }}</span>
-				</div>
+				</div> -->
 				<router-link :to="{name: 'createSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white">Add a section</router-link>
 				<div class="bg-gray-100 mt-2 rounded-lg" v-if="sections.length > 0">
 					<div class="border-b-8 border-white last:border-0 px-5 py-4 relative" @mouseover="mouseOverSection(index)" :key="section.id" v-for="(section, index) in sections">
@@ -63,23 +66,23 @@
             	let tripId = this.$route.params.tripId;
             	let reportId = this.$route.params.reportId;
 
-            	if (this.$store.getters.hasReportWithId(reportId)) {
-            		this.report = this.$store.getters.getReportById(reportId)[0];
-            		return;
-            	}
+            	// if (this.$store.getters.hasReportWithId(reportId)) {
+            	// 	this.report = this.$store.getters.getReportById(reportId)[0];
+            	// 	return;
+            	// }
 
                 axios.get(`/api/v1/trips/${tripId}/reports/${reportId}`)
                     .then((response) => {
-                    	this.$store.commit('addReport', response.data);
-                        this.report = response.data.data;
+                    	// this.$store.commit('addReport', response.data);
+                        this.report = response.data;
                     })
                     .catch(this.handleError);
             },
             getSections: function() {
             	axios.get(`/api/v1/trips/${this.$route.params.tripId}/reports/${this.$route.params.reportId}/sections`)
                     .then((response) => {
-                        this.sections = response.data.data;
-                        this.$store.commit('setSections', response.data.data);
+                        this.sections = response.data;
+                        // this.$store.commit('setSections', response.data);
                     })
                     .catch(this.handleError)
                     .finally(this.stopLoading);

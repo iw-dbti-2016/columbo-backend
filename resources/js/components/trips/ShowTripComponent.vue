@@ -1,8 +1,12 @@
 <template>
-	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<router-link :to="{name: 'home'}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Close this trip"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
-		<router-link :to="{name: 'editTrip', params: {'tripId': $route.params.tripId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-12 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Edit this trip"><font-awesome-icon :icon="['fas', 'edit']" /></router-link>
-		<div @click.prevent="removeTrip" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-24 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Remove this trip"><font-awesome-icon :icon="['fas', 'trash-alt']" /></div>
+	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
+		<ActionBarComponent
+				:backLink="{name: 'home'}"
+				:editLink="{name: 'editTrip', params: {'tripId': $route.params.tripId}}"
+				:showRemoveLink="true"
+				v-on:removeclick="removeTrip"
+				:title="trip.name">
+		</ActionBarComponent>
         <div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3">
 				<h1 class="text-6xl tracking-wide uppercase">{{ trip.name }}</h1> <!-- NAME -->
@@ -31,7 +35,7 @@
 			<div class="flex-grow mr-4 w-1/2"> <!-- REPORTS -->
 				<span class="block text-2xl">Reports</span>
 				<router-link :to="{name: 'createReport', params: {tripId: $route.params.tripId}}" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white">Create a new report</router-link>
-				<span v-if="loading" class="block mt-2 text-gray-700">Loading reports...</span>
+				<span v-if="!ready" class="block mt-2 text-gray-700">Loading reports...</span>
 				<span v-else-if="reports.length == 0" class="block mt-2 text-gray-700">No reports written yet.</span>
 				<div v-else class="bg-gray-100 mt-2 rounded-lg shadow-md">
 					<div v-for="report in reports" @click.prevent="$router.push({name: 'showReport', params: {tripId: $route.params.tripId, reportId: report.id}})" class="border-b border-gray-400 last:border-b-0 px-5 py-4 text-md cursor-pointer">{{ report.title }}</div>
@@ -49,15 +53,14 @@
 
 <script>
 	export default {
-		mounted() {
+		name: 'show-trip',
 
-        },
         data() {
             return {
                 trip: {},
                 reports: [],
 
-            	loading: true,
+            	ready: false,
                 error: "",
             };
         },
@@ -69,23 +72,23 @@
             getTrip: function() {
             	let tripId = this.$route.params.tripId;
 
-            	if (this.$store.getters.hasTripWithId(tripId)) {
-            		this.trip = this.$store.getters.getTripById(tripId)[0];
-            		return;
-            	}
+            	// if (this.$store.getters.hasTripWithId(tripId)) {
+            	// 	this.trip = this.$store.getters.getTripById(tripId)[0];
+            	// 	return;
+            	// }
 
                 axios.get(`/api/v1/trips/${tripId}`)
                     .then((response) => {
-                    	this.$store.commit('addTrip', response.data);
-                        this.trip = response.data.data;
+                    	// this.$store.commit('addTrip', response.data);
+                        this.trip = response.data;
                     })
                     .catch(this.handleError);
             },
             getReports: function() {
             	axios.get(`/api/v1/trips/${this.$route.params.tripId}/reports`)
                     .then((response) => {
-                        this.reports = response.data.data;
-                        this.$store.commit('setReports', response.data.data);
+                        this.reports = response.data;
+                        // this.$store.commit('setReports', response.data);
                     })
                     .catch(this.handleError)
                     .finally(this.stopLoading);
@@ -107,7 +110,7 @@
                 this.userData = error.response.data;
             },
             stopLoading: function() {
-                this.loading = false;
+                this.ready = true;
             }
         },
     }

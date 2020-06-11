@@ -1,9 +1,11 @@
 <template>
-	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<router-link :to="{name: 'home'}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Cancel"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
+	<div class="m-auto pl-8 pr-24 w-full">
+		<ActionBarComponent
+				:backLink="{name: 'home'}"
+				title="Create a new trip">
+		</ActionBarComponent>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
-				<h1 class="text-4xl tracking-wide">Create a new trip</h1>
 
 				<div class="w-full mt-4">
 					<div>
@@ -79,7 +81,7 @@
         },
         methods: {
             submitTrip: function() {
-                axios.post('/api/v1/trips/create', {
+                axios.post('/api/v1/trips', {
                 	name: this.name,
                 	synopsis: this.synopsis,
                 	start_date: this.startDate,
@@ -89,8 +91,8 @@
                 	//published_at for postponed publication
                 })
                     .then((response) => {
-                        this.$store.commit('addTrip', response.data);
-                        this.$router.push({name: 'showTrip', params: {tripId: response.data.data.id}});
+                        // this.$store.commit('addTrip', response.data);
+                        this.$router.push({name: 'showTrip', params: {tripId: response.data.id}});
                     })
                     .catch((error) => {
 		                if (error.response.status == 401) {

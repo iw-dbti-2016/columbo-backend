@@ -1,10 +1,11 @@
 <template>
-	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<router-link :to="{name: 'showTrip', params: {tripId: this.$route.params.tripId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Cancel"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
+	<div class="m-auto pl-8 pr-24 w-full">
+		<ActionBarComponent
+				:backLink="{name: 'showTrip', params: {tripId: this.$route.params.tripId}}"
+				title="Create a new report">
+		</ActionBarComponent>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
-				<h1 class="text-4xl tracking-wide">Create a new report</h1>
-
 				<div class="w-full mt-4">
 					<div>
 						<label class="text-gray-700 mt-3 block" for="name">Title</label>

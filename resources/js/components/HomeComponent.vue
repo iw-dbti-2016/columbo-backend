@@ -1,9 +1,9 @@
 <template>
 	<div class="">
-		<div class="h-10 flex items-center absolute top-0 right-0 mr-20 mt-6">
+		<div class="h-10 flex items-center absolute top-0 right-0 mr-24 mt-6">
 			<a class="bg-gray-800 text-white inline-block px-4 py-2 rounded cursor-pointer" @click="signout">Log out</a>
 		</div>
-		<div class="m-auto pl-8 pr-20 mt-20 flex justify-between">
+		<div class="m-auto pl-8 pr-24 mt-20 flex justify-between">
 			<div class="w-3/4">
 				<h1 class="text-white tracking-wide text-5xl uppercase">Timeline</h1>
 			</div>

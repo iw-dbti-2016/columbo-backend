@@ -1,6 +1,9 @@
 <template>
-	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<router-link :to="{name: 'showReport', params: {tripId: this.$route.params.tripId, reportId: this.$route.params.reportId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Cancel"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
+	<div class="m-auto pl-8 pr-24 w-full">
+		<ActionBarComponent
+				:backLink="{name: 'showReport', params: {tripId: this.$route.params.tripId, reportId: this.$route.params.reportId}}"
+				title="Update report">
+		</ActionBarComponent>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
 				<h1 class="text-4xl tracking-wide">Update report</h1>
@@ -65,14 +68,14 @@
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;
 
-				if (this.$store.getters.hasReportWithId(reportId)) {
-					this.report = _.cloneDeep(this.$store.getters.getReportById(reportId)[0]);
-					return;
-				}
+				// if (this.$store.getters.hasReportWithId(reportId)) {
+				// 	this.report = _.cloneDeep(this.$store.getters.getReportById(reportId)[0]);
+				// 	return;
+				// }
 
 				axios.get(`/api/v1/trips/${tripId}/reports/${reportId}`)
 					.then((response) => {
-						this.$store.commit('addReport', response.data);
+						// this.$store.commit('addReport', response.data);
 						this.report = response.data.data;
 					})
 					.catch(this.handleError)

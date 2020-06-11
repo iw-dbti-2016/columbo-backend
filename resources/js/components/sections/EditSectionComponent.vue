@@ -1,10 +1,11 @@
 <template>
-	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<router-link :to="{name: 'showSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: $route.params.sectionId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Cancel"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
+	<div class="m-auto pl-8 pr-24 w-full">
+		<ActionBarComponent
+				:backLink="{name: 'showSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: $route.params.sectionId}}"
+				title="Update section">
+		</ActionBarComponent>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
-				<h1 class="text-4xl tracking-wide">Update section</h1>
-
 				<div class="w-full mt-4">
 					<span class="mt-2 text-lg font-bold align-baseline">06/07/2020 <span class="text-xs font-light">(from report)</span></span>
 					<div class="mt-2 w-full flex flex-row justify-between">
@@ -107,14 +108,14 @@
             	let reportId = this.$route.params.reportId;
             	let sectionId = this.$route.params.sectionId;
 
-            	if (this.$store.getters.hasSectionWithId(sectionId)) {
-            		this.section = _.cloneDeep(this.$store.getters.getSectionById(sectionId)[0]);
-            		return;
-            	}
+            	// if (this.$store.getters.hasSectionWithId(sectionId)) {
+            	// 	this.section = _.cloneDeep(this.$store.getters.getSectionById(sectionId)[0]);
+            	// 	return;
+            	// }
 
                 axios.get(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${sectionId}`)
                     .then((response) => {
-                    	this.$store.commit('addSection', response.data);
+                    	// this.$store.commit('addSection', response.data);
                         this.section = response.data.data;
                     })
                     .catch(this.handleError)

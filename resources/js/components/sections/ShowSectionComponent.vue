@@ -1,8 +1,12 @@
 <template>
-	<div class="m-auto max-w-4xl my-8 py-10 w-full relative">
-		<router-link :to="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-4 mt-8 py-2 right-0 text-3xl text-gray-400 top-0" title="Close this section"><font-awesome-icon :icon="['fas', 'times']" /></router-link>
-		<router-link :to="{name: 'editSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: $route.params.sectionId}}" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-12 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Edit this section"><font-awesome-icon :icon="['fas', 'edit']" /></router-link>
-		<div @click.prevent="removeSection" class="absolute cursor-pointer focus:outline-none focus:text-gray-600 mr-24 mt-8 py-3 right-0 text-2xl text-gray-400 top-0" title="Remove this section"><font-awesome-icon :icon="['fas', 'trash-alt']" /></div>
+	<div class="m-auto pl-8 pr-24 w-full">
+		<ActionBarComponent
+				:backLink="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}"
+				:editLink="{name: 'editSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: $route.params.sectionId}}"
+				:showRemoveLink="true"
+				v-on:removeclick="removeSection"
+				title="Read more">
+		</ActionBarComponent>
         <div class="flex flex-row justify-between">
 			<div class="flex-grow mr-8 w-2/3">
 				<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span>
@@ -50,16 +54,16 @@
             	let reportId = this.$route.params.reportId;
             	let sectionId = this.$route.params.sectionId;
 
-            	if (this.$store.getters.hasSectionWithId(sectionId)) {
-            		this.section = this.$store.getters.getSectionById(sectionId)[0];
-            		this.loading = false;
-            		return;
-            	}
+            	// if (this.$store.getters.hasSectionWithId(sectionId)) {
+            	// 	this.section = this.$store.getters.getSectionById(sectionId)[0];
+            	// 	this.loading = false;
+            	// 	return;
+            	// }
 
                 axios.get(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${sectionId}`)
                     .then((response) => {
-                    	this.$store.commit('addSection', response.data);
-                        this.section = response.data.data;
+                    	// this.$store.commit('addSection', response.data);
+                        this.section = response.data;
                     })
                     .catch(this.handleError)
                     .finally(this.stopLoading);
