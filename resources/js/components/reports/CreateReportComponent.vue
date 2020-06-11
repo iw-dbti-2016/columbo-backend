@@ -1,5 +1,5 @@
 <template>
-	<div class="m-auto pl-8 pr-24 w-full">
+	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
 				:backLink="{name: 'showTrip', params: {tripId: this.$route.params.tripId}}"
 				title="Create a new report">
@@ -43,16 +43,30 @@
 </template>
 
 <script>
+	import NProgress from 'nprogress'
+
 	export default {
+		name: 'create-report',
+
 		data() {
 			return {
 				title: "",
 				date: "",
 				description: "",
 
+				ready: false,
 				error: "",
 			};
 		},
+
+		beforeRouteEnter(to, from, next) {
+            next(component => {
+            	component.ready = true;
+
+                NProgress.done()
+            })
+        },
+
 		methods: {
 			submitReport: function() {
 				let tripId = this.$route.params.tripId;

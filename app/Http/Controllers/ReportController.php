@@ -22,7 +22,7 @@ class ReportController extends Controller
 	{
 		$this->authorize('viewAny', [Report::class, $trip]);
 
-		$reports = Report::with(
+		$reports = $trip->reports()->with(
 			'sections',
 			'sections.locationable',
 			'trip'
@@ -35,7 +35,7 @@ class ReportController extends Controller
 	{
 		$this->authorize('view', [$report, $trip]);
 
-		return new ReportResource($report);
+		return new ReportResource($report->load('sections.owner','sections.locationable'));
 	}
 
 	public function store(StoreReport $request, Trip $trip)

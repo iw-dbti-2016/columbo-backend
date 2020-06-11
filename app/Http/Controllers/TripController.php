@@ -28,7 +28,7 @@ class TripController extends Controller
 	{
 		$this->authorize('view', $trip);
 
-		return new TripResource($trip);
+		return new TripResource($trip->load('reports'));
 	}
 
 	public function store(StoreTrip $request)

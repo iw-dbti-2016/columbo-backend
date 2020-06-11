@@ -1,5 +1,5 @@
 <template>
-	<div class="m-auto pl-8 pr-24 w-full">
+	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
 				:backLink="{name: 'showTrip', params: {tripId: $route.params.tripId}}"
 				:editLink="{name: 'editReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}"
@@ -15,9 +15,6 @@
 		<div class="mt-8 flex flex-row justify-between">
 			<div class="flex-grow mr-4 w-2/3"> <!-- SECTIONS -->
 				<span class="block text-2xl">Report</span>
-				<!-- <div class="-ml-20 h-0 rotate-270 sticky text-6xl text-right top-0 uppercase">
-					<span class="pr-8">{{ report.title }}</span>
-				</div> -->
 				<router-link :to="{name: 'createSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white">Add a section</router-link>
 				<div class="bg-gray-100 mt-2 rounded-lg" v-if="sections.length > 0">
 					<div class="border-b-8 border-white last:border-0 px-5 py-4 relative" @mouseover="mouseOverSection(index)" :key="section.id" v-for="(section, index) in sections">
@@ -27,12 +24,12 @@
                         <MarkdownOutputComponent v-bind:content="section.content"></MarkdownOutputComponent>
 					</div>
 				</div>
-				<span class="block mt-2 text-gray-700" v-else-if="loading">Loading sections.</span>
+				<span class="block mt-2 text-gray-700" v-else-if="!ready">Loading sections.</span>
 				<span class="block mt-2 text-gray-700" v-else>No sections written yet.</span>
 			</div>
 			<div class="flex-grow w-1/3">
 				<div class="sticky top-0 pt-8">
-					<SectionSideCardComponent :section="sections[sectionInfoIndex]" :loading="loading"></SectionSideCardComponent>
+					<SectionSideCardComponent :section="sections[sectionInfoIndex]" :loading="!ready"></SectionSideCardComponent>
 				</div>
 			</div>
 		</div>
@@ -41,52 +38,45 @@
 </template>
 
 <script>
+	import NProgress from 'nprogress'
     import SectionSideCardComponent from './../sections/SectionSideCardComponent.vue';
 
 	export default {
+		name: 'show-report',
+
 		components: {
             SectionSideCardComponent,
         },
+
         data() {
             return {
                 report: {},
                 sections: [],
                 sectionInfoIndex: 0,
 
-                loading: true,
+                ready: false,
                 error: "",
             };
         },
-        created() {
-        	this.getReport();
-        	this.getSections();
-        },
-        methods: {
-            getReport: function() {
-            	let tripId = this.$route.params.tripId;
-            	let reportId = this.$route.params.reportId;
 
-            	// if (this.$store.getters.hasReportWithId(reportId)) {
-            	// 	this.report = this.$store.getters.getReportById(reportId)[0];
-            	// 	return;
-            	// }
+        beforeRouteEnter(to, from, next) {
+            next(component => {
+            	let tripId = component.$route.params.tripId;
+            	let reportId = component.$route.params.reportId;
 
                 axios.get(`/api/v1/trips/${tripId}/reports/${reportId}`)
-                    .then((response) => {
-                    	// this.$store.commit('addReport', response.data);
-                        this.report = response.data;
+                    .then(response => {
+                    	component.report = response.data;
+                    	component.sections = response.data.sections;
+                    	component.ready = true;
+
+                        NProgress.done()
                     })
-                    .catch(this.handleError);
-            },
-            getSections: function() {
-            	axios.get(`/api/v1/trips/${this.$route.params.tripId}/reports/${this.$route.params.reportId}/sections`)
-                    .then((response) => {
-                        this.sections = response.data;
-                        // this.$store.commit('setSections', response.data);
-                    })
-                    .catch(this.handleError)
-                    .finally(this.stopLoading);
-            },
+                    .catch(component.handleError)
+            })
+        },
+
+        methods: {
             mouseOverSection: function(index) {
             	if (this.sectionInfoIndex != index) {
             		this.sectionInfoIndex = index;
@@ -108,9 +98,6 @@
 
                 this.error = error.response.data;
             },
-            stopLoading: function() {
-                this.loading = false;
-            }
         },
     }
 </script>

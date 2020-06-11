@@ -1,5 +1,5 @@
 <template>
-	<div class="">
+	<div v-if="ready">
 		<div class="h-10 flex items-center absolute top-0 right-0 mr-24 mt-6">
 			<a class="bg-gray-800 text-white inline-block px-4 py-2 rounded cursor-pointer" @click="signout">Log out</a>
 		</div>
@@ -22,18 +22,33 @@
 </template>
 
 <script>
+	import NProgress from 'nprogress'
 	import { mapActions } from 'vuex'
 
 	export default {
-		mounted() {
-			this.getTrips();
-		},
+		name: 'home',
+
 		data() {
 			return {
 				user: this.$store.getters['auth/user'],
+				ready: false,
 				trips: [],
 			};
 		},
+
+		beforeRouteEnter(to, from, next) {
+            next(component => {
+                axios.get(`/api/v1/trips`)
+                    .then(response => {
+                    	component.trips = response.data;
+                    	component.ready = true;
+
+                        NProgress.done()
+                    })
+                    .catch(component.handleError)
+            })
+        },
+
 		methods: {
 			...mapActions({
 				logout: 'auth/logout'
@@ -43,39 +58,22 @@
 
 				this.$router.replace({name: 'login'});
 			},
-			getTrips: function() {
-				axios.get('/api/v1/user/trips')
-				.then((response) => {
-					this.trips = response.data;
-					this.$store.commit('setTrips', response.data);
-				})
-				.catch((error) => {
-					if (error.response.status == 500 || error.response.status == 403) {
-						this.userData = error.response.data;
-					}
-					if (error.response.status == 401) {
-						// console.log("NOT LOGGED IN, GO BACK!")
-						// this.$router.replace({name: 'login'});
-						// document.getElementById('logout').submit();
-					}
-					console.log("error: " + error);
-				});
-			},
 			refreshToken: function() {
 				axios.patch('/api/v1/auth/refresh')
 					.then((response) => {
 						this.userData = response.data.data;
 					})
-					.catch((error) => {
-						if (error.response.status == 500 || error.response.status == 403) {
-							this.userData = error.response.data;
-						}
-						if (error.response.status == 401) {
-							// document.getElementById('logout').submit();
-						}
-						console.log("error: " + error);
-					});
+					.catch(this.handleError);
 			},
+			handleError: function(error) {
+				if (error.response.status == 500 || error.response.status == 403) {
+					this.userData = error.response.data;
+				}
+				if (error.response.status == 401) {
+					// document.getElementById('logout').submit();
+				}
+				console.log("error: " + error);
+			}
 		},
 	}
 </script>

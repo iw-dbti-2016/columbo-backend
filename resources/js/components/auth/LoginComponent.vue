@@ -1,6 +1,5 @@
 <template>
-
-	<div class="flex items-center justify-center w-full h-screen">
+	<div class="flex items-center justify-center w-full h-screen" v-if="ready">
 		<form @submit.prevent="submit" class="bg-gray-900 w-full max-w-xl max-h-screen rounded p-4">
 			<input v-model="form.email" type="email"><br><br>
 			<input v-model="form.password" type="password"><br><br>
@@ -10,19 +9,31 @@
 </template>
 
 <script>
+	import NProgress from 'nprogress'
 	import { mapActions } from 'vuex'
 
 	export default {
-		name: 'Login',
+		name: 'login',
 
 		data() {
 			return {
 				form: {
 					email: "",
 					password: "",
-				}
+				},
+
+				ready: false,
 			};
 		},
+
+		beforeRouteEnter(to, from, next) {
+            next(component => {
+            	component.ready = true;
+
+                NProgress.done()
+            })
+        },
+
 		methods: {
 			...mapActions({
 				login: 'auth/login'

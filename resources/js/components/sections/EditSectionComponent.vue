@@ -1,5 +1,5 @@
 <template>
-	<div class="m-auto pl-8 pr-24 w-full">
+	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
 				:backLink="{name: 'showSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: $route.params.sectionId}}"
 				title="Update section">
@@ -59,20 +59,39 @@
 </template>
 
 <script>
+	import NProgress from 'nprogress'
+
 	export default {
+		name: 'edit-section',
+
 		data() {
 			return {
 				section: {},
 				duration: "--",
 				preview: false,
 
-				loading: false,
+				ready: false,
 				error: "",
 			};
 		},
-		created() {
-			this.getSection();
-		},
+
+		beforeRouteEnter(to, from, next) {
+            next(component => {
+            	let tripId = component.$route.params.tripId;
+            	let reportId = component.$route.params.reportId;
+            	let sectionId = component.$route.params.sectionId;
+
+                axios.get(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${sectionId}`)
+                    .then(response => {
+                    	component.section = response.data;
+                    	component.ready = true;
+
+                        NProgress.done()
+                    })
+                    .catch(component.handleError)
+            })
+        },
+
 		methods: {
 			updateSection: function() {
 				let tripId = this.$route.params.tripId;
@@ -91,7 +110,6 @@
 						this.$router.push({name: 'showSection', params: {tripId: tripId, reportId: reportId, sectionId: response.data.data.id}});
 					})
 					.catch(this.handleError)
-					.finally(this.stopLoading);
 			},
 			calculateDuration: function() {
 				let start = this.startTime.split(":");
@@ -103,33 +121,12 @@
 
 				return (end[0] - start[0]) * 60 + (end[1] - start[1]);
 			},
-			getSection: function() {
-            	let tripId = this.$route.params.tripId;
-            	let reportId = this.$route.params.reportId;
-            	let sectionId = this.$route.params.sectionId;
-
-            	// if (this.$store.getters.hasSectionWithId(sectionId)) {
-            	// 	this.section = _.cloneDeep(this.$store.getters.getSectionById(sectionId)[0]);
-            	// 	return;
-            	// }
-
-                axios.get(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${sectionId}`)
-                    .then((response) => {
-                    	// this.$store.commit('addSection', response.data);
-                        this.section = response.data.data;
-                    })
-                    .catch(this.handleError)
-                    .finally(this.stopLoading);
-            },
             handleError: function(error) {
 				if (error.response.status == 401) {
 					document.getElementById('logout').submit();
 				}
 
 				this.error = error.response.data;
-            },
-            stopLoading: function() {
-            	this.loading = false;
             },
 		},
 	}

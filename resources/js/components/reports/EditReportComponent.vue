@@ -1,13 +1,11 @@
 <template>
-	<div class="m-auto pl-8 pr-24 w-full">
+	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
 				:backLink="{name: 'showReport', params: {tripId: this.$route.params.tripId, reportId: this.$route.params.reportId}}"
 				title="Update report">
 		</ActionBarComponent>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
-				<h1 class="text-4xl tracking-wide">Update report</h1>
-
 				<div class="w-full mt-4">
 					<div>
 						<label class="text-gray-700 mt-3 block" for="name">Title</label>
@@ -45,10 +43,11 @@
 </template>
 
 <script>
-	export default {
-		mounted() {
+	import NProgress from 'nprogress'
 
-		},
+	export default {
+		name: 'edit-report',
+
 		data() {
 			return {
 				title: "",
@@ -56,31 +55,28 @@
 				description: "",
 				report: {},
 
-				loading: false,
+				ready: false,
 				error: "",
 			};
 		},
-		created() {
-			this.getReport();
-		},
+
+		beforeRouteEnter(to, from, next) {
+            next(component => {
+				let tripId = component.$route.params.tripId;
+				let reportId = component.$route.params.reportId;
+
+                axios.get(`/api/v1/trips/${tripId}/reports/${reportId}`)
+                    .then(response => {
+                    	component.report = response.data;
+                    	component.ready = true;
+
+                        NProgress.done()
+                    })
+                    .catch(component.handleError)
+            })
+        },
+
 		methods: {
-			getReport: function() {
-				let tripId = this.$route.params.tripId;
-				let reportId = this.$route.params.reportId;
-
-				// if (this.$store.getters.hasReportWithId(reportId)) {
-				// 	this.report = _.cloneDeep(this.$store.getters.getReportById(reportId)[0]);
-				// 	return;
-				// }
-
-				axios.get(`/api/v1/trips/${tripId}/reports/${reportId}`)
-					.then((response) => {
-						// this.$store.commit('addReport', response.data);
-						this.report = response.data.data;
-					})
-					.catch(this.handleError)
-					.finally(this.stopLoading);
-			},
 			updateReport: function() {
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;
@@ -104,9 +100,6 @@
 
 				this.userData = error.response.data;
 			},
-			stopLoading: function() {
-				this.loading = false;
-			}
 		},
 	}
 </script>

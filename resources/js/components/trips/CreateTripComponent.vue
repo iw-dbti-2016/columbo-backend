@@ -1,5 +1,5 @@
 <template>
-	<div class="m-auto pl-8 pr-24 w-full">
+	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
 				:backLink="{name: 'home'}"
 				title="Create a new trip">
@@ -67,7 +67,11 @@
 </template>
 
 <script>
+	import NProgress from 'nprogress'
+
 	export default {
+		name: 'create-trip',
+
 		data() {
             return {
                 name: "",
@@ -76,9 +80,19 @@
                 endDate: "",
                 description: "",
 
+                ready: false,
                 error: "",
             };
         },
+
+        beforeRouteEnter(to, from, next) {
+            next(component => {
+            	component.ready = true;
+
+                NProgress.done()
+            })
+        },
+
         methods: {
             submitTrip: function() {
                 axios.post('/api/v1/trips', {
@@ -91,7 +105,6 @@
                 	//published_at for postponed publication
                 })
                     .then((response) => {
-                        // this.$store.commit('addTrip', response.data);
                         this.$router.push({name: 'showTrip', params: {tripId: response.data.id}});
                     })
                     .catch((error) => {

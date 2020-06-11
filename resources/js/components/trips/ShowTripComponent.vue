@@ -9,7 +9,7 @@
 		</ActionBarComponent>
         <div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3">
-				<h1 class="text-6xl tracking-wide uppercase">{{ trip.name }}</h1> <!-- NAME -->
+				<ProgressBarComponent class="py-2 px-2" :start="trip.start_date" :end="trip.end_date" :current="Date.now()"></ProgressBarComponent>
 				<p class="ml-2 text-gray-700 text-sm">{{ trip.synopsis }}</p> <!-- SYNOPSIS -->
 				<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
 				<span class="block ml-2 mt-3 text-gray-700 text-lg">{{ trip.start_date }} - {{ trip.end_date }}</span> <!-- START AND END DATE -->
@@ -35,8 +35,7 @@
 			<div class="flex-grow mr-4 w-1/2"> <!-- REPORTS -->
 				<span class="block text-2xl">Reports</span>
 				<router-link :to="{name: 'createReport', params: {tripId: $route.params.tripId}}" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white">Create a new report</router-link>
-				<span v-if="!ready" class="block mt-2 text-gray-700">Loading reports...</span>
-				<span v-else-if="reports.length == 0" class="block mt-2 text-gray-700">No reports written yet.</span>
+				<span v-if="reports.length == 0" class="block mt-2 text-gray-700">No reports written yet.</span>
 				<div v-else class="bg-gray-100 mt-2 rounded-lg shadow-md">
 					<div v-for="report in reports" @click.prevent="$router.push({name: 'showReport', params: {tripId: $route.params.tripId, reportId: report.id}})" class="border-b border-gray-400 last:border-b-0 px-5 py-4 text-md cursor-pointer">{{ report.title }}</div>
 				</div>
@@ -52,6 +51,8 @@
 </template>
 
 <script>
+	import NProgress from 'nprogress'
+
 	export default {
 		name: 'show-trip',
 
@@ -64,35 +65,21 @@
                 error: "",
             };
         },
-        created() {
-        	this.getTrip();
-        	this.getReports();
+
+        beforeRouteEnter(to, from, next) {
+            next(component => {
+                axios.get(`/api/v1/trips/${component.$route.params.tripId}`)
+                    .then(response => {
+                    	component.trip = response.data;
+                    	component.reports = response.data.reports;
+                    	component.ready = true;
+
+                        NProgress.done()
+                    })
+                    .catch(component.handleError)
+            })
         },
         methods: {
-            getTrip: function() {
-            	let tripId = this.$route.params.tripId;
-
-            	// if (this.$store.getters.hasTripWithId(tripId)) {
-            	// 	this.trip = this.$store.getters.getTripById(tripId)[0];
-            	// 	return;
-            	// }
-
-                axios.get(`/api/v1/trips/${tripId}`)
-                    .then((response) => {
-                    	// this.$store.commit('addTrip', response.data);
-                        this.trip = response.data;
-                    })
-                    .catch(this.handleError);
-            },
-            getReports: function() {
-            	axios.get(`/api/v1/trips/${this.$route.params.tripId}/reports`)
-                    .then((response) => {
-                        this.reports = response.data;
-                        // this.$store.commit('setReports', response.data);
-                    })
-                    .catch(this.handleError)
-                    .finally(this.stopLoading);
-            },
             removeTrip: function() {
                 let tripId = this.$route.params.tripId;
 
@@ -109,9 +96,6 @@
 
                 this.userData = error.response.data;
             },
-            stopLoading: function() {
-                this.ready = true;
-            }
         },
     }
 </script>

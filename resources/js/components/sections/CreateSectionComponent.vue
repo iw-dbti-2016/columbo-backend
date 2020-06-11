@@ -1,5 +1,5 @@
 <template>
-	<div class="m-auto pl-8 pr-24 w-full">
+	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
 				:backLink="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}"
 				backTitle="Discard and go back"
@@ -60,7 +60,11 @@
 </template>
 
 <script>
+	import NProgress from 'nprogress'
+
 	export default {
+		name: 'create-section',
+
 		data() {
 			return {
 				startTime: "",
@@ -71,9 +75,19 @@
 				submitText: "Store this report!",
 				duration: "--",
 
+				ready: false,
 				error: "",
 			};
 		},
+
+		beforeRouteEnter(to, from, next) {
+            next(component => {
+            	component.ready = true;
+
+                NProgress.done()
+            })
+        },
+
 		methods: {
 			submitSection: function() {
 				let tripId = this.$route.params.tripId;

@@ -1,5 +1,5 @@
 <template>
-	<div class="m-auto pl-8 pr-24 w-full">
+	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
 				:backLink="{name: 'showTrip', params: {'tripId': $route.params.tripId}}"
 				title="Edit trip">
@@ -66,37 +66,37 @@
 </template>
 
 <script>
+	import NProgress from 'nprogress'
+
 	export default {
+		name: 'edit-trip',
+
 		data() {
             return {
                 trip: {},
-
+                ready: false,
                 error: "",
             };
         },
-        created() {
-        	this.loadTrip();
-        },
-        methods: {
-        	loadTrip: function() {
-        		let tripId = this.$route.params.tripId;
 
-            	// if (this.$store.getters.hasTripWithId(tripId)) {
-            	// 	this.trip = _.cloneDeep(this.$store.getters.getTripById(tripId)[0]);
-            	// 	return;
-            	// }
+        beforeRouteEnter(to, from, next) {
+            next(component => {
+                axios.get(`/api/v1/trips/${component.$route.params.tripId}`)
+                    .then(response => {
+                    	component.trip = response.data;
+                    	component.ready = true;
 
-                axios.get(`/api/v1/trips/${tripId}`)
-                    .then((response) => {
-                    	// this.$store.commit('addTrip', response.data);
-                        this.trip = response.data;
+                        NProgress.done()
                     })
-                    .catch(this.handleError);
-        	},
+                    .catch(component.handleError)
+            })
+        },
+
+        methods: {
             updateTrip: function() {
             	let tripId = this.$route.params.tripId;
 
-                axios.put(`/api/v1/trips/${tripId}`, {
+                axios.patch(`/api/v1/trips/${tripId}`, {
                 	name: this.trip.name,
                 	synopsis: this.trip.synopsis,
                 	start_date: this.trip.start_date,
@@ -106,7 +106,6 @@
                 	//published_at for postponed publication
                 })
                     .then((response) => {
-                        // this.$store.commit('setTrips', [this.trip]);
                         this.$router.push({name: 'showTrip', params: {tripId: tripId}});
                     })
                     .catch(this.handleError);

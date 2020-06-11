@@ -1,5 +1,5 @@
 <template>
-	<div class="m-auto pl-8 pr-24 w-full">
+	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
 				:backLink="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}"
 				:editLink="{name: 'editSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: $route.params.sectionId}}"
@@ -31,43 +31,44 @@
 </template>
 
 <script>
+	import NProgress from 'nprogress'
     import SectionSideCardComponent from './SectionSideCardComponent.vue';
 
     export default {
+    	name: 'show-section',
+
         components: {
             SectionSideCardComponent,
         },
+
         data() {
             return {
-            	loading: true,
                 section: {},
                 showMap: true,
+
+            	ready: false,
                 error: "",
             };
         },
-        created() {
-        	this.getSection();
-        },
-        methods: {
-            getSection: function() {
-            	let tripId = this.$route.params.tripId;
-            	let reportId = this.$route.params.reportId;
-            	let sectionId = this.$route.params.sectionId;
 
-            	// if (this.$store.getters.hasSectionWithId(sectionId)) {
-            	// 	this.section = this.$store.getters.getSectionById(sectionId)[0];
-            	// 	this.loading = false;
-            	// 	return;
-            	// }
+        beforeRouteEnter(to, from, next) {
+            next(component => {
+            	let tripId = component.$route.params.tripId;
+            	let reportId = component.$route.params.reportId;
+            	let sectionId = component.$route.params.sectionId;
 
                 axios.get(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${sectionId}`)
-                    .then((response) => {
-                    	// this.$store.commit('addSection', response.data);
-                        this.section = response.data;
+                    .then(response => {
+                    	component.section = response.data;
+                    	component.ready = true;
+
+                        NProgress.done()
                     })
-                    .catch(this.handleError)
-                    .finally(this.stopLoading);
-            },
+                    .catch(component.handleError)
+            })
+        },
+
+        methods: {
             removeSection: function() {
                 let tripId = this.$route.params.tripId;
                 let reportId = this.$route.params.reportId;
@@ -77,7 +78,6 @@
                         this.$router.push({name: 'showReport', params: {tripId: tripId, reportId: reportId}});
                     })
                     .catch(this.handleError)
-                    .finally(this.stopLoading);
             },
             handleError(error) {
                 if (error.response.status == 401) {
@@ -89,9 +89,6 @@
             },
             noResponse() {
                 this.error = "No response...";
-            },
-            stopLoading() {
-                this.loading = false;
             },
         },
     }

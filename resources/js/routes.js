@@ -9,7 +9,7 @@ export default [
 		path: '/app/users/:username',
 		name: 'showProfile',
 		meta: {requiresAuthentication: true,},
-		component: require('./components/profile/ProfileComponent.vue').default,
+		component: require('./components/profile/ShowProfileComponent.vue').default,
 	},
 	{
 		path: '/app/trips/create',

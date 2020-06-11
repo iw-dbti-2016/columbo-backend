@@ -103,9 +103,25 @@
 	opacity: 0;
 }
 
-@responsive {
-	.rotate-270 {
-		transform-origin: right;
-		transform: translateX(-100%) rotate(270deg);
-	}
+/* NProgress JS */
+/* Make clicks pass-through */
+#nprogress {
+	pointer-events: none;
+}
+
+#nprogress .bar {
+	@apply bg-green-600;
+	@apply fixed z-50 top-0 left-0 w-full h-1;
+}
+
+/* Fancy blur effect */
+#nprogress .peg {
+	@apply block absolute right-0 h-full opacity-100;
+
+	width: 100px;
+	box-shadow: 0 0 10px #38a169, 0 0 5px #38a169;
+
+	-webkit-transform: rotate(3deg) translate(0px, -4px);
+		-ms-transform: rotate(3deg) translate(0px, -4px);
+			transform: rotate(3deg) translate(0px, -4px);
 }

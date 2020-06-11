@@ -2,6 +2,7 @@
 
 namespace Columbo\Http\Resources;
 
+use Columbo\Http\Resources\Report;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class Trip extends JsonResource
@@ -21,6 +22,7 @@ class Trip extends JsonResource
 			"description"  => $this->description,
 			"start_date"   => $this->start_date,
 			"end_date"     => $this->end_date,
+			"reports"      => Report::collection($this->whenLoaded('reports')),
 			"published_at" => $this->published_at,
 		];
 	}

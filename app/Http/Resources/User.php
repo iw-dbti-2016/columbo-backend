@@ -29,6 +29,7 @@ class User extends JsonResource
 			"last_name"         => $this->last_name,
 			"username"          => $this->username,
 			"email"             => $this->email,
+			"email_hash"		=> md5($this->email),
 			"telephone"         => $this->telephone,
 			"image"             => $this->image,
 			"birth_date"        => $this->birth_date,
