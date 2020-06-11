@@ -8,6 +8,7 @@ import Vue from 'vue'
 import routes from './routes'
 import { store } from './store'
 import VueRouter from 'vue-router'
+import App from './App.vue'
 
 require('./bootstrap')
 require('./font-awesome')
@@ -48,6 +49,7 @@ Vue.component('MarkdownInputComponent', require('./components/global/MarkdownInp
 Vue.component('MapOutputComponent', require('./components/global/MapOutputComponent.vue').default);
 Vue.component('MapInputComponent', require('./components/global/MapInputComponent.vue').default);
 Vue.component('ErrorHandlerComponent', require('./components/global/ErrorHandlerComponent.vue').default);
+Vue.component('ProgressBarComponent', require('./components/global/ProgressBarComponent.vue').default);
 
 router.beforeEach((to, from, next) => {
 	let isAuthenticated = store.getters['auth/authenticated'];
@@ -65,5 +67,6 @@ store.dispatch('auth/me').then(() => {
 	new Vue({
 		router,
 		store,
+		render: h => h(App),
 	}).$mount("#app")
 })
