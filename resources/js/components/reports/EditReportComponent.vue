@@ -23,7 +23,7 @@
 							<span></span>
 						</div>
 					</div>
-					<MarkdownInputComponent label="Description" :content.sync="report.description"></MarkdownInputComponent>
+					<RichTextInput label="Description" :content.sync="report.description"></RichTextInput>
 					<input @click.prevent="updateReport" class="inline-block mt-4 px-4 py-3 bg-green-500 rounded text-white cursor-pointer focus:outline-none hover:bg-green-600 focus:bg-green-600 focus:shadow-lg" type="submit" value="Update this report!">
 					<router-link :to="{name: 'showReport', params: {tripId: this.$route.params.tripId, reportId: this.$route.params.reportId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-gray-100 rounded shadow focus:outline-none hover:bg-gray-200 focus:bg-gray-200 focus:shadow-md">Cancel</router-link>
 				</div>

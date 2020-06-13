@@ -42,7 +42,7 @@ let csrf = document.head.querySelector('meta[name="csrf-token"]').content;
 NProgress.configure({
     showSpinner: false,
     easing: 'ease',
-    speed: 500,
+    speed: 250,
 })
 
 const router = new VueRouter({
@@ -50,8 +50,8 @@ const router = new VueRouter({
 	mode: 'history',
 });
 
-Vue.component('MarkdownOutputComponent', require('./components/global/MarkdownOutputComponent.vue').default);
-Vue.component('MarkdownInputComponent', require('./components/global/MarkdownInputComponent.vue').default);
+Vue.component('RichTextOutput', require('./components/editor/RichTextOutput.vue').default);
+Vue.component('RichTextInput', require('./components/editor/RichTextInput.vue').default);
 Vue.component('MapOutputComponent', require('./components/global/MapOutputComponent.vue').default);
 Vue.component('MapInputComponent', require('./components/global/MapInputComponent.vue').default);
 Vue.component('ErrorHandlerComponent', require('./components/global/ErrorHandlerComponent.vue').default);

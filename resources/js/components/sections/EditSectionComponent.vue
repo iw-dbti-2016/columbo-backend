@@ -27,7 +27,7 @@
 						</div>
 					</div>
 					<span class="">Duration: {{ section.duration_minutes }}</span>
-					<MarkdownInputComponent :content.sync="section.content"></MarkdownInputComponent>
+					<RichTextInput :content.sync="section.content"></RichTextInput>
 					<div>
 						<label class="text-gray-700 mt-3 block" for="draft">
 							<input v-model="section.is_draft" name="draft" id="draft" class="inline-block mt-2 px-4 py-3" type="checkbox">

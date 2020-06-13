@@ -14,7 +14,7 @@
 				<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
 				<span class="block ml-2 mt-3 text-gray-700 text-lg">{{ trip.start_date }} - {{ trip.end_date }}</span> <!-- START AND END DATE -->
 				<p class="leading-normal ml-2 mt-3 text-justify text-md">
-                    <MarkdownOutputComponent :content="trip.description"></MarkdownOutputComponent>
+                    <RichTextOutput :content="trip.description"></RichTextOutput>
                 </p> <!-- DESCRIPTION -->
 			</div>
 			<div class="mt-12 w-1/3">

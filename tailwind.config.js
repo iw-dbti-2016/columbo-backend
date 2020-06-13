@@ -3,6 +3,7 @@ module.exports = {
 		extend: {},
 		fontFamily: {
 			'sans': 'Montserrat,Helvetica,Arial,sans-serif',
+			'mono': 'Roboto Mono,monospace'
 		}
 	},
 	variants: {

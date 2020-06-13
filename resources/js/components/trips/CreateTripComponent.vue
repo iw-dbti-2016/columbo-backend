@@ -42,7 +42,7 @@
 							</div>
 						</div>
 					</div>
-					<MarkdownInputComponent label="Description" :content.sync="description"></MarkdownInputComponent>
+					<RichTextInput label="Description" :content.sync="description"></RichTextInput>
 					<input @click.prevent="submitTrip" class="inline-block mt-4 px-4 py-3 bg-green-500 rounded text-white cursor-pointer focus:outline-none hover:bg-green-600 focus:bg-green-600 focus:shadow-lg" type="submit" value="Create this trip!">
 					<router-link :to="{name: 'home'}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-gray-100 rounded shadow focus:outline-none hover:bg-gray-200 focus:bg-gray-200 focus:shadow-md">Cancel</router-link>
 				</div>

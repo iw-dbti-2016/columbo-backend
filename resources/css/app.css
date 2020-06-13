@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 
 /**
  * This injects Tailwind's base styles, which is a combination of
@@ -102,6 +103,87 @@
 .component-fade-enter, .component-fade-leave-to {
 	opacity: 0;
 }
+
+/* EDITOR */
+.editor {
+	position: relative;
+}
+
+/* EDITOR MENUS */
+.floating-menu-bar {
+	position: absolute;
+	z-index: 1;
+	margin-top: -0.25rem;
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.2s, visibility 0.2s;
+}
+
+.floating-menu-bar.is-active {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* EDITOR CONTENT STYLES */
+.ProseMirror {
+	@apply text-gray-100;
+}
+
+.ProseMirror:focus {
+	@apply outline-none;
+}
+
+.ProseMirror h1 {
+	@apply text-4xl font-bold my-6 leading-10;
+}
+
+.ProseMirror h2 {
+	@apply text-2xl font-bold my-5 leading-8;
+}
+
+.ProseMirror h3 {
+	@apply text-lg font-bold my-4 leading-6;
+}
+
+.ProseMirror p {
+	@apply text-lg my-2 leading-6 text-justify;
+}
+
+.ProseMirror code {
+	@apply font-mono bg-gray-700 rounded px-2 py-1;
+}
+
+.ProseMirror ul {
+	@apply list-disc my-4 list-outside leading-6 ml-6;
+}
+
+.ProseMirror ol {
+	@apply list-decimal my-4 list-outside leading-6 ml-6;
+}
+
+.ProseMirror li p {
+	@apply my-2 inline leading-6 text-justify relative ml-2;
+}
+
+.ProseMirror blockquote {
+	@apply border-l-4 text-lg border-gray-700 pl-4 italic my-4 leading-6;
+}
+
+.ProseMirror blockquote p,
+.ProseMirror blockquote h1,
+.ProseMirror blockquote h2,
+.ProseMirror blockquote h3 {
+	@apply my-0;
+}
+
+.ProseMirror iframe {
+	@apply my-6;
+}
+/*
+Mention,
+ */
+
+
 
 /* NProgress JS */
 /* Make clicks pass-through */

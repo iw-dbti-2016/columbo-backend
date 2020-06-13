@@ -28,7 +28,7 @@
 						</div>
 					</div>
 					<span class="">Duration: {{ duration }}</span>
-					<MarkdownInputComponent label="Content" :content.sync="content"></MarkdownInputComponent>
+					<RichTextInput label="Content" :content.sync="content"></RichTextInput>
 					<div>
 						<label class="text-gray-700 mt-3 block" for="draft">
 							<input v-model="draft" name="draft" id="draft" class="inline-block mt-2 px-4 py-3" type="checkbox">

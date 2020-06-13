@@ -1,26 +1,77 @@
 <template>
-	<div>
-		<div v-if="suggestions.length" class="fixed top-0 h-full left-0 ml-24 flex flex-col justify-center">
-			<div @click.prevent="addTag" class="bg-gray-100 h-9 px-2 py-2 rounded shadow sticky text-left text-xl w-56" v-html="suggestions"></div>
-		</div>
-		<label class="text-gray-700 mt-3 block" for="content">{{ label }}</label>
-		<div class="mt-2">
-			<a :class="{'font-bold': !preview}" class="bg-gray-100 inline-block mr-1 px-8 py-4 rounded shadow hover:shadow-md" @click.prevent="preview = false" href="#">Edit</a>
-			<a :class="{'font-bold': preview}" class="bg-gray-100 inline-block px-8 py-4 rounded shadow hover:shadow-md" @click.prevent="switchToPreview" href="#">Preview</a>
-		</div>
-		<div v-if="!preview" @focus="suggestions = '';" @blur="" @click="onClick" @keyup="onKeyUp" id="edit-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" class="inline-block whitespace-pre-wrap leading-tight resize-y w-full h-64 overflow-y-auto bg-gray-100 block mt-2 px-4 py-3 shadow rounded focus:outline-none focus:shadow-md" v-html="outOfSyncInputData"></div>
-		<div v-else>
-			<MarkdownOutputComponent :content="markdownData"></MarkdownOutputComponent>
-		</div>
-		<div>
-			<span></span>
-			<span></span>
-		</div>
+	<div class="editor mt-6">
+		<editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
+			<div class="menubar is-hidden flex bg-gray-900 px-2 py-2 pb-4 sticky top-0 z-10 border-b border-gray-700">
+				<EditorMenuButton icon="bold" :isActive="isActive.bold()" @click="commands.bold"></EditorMenuButton>
+				<EditorMenuButton icon="italic" :isActive="isActive.italic()" @click="commands.italic"></EditorMenuButton>
+				<EditorMenuButton icon="strikethrough" :isActive="isActive.strike()" @click="commands.strike"></EditorMenuButton>
+				<EditorMenuButton icon="underline" :isActive="isActive.underline()" @click="commands.underline"></EditorMenuButton>
+				<EditorMenuButton icon="code" :isActive="isActive.code()" @click="commands.code"></EditorMenuButton>
+				<EditorMenuButton icon="paragraph" :isActive="isActive.paragraph()" @click="commands.paragraph"></EditorMenuButton>
+				<EditorMenuButton icon="heading" postFix="1" :isActive="isActive.heading({level:1})" @click="commands.heading({level:1})"></EditorMenuButton>
+				<EditorMenuButton icon="heading" postFix="2" :isActive="isActive.heading({level:2})" @click="commands.heading({level:2})"></EditorMenuButton>
+				<EditorMenuButton icon="heading" postFix="3" :isActive="isActive.heading({level:3})" @click="commands.heading({level:3})"></EditorMenuButton>
+				<EditorMenuButton icon="list-ul" :isActive="isActive.bullet_list()" @click="commands.bullet_list"></EditorMenuButton>
+				<EditorMenuButton icon="list-ol" :isActive="isActive.ordered_list()" @click="commands.ordered_list"></EditorMenuButton>
+				<EditorMenuButton icon="quote-left" :isActive="isActive.blockquote()" @click="commands.blockquote"></EditorMenuButton>
+				<EditorMenuButton icon="spotify" iconType="b" :isActive="false" @click="showSpotifyModal(commands.spotifysong)"></EditorMenuButton>
+			</div>
+		</editor-menu-bar>
+
+		<editor-floating-menu :editor="editor" v-slot="{ commands, isActive, menu }">
+			<div class="floating-menu-bar flex" :class="{ 'is-active': menu.isActive }" :style="`top: ${menu.top}px`">
+				<div class="w-2"></div> <!-- PADDING -->
+				<EditorMenuButton icon="heading" postFix="1" :isActive="isActive.heading({level:1})" @click="commands.heading({level:1})"></EditorMenuButton>
+				<EditorMenuButton icon="heading" postFix="2" :isActive="isActive.heading({level:2})" @click="commands.heading({level:2})"></EditorMenuButton>
+				<EditorMenuButton icon="heading" postFix="3" :isActive="isActive.heading({level:3})" @click="commands.heading({level:3})"></EditorMenuButton>
+				<EditorMenuButton icon="list-ul" :isActive="isActive.bullet_list()" @click="commands.bullet_list"></EditorMenuButton>
+				<EditorMenuButton icon="list-ol" :isActive="isActive.ordered_list()" @click="commands.ordered_list"></EditorMenuButton>
+				<EditorMenuButton icon="quote-left" :isActive="isActive.blockquote()" @click="commands.blockquote"></EditorMenuButton>
+				<EditorMenuButton icon="spotify" iconType="b" :isActive="false" @click="showSpotifyModal(commands.spotifysong)"></EditorMenuButton>
+			</div>
+		</editor-floating-menu>
+
+		<editor-content :editor="editor" class="mt-2 pb-2 border-b border-gray-700" />
+		<EmbedSpotifyModal ref="spotifyModal" @onConfirm="addCommand"/>
 	</div>
 </template>
 
 <script>
+	import { Editor, EditorContent, EditorFloatingMenu, EditorMenuBar } from 'tiptap'
+	import {
+		Blockquote,
+		BulletList,
+		HardBreak,
+		Mention,
+		Heading,
+		ListItem,
+		OrderedList,
+		Strike,
+		Underline,
+		Bold,
+		Code,
+		Italic,
+		TrailingNode,
+		Placeholder,
+		History, } from 'tiptap-extensions'
+	import SpotifyEmbed from './SpotifyEmbed.js'
+	import EmbedSpotifyModal from './EmbedSpotifyModal'
+	import EditorMenuButton from './EditorMenuButton'
+
 	export default {
+		name: 'rich-text-input',
+
+		components: {
+			EditorContent,
+			EditorFloatingMenu,
+			EditorMenuBar,
+			EmbedSpotifyModal,
+			EditorMenuButton,
+		},
+		beforeDestroy() {
+			// Always destroy your editor instance when it's no longer needed
+			this.editor.destroy()
+		},
 		props: {
 			content: {
 				type: String,
@@ -78,6 +129,41 @@
 				preview: false,
 				suggestions: "",
 
+				editor: new Editor({
+					content: this.content,
+					extensions: [
+						new Blockquote(),
+						new BulletList(),
+						new HardBreak(),
+						new Mention(),
+						new Heading({ levels: [1, 2, 3] }),
+						new ListItem(),
+						new OrderedList(),
+						new Strike(),
+						new Underline(),
+						new Bold(),
+						new Code(),
+						new Italic(),
+						new TrailingNode({
+							node: 'paragraph',
+							notAfter: ['paragraph'],
+						}),
+						new Placeholder({
+							showOnlyCurrent: false,
+							emptyNodeText: node => {
+								return  `Start writing the ${this.label.toLowerCase()} right here!`
+							},
+						}),
+						new History(),
+						// CUSTOM
+						new SpotifyEmbed(),
+					],
+					onUpdate: ( { state, getHTML, getJSON, transaction } ) => {
+						// this.content = getHTML();
+						this.$emit('update:content', getHTML());
+					},
+				}),
+
 			};
 		},
 		beforeMount() {
@@ -97,6 +183,15 @@
 			}
 		},
 		methods: {
+			showSpotifyModal(command) {
+				this.$refs.spotifyModal.showModal(command)
+			},
+			addCommand(data) {
+				if (data.command !== null) {
+					data.command(data.data)
+				}
+			},
+
 			///////////////////////
 			// BASIC CONVERSIONS //
 			///////////////////////
@@ -527,3 +622,14 @@
 		return cum_length[0];
 	}
 </script>
+
+<style lang="scss">
+	.editor *:not(.ProseMirror-focused) > .is-empty:nth-child(1)::before {
+		content: attr(data-empty-text);
+		float: left;
+		color: #aaa;
+		pointer-events: none;
+		height: 0;
+		font-style: italic;
+	}
+</style>
