@@ -2,32 +2,35 @@
 	<div class="editor mt-6">
 		<editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
 			<div class="menubar is-hidden flex bg-gray-900 px-2 py-2 pb-4 sticky top-0 z-10 border-b border-gray-700">
-				<EditorMenuButton icon="bold" :isActive="isActive.bold()" @click="commands.bold"></EditorMenuButton>
-				<EditorMenuButton icon="italic" :isActive="isActive.italic()" @click="commands.italic"></EditorMenuButton>
-				<EditorMenuButton icon="strikethrough" :isActive="isActive.strike()" @click="commands.strike"></EditorMenuButton>
-				<EditorMenuButton icon="underline" :isActive="isActive.underline()" @click="commands.underline"></EditorMenuButton>
-				<EditorMenuButton icon="code" :isActive="isActive.code()" @click="commands.code"></EditorMenuButton>
-				<EditorMenuButton icon="paragraph" :isActive="isActive.paragraph()" @click="commands.paragraph"></EditorMenuButton>
-				<EditorMenuButton icon="heading" postFix="1" :isActive="isActive.heading({level:1})" @click="commands.heading({level:1})"></EditorMenuButton>
-				<EditorMenuButton icon="heading" postFix="2" :isActive="isActive.heading({level:2})" @click="commands.heading({level:2})"></EditorMenuButton>
-				<EditorMenuButton icon="heading" postFix="3" :isActive="isActive.heading({level:3})" @click="commands.heading({level:3})"></EditorMenuButton>
-				<EditorMenuButton icon="list-ul" :isActive="isActive.bullet_list()" @click="commands.bullet_list"></EditorMenuButton>
-				<EditorMenuButton icon="list-ol" :isActive="isActive.ordered_list()" @click="commands.ordered_list"></EditorMenuButton>
-				<EditorMenuButton icon="quote-left" :isActive="isActive.blockquote()" @click="commands.blockquote"></EditorMenuButton>
-				<EditorMenuButton icon="spotify" iconType="b" @click="showSpotifyModal(commands.spotify_track_embed)"></EditorMenuButton>
+				<EditorMenuButton icon="bold" :isActive="isActive.bold()" @click="commands.bold" title="Bold"></EditorMenuButton>
+				<EditorMenuButton icon="italic" :isActive="isActive.italic()" @click="commands.italic" title="Italic"></EditorMenuButton>
+				<EditorMenuButton icon="strikethrough" :isActive="isActive.strike()" @click="commands.strike" title="Strikthrough"></EditorMenuButton>
+				<EditorMenuButton icon="underline" :isActive="isActive.underline()" @click="commands.underline" title="Underline"></EditorMenuButton>
+				<EditorMenuButton icon="code" :isActive="isActive.code()" @click="commands.code" title="Inline Code"></EditorMenuButton>
+				<EditorMenuButton icon="paragraph" :isActive="isActive.paragraph()" @click="commands.paragraph" title="Paragraph"></EditorMenuButton>
+				<EditorMenuButton icon="heading" postFix="1" :isActive="isActive.heading({level:1})" @click="commands.heading({level:1})" title="Large Heading"></EditorMenuButton>
+				<EditorMenuButton icon="heading" postFix="2" :isActive="isActive.heading({level:2})" @click="commands.heading({level:2})" title="Medium Heading"></EditorMenuButton>
+				<EditorMenuButton icon="heading" postFix="3" :isActive="isActive.heading({level:3})" @click="commands.heading({level:3})" title="Small Heading"></EditorMenuButton>
+				<EditorMenuButton icon="list-ul" :isActive="isActive.bullet_list()" @click="commands.bullet_list" title="Bullet list"></EditorMenuButton>
+				<EditorMenuButton icon="list-ol" :isActive="isActive.ordered_list()" @click="commands.ordered_list" title="Ordered list"></EditorMenuButton>
+				<EditorMenuButton icon="quote-left" :isActive="isActive.blockquote()" @click="commands.blockquote" title="Blockquote"></EditorMenuButton>
+				<EditorMenuButton icon="spotify" iconType="b" @click="showSpotifyModal(commands.spotify_track_embed)" title="Spotify Track"></EditorMenuButton>
+				<EditorMenuButton icon="undo-alt" @click="commands.undo" title="Undo"></EditorMenuButton>
+				<EditorMenuButton icon="redo-alt" @click="commands.redo" title="Redo"></EditorMenuButton>
+				<span v-show="maxLength > 0 && content.length > maxLength" class="absolute font-bold text-red-500 text-xl right-0 top-0 mr-2 mt-3">{{label}} Too Long!</span>
 			</div>
 		</editor-menu-bar>
 
 		<editor-floating-menu :editor="editor" v-slot="{ commands, isActive, menu }">
 			<div class="floating-menu-bar flex" :class="{ 'is-active': menu.isActive }" :style="`top: ${menu.top}px`">
 				<div class="w-2"></div> <!-- PADDING -->
-				<EditorMenuButton icon="heading" postFix="1" :isActive="isActive.heading({level:1})" @click="commands.heading({level:1})"></EditorMenuButton>
-				<EditorMenuButton icon="heading" postFix="2" :isActive="isActive.heading({level:2})" @click="commands.heading({level:2})"></EditorMenuButton>
-				<EditorMenuButton icon="heading" postFix="3" :isActive="isActive.heading({level:3})" @click="commands.heading({level:3})"></EditorMenuButton>
-				<EditorMenuButton icon="list-ul" :isActive="isActive.bullet_list()" @click="commands.bullet_list"></EditorMenuButton>
-				<EditorMenuButton icon="list-ol" :isActive="isActive.ordered_list()" @click="commands.ordered_list"></EditorMenuButton>
-				<EditorMenuButton icon="quote-left" :isActive="isActive.blockquote()" @click="commands.blockquote"></EditorMenuButton>
-				<EditorMenuButton icon="spotify" iconType="b" @click="showSpotifyModal(commands.spotify_track_embed)"></EditorMenuButton>
+				<EditorMenuButton icon="heading" postFix="1" :isActive="isActive.heading({level:1})" @click="commands.heading({level:1})" title="Large Heading"></EditorMenuButton>
+				<EditorMenuButton icon="heading" postFix="2" :isActive="isActive.heading({level:2})" @click="commands.heading({level:2})" title="Medium Heading"></EditorMenuButton>
+				<EditorMenuButton icon="heading" postFix="3" :isActive="isActive.heading({level:3})" @click="commands.heading({level:3})" title="Small Heading"></EditorMenuButton>
+				<EditorMenuButton icon="list-ul" :isActive="isActive.bullet_list()" @click="commands.bullet_list" title="Bullet list"></EditorMenuButton>
+				<EditorMenuButton icon="list-ol" :isActive="isActive.ordered_list()" @click="commands.ordered_list" title="Ordered list"></EditorMenuButton>
+				<EditorMenuButton icon="quote-left" :isActive="isActive.blockquote()" @click="commands.blockquote" title="Blockquote"></EditorMenuButton>
+				<EditorMenuButton icon="spotify" iconType="b" @click="showSpotifyModal(commands.spotify_track_embed)" title="Spotify Track"></EditorMenuButton>
 			</div>
 		</editor-floating-menu>
 
@@ -90,6 +93,10 @@
 					return []
 				},
 			},
+			maxLength: {
+				type: Number,
+				default: -1,
+			}
 		},
 
 		data() {
