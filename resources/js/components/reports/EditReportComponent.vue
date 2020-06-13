@@ -81,7 +81,7 @@
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;
 
-				axios.put(`/api/v1/trips/${tripId}/reports/${reportId}`, {
+				axios.patch(`/api/v1/trips/${tripId}/reports/${reportId}`, {
 					title: this.report.title,
 					date: this.report.date,
 					description: this.report.description,

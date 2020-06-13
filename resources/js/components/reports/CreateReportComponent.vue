@@ -71,7 +71,7 @@
 			submitReport: function() {
 				let tripId = this.$route.params.tripId;
 
-				axios.post(`/api/v1/trips/${tripId}/reports/create`, {
+				axios.post(`/api/v1/trips/${tripId}/reports`, {
 					title: this.title,
 					date: this.date,
 					description: this.description,
@@ -79,7 +79,7 @@
 					//published_at for postponed publication
 				})
 					.then((response) => {
-						this.$router.push(`/app/trips/${tripId}/reports/${response.data.data.id}`);
+						this.$router.push(`/app/trips/${tripId}/reports/${response.data.id}`);
 					})
 					.catch((error) => {
 						if (error.response.status == 401) {

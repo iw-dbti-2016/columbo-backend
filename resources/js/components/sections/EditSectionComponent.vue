@@ -98,7 +98,7 @@
 				let reportId = this.$route.params.reportId;
 				let sectionId = this.$route.params.sectionId;
 
-				axios.put(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${sectionId}`, {
+				axios.patch(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${sectionId}`, {
 					start_time: this.section.start_time,
 					end_time: this.section.end_time,
 					content: this.section.content,
@@ -107,7 +107,7 @@
 					//published_at for postponed publication
 				})
 					.then((response) => {
-						this.$router.push({name: 'showSection', params: {tripId: tripId, reportId: reportId, sectionId: response.data.data.id}});
+						this.$router.push({name: 'showSection', params: {tripId: tripId, reportId: reportId, sectionId: response.data.id}});
 					})
 					.catch(this.handleError)
 			},

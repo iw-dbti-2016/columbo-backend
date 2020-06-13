@@ -93,7 +93,7 @@
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;
 
-				axios.post(`/api/v1/trips/${tripId}/reports/${reportId}/sections/create`, {
+				axios.post(`/api/v1/trips/${tripId}/reports/${reportId}/sections`, {
 					start_time: this.startTime,
 					end_time: this.endTime,
 					content: this.content,
@@ -102,7 +102,7 @@
 					//published_at for postponed publication
 				})
 					.then((response) => {
-						this.$router.push({name: 'showSection', params: {tripId: tripId, reportId: reportId, sectionId: response.data.data.id}});
+						this.$router.push({name: 'showSection', params: {tripId: tripId, reportId: reportId, sectionId: response.data.id}});
 					})
 					.catch(this.handleError);
 			},

@@ -7,7 +7,7 @@
 			</div>
 			<div class="relative" v-if="section.locationable != null">
 				<keep-alive>
-					<MapOutputComponent v-if="showMap" :zoom="8" :coordinates="section.locationable.coordinates.coordinates"></MapOutputComponent>
+					<MapOutputComponent v-if="showMap" :zoom="section.locationable[locType].map_zoom" :coordinates="section.locationable[locType].coordinates"></MapOutputComponent>
 					<img v-else src="/img/example-map.png" alt="#">
 				</keep-alive>
 				<div class="absolute bg-gray-100 flex flex-col items-center mr-2 mt-2 px-1 px-2 py-3 right-0 rounded-full text-2xl text-xl top-0">
@@ -36,7 +36,13 @@
 		data() {
 			return {
 				showMap: true,
+				locType: 'location',
 			};
+		},
+		create() {
+			if (this.section.locationable != null && this.section.locationable.hasOwnProperty('location')) {
+				this.locType = 'location'
+			}
 		},
 		methods: {
 			calculateDuration: function() {
