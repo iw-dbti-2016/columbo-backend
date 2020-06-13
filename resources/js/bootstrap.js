@@ -1,52 +1,29 @@
+import NProgress from 'nprogress'
+
+
+////////////////////////
+// CONFIGURE PACKAGES //
+////////////////////////
+NProgress.configure({
+    showSpinner: false,
+    easing: 'ease',
+    speed: 250,
+})
+
+//////////////////////
+// GLOBAL VARIABLES //
+//////////////////////
 window._ = require('lodash');
 
+window.Vue = require('vue')
 window.dompurify = require('dompurify');
-const { Remarkable } = require('remarkable');
-window.remarkable = new Remarkable();
 
-remarkable.use(function(md, opts) {
-	md.inline.ruler.before("text", "spotify_track", function(state, checkMode) {
-
-		let regex = /^spotify:track:([a-zA-Z0-9]+)(.*)$/;
-		let found = regex.exec(state.src.substr(state.pos));
-
-		if (found !== null) {
-			if (checkMode) return true;
-
-			state.push({"type": "spotify_track", "level": 0, "track": found[1]});
-			state.pos = state.posMax;
-			return true;
-		}
-	});
-
-	md.inline.ruler.before("text", "user_tag", function(state, checkMode) {
-		let regex = /^@([A-Za-z-'\. ]+):([A-Za-z0-9-\.]{4,40});/;
-		let found = regex.exec(state.src.substr(state.pos));
-
-		if (found !== null) {
-			if (checkMode) return true;
-
-			state.push({"type": "user_tag", "level": 0, "username": found[2], "name": found[1]});
-			state.pos += found[0].length;
-			return true;
-		}
-	});
-
-	md.renderer.rules.spotify_track = function(tokens, idx, options, env) {
-		return `<iframe src="https://open.spotify.com/embed/track/${tokens[idx].track}" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
-	}
-
-	md.renderer.rules.user_tag = function(tokens, idx, options, env) {
-		return `<router-link :to="{name: 'showProfile', params: {'username': '${tokens[idx].username}'}}">${tokens[idx].name}</router-link>`;
-		//return `<a @click.prevent="/app/users/${tokens[idx].username}" href="/app/users/${tokens[idx].username}">${tokens[idx].name}</a>`;
-	}
-});
-
+var baseUrl = document.head.querySelector('meta[name="base-url"]').content;
 
 window.axios = require('axios');
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.axios.defaults.withCredentials = true
-window.axios.defaults.baseURL = 'http://127.0.0.1/'
+window.axios.defaults.baseURL = baseUrl;
 
 let token = document.head.querySelector('meta[name="csrf-token"]');
 if (token) {
@@ -54,20 +31,3 @@ if (token) {
 } else {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
-
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allows your team to easily build robust real-time web applications.
- */
-
-// import Echo from 'laravel-echo'
-
-// window.Pusher = require('pusher-js');
-
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: process.env.MIX_PUSHER_APP_KEY,
-//     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-//     encrypted: true
-// });

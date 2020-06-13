@@ -15,10 +15,7 @@
         computed: {
             parsed() {
             	let parsedContent = dompurify.sanitize(
-					// remarkable.render(
-					this.content
-					// )
-					,
+					this.content,
 					{
 						ALLOWED_TAGS: ['h1', 'h2', 'h3', 'br', 'p', 'span', 'strong', 'em', 's', 'u', 'ul', 'ol', 'li', 'blockquote', 'code', 'iframe'],
 						ALLOWED_ATTR: ['src', 'width', 'height', 'allowTransparancy', 'allow', 'class']

@@ -35,12 +35,14 @@
 <script>
 	import NProgress from 'nprogress'
     import SectionSideCardComponent from './SectionSideCardComponent.vue';
+    import RichTextOutput from 'Vue/components/editor/RichTextOutput'
 
     export default {
     	name: 'show-section',
 
         components: {
             SectionSideCardComponent,
+            RichTextOutput,
         },
 
         data() {

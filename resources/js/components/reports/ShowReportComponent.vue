@@ -41,12 +41,14 @@
 <script>
 	import NProgress from 'nprogress'
     import SectionSideCardComponent from './../sections/SectionSideCardComponent.vue';
+    import RichTextOutput from 'Vue/components/editor/RichTextOutput'
 
 	export default {
 		name: 'show-report',
 
 		components: {
             SectionSideCardComponent,
+            RichTextOutput,
         },
 
         data() {

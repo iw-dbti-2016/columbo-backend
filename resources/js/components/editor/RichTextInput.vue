@@ -47,7 +47,7 @@
 			</div>
 		</div>
 
-		<editor-content :editor="editor" class="mt-2 pb-2 border-b border-gray-700"></editor-content>
+		<editor-content @click.native="clickeditor" :editor="editor" class="mt-2 pb-2 border-b border-gray-700"></editor-content>
 	</div>
 </template>
 
@@ -99,18 +99,13 @@
 					extensions: [
 						// CUSTOM
 						new SpotifyTrackEmbed(),
-						// DEFAULT
-						new Blockquote(),
-						new BulletList(),
-						new HardBreak(),
-						new ListItem(),
-						new OrderedList(),
-						new Strike(),
-						new Underline(),
-						new Bold(),
-						new Code(),
-						new Italic(),
-						new History(),
+
+						// BASIC DEFAULT
+						new Blockquote(), new BulletList(),  new HardBreak(),
+						new ListItem(),   new OrderedList(), new Strike(),    new Underline(),
+						new Bold(),       new Code(),        new Italic(),    new History(),
+
+						// CONFIGURABLE DEFAULT
 						new Heading({ levels: [1, 2, 3] }),
 						new TrailingNode({
 							node: 'paragraph',
@@ -125,9 +120,7 @@
 						new Mention({
 							items: () => this.tagSuggestions,
 
-							onEnter: ({
-								items, query, range, command, virtualNode,
-							}) => {
+							onEnter: ({ items, query, range, command, virtualNode }) => {
 								this.query = query
 								this.filteredUsers = items
 								this.suggestionRange = range
@@ -136,9 +129,7 @@
 								this.insertMention = command
 							},
 
-							onChange: ({
-								items, query, range, virtualNode,
-							}) => {
+							onChange: ({ items, query, range, virtualNode }) => {
 								this.query = query
 								this.filteredUsers = items
 								this.suggestionRange = range
@@ -182,7 +173,7 @@
 							},
 						}),
 					],
-					onUpdate: ( { state, getHTML, getJSON, transaction } ) => {
+					onUpdate: ({ state, getHTML, getJSON, transaction }) => {
 						this.$emit('update:content', getHTML());
 					},
 				}),
@@ -209,6 +200,27 @@
 		},
 
 		methods: {
+			// This was for support of switching between full name and
+			// 	just first name, but it doesn't work because tiptap
+			// 	generates the html based on the state of the plugin
+			// 	and not the content of the editor.
+			clickeditor(clickInfo) {
+				// let span = clickInfo.srcElement;
+
+				// if (! span.classList.contains("mention")) {
+				// 	return
+				// }
+
+				// if (span.hasAttribute("data-mention-fulltext")) {
+				// 	let fulltext = span.getAttribute("data-mention-fulltext")
+				// 	span.removeAttribute("data-mention-fulltext")
+				// 	span.innerText = fulltext
+				// } else {
+				// 	span.setAttribute("data-mention-fulltext", span.innerText)
+				// 	span.innerText = span.innerText.split(' ')[0]
+				// }
+			},
+
 			// SPOTIFY
 			showSpotifyModal(command) {
 				this.$refs.spotifyModal.showModal(command)
@@ -218,6 +230,7 @@
 					data.command(data.data)
 				}
 			},
+
 			// MENTIONS
 			upHandler() {
 				this.navigatedUserIndex = ((this.navigatedUserIndex + this.filteredUsers.length) - 1) % this.filteredUsers.length

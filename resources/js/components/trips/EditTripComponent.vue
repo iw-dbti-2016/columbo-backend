@@ -67,9 +67,14 @@
 
 <script>
 	import NProgress from 'nprogress'
+	import RichTextInput from 'Vue/components/editor/RichTextInput'
 
 	export default {
 		name: 'edit-trip',
+
+		components: {
+			RichTextInput
+		},
 
 		data() {
             return {

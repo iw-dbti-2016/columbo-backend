@@ -52,9 +52,14 @@
 
 <script>
 	import NProgress from 'nprogress'
+	import RichTextOutput from 'Vue/components/editor/RichTextOutput'
 
 	export default {
 		name: 'show-trip',
+
+		components: {
+			RichTextOutput
+		},
 
         data() {
             return {

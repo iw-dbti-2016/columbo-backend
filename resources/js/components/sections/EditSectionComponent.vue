@@ -60,9 +60,14 @@
 
 <script>
 	import NProgress from 'nprogress'
+	import RichTextInput from 'Vue/components/editor/RichTextInput'
 
 	export default {
 		name: 'edit-section',
+
+		components: {
+			RichTextInput
+		},
 
 		data() {
 			return {
