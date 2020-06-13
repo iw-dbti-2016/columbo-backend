@@ -8,6 +8,7 @@ module.exports = {
 	},
 	variants: {
 		borderWidth: ['last'],
+		margin: ['last'],
 	},
 	plugins: []
 }

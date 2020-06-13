@@ -1,9 +1,8 @@
 import { Node } from 'tiptap'
-import { wrappingInputRule, toggleWrap} from 'tiptap-commands'
 
-export default class SpotifySong extends Node {
+export default class SpotifyTrackEmbed extends Node {
 	get name() {
-		return 'spotify-embed'
+		return 'spotify_track_embed'
 	}
 
 	get schema() {

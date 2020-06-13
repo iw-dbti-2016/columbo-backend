@@ -1,5 +1,5 @@
 <template>
-	<component v-bind:is="parsed"></component>
+	<component v-bind:is="parsed" @click.native="clickcont"></component>
 </template>
 
 <script>
@@ -20,8 +20,8 @@
 					// )
 					,
 					{
-						ALLOWED_TAGS: ['h1', 'h2', 'h3', 'br', 'p', 'strong', 'em', 's', 'u', 'ul', 'ol', 'li', 'blockquote', 'code', 'iframe'],
-						ALLOWED_ATTR: ['src', 'width', 'height', 'allowTransparancy', 'allow']
+						ALLOWED_TAGS: ['h1', 'h2', 'h3', 'br', 'p', 'span', 'strong', 'em', 's', 'u', 'ul', 'ol', 'li', 'blockquote', 'code', 'iframe'],
+						ALLOWED_ATTR: ['src', 'width', 'height', 'allowTransparancy', 'allow', 'class']
 					}
 				);
 
@@ -29,6 +29,21 @@
                 	template: `<div class="ProseMirror leading-snug mt-4 text-justify markdown text-gray-100">${parsedContent}</div>`,
                 };
             },
-        }
-    }
+        },
+        methods: {
+        	clickcont(clickInfo) {
+				if (! clickInfo.srcElement.classList.contains("mention")) {
+					return
+				}
+
+				let tagUsername = clickInfo.srcElement.getAttribute("data-mention-id");
+
+				if (tagUsername === null) {
+					return
+				}
+
+				this.$router.push({name: 'showProfile', params: {username: tagUsername}})
+			}
+		}
+	}
 </script>

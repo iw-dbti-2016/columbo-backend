@@ -124,6 +124,15 @@
 	visibility: visible;
 }
 
+/* EDITOR PLACEHOLDER */
+.editor *:not(.ProseMirror-focused) > .is-empty:nth-child(1)::before {
+	/* SEE ALSO:
+	 * resources/js/components/editor/RichTextInput.vue
+	 * for css that determines the content!
+	 */
+	@apply pointer-events-none float-left h-0 italic text-gray-500;
+}
+
 /* EDITOR CONTENT STYLES */
 .ProseMirror {
 	@apply text-gray-100;
@@ -179,11 +188,26 @@
 .ProseMirror iframe {
 	@apply my-6;
 }
-/*
-Mention,
- */
 
+/* EDITOR MENTIONS */
+.mention {
+	@apply bg-gray-800 text-gray-200 font-bold rounded-lg px-2 py-1 whitespace-no-wrap cursor-pointer;
+}
+.mention:hover {
+	@apply bg-gray-700 text-gray-100;
+}
+.mention-suggestion {
+	@apply text-gray-200;
+}
 
+.tippy-box[data-theme~=dark] {
+	background-color: #000;
+	padding: 0;
+	font-size: 1rem;
+	text-align: inherit;
+	color: #fff;
+	border-radius: 5px;
+}
 
 /* NProgress JS */
 /* Make clicks pass-through */

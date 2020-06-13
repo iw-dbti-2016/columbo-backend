@@ -10,7 +10,7 @@
 
 <script>
 export default {
-	name: 'embed-spotify-modal',
+	name: 'embed-spotify-track-modal',
 
 	data() {
 		return {

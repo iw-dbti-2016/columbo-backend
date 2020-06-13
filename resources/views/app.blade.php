@@ -15,7 +15,7 @@
 	<link href="{{ mix('css/app.css') }}" rel="stylesheet">
 </head>
 <body class="h-screen antialiased leading-none font-sans bg-gray-900">
-<div class="flex flex-col">
+<div class="flex flex-col page">
 	@if(Route::has('login'))
 		<div class="absolute top-0 right-0 mt-2 mr-6">
 			<form id="logout" action="{{ route('logout') }}" method="post">
