@@ -8,16 +8,16 @@
 			<div class="flex-grow pr-8 w-2/3 relative">
 				<div class="w-full mt-4">
 					<div>
-						<label class="text-gray-700 mt-3 block" for="name">Title</label>
-						<input v-model="report.title" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" type="text">
+						<label class="text-fade mt-3 block" for="title">Title</label>
+						<input v-model="report.title" placeholder="Title" class="w-full block mt-2 bg-primary text-primary text-4xl font-light focus:outline-none" type="text">
 						<div>
 							<span></span>
 							<span></span>
 						</div>
 					</div>
 					<div>
-						<label class="text-gray-700 mt-3 block" for="date">Date</label>
-						<input v-model="report.date" name="date" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" type="date">
+						<label class="text-fade mt-3 block" for="date">Date</label>
+						<input v-model="report.date" name="date" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="date">
 						<div>
 							<span></span>
 							<span></span>
@@ -25,13 +25,13 @@
 					</div>
 					<RichTextInput label="Description" :content.sync="report.description"></RichTextInput>
 					<input @click.prevent="updateReport" class="inline-block mt-4 px-4 py-3 bg-green-500 rounded text-white cursor-pointer focus:outline-none hover:bg-green-600 focus:bg-green-600 focus:shadow-lg" type="submit" value="Update this report!">
-					<router-link :to="{name: 'showReport', params: {tripId: this.$route.params.tripId, reportId: this.$route.params.reportId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-gray-100 rounded shadow focus:outline-none hover:bg-gray-200 focus:bg-gray-200 focus:shadow-md">Cancel</router-link>
+					<router-link :to="{name: 'showReport', params: {tripId: this.$route.params.tripId, reportId: this.$route.params.reportId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-box rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</router-link>
 				</div>
 			</div>
 			<div class="mt-12 w-1/3">
-				<div class="px-6 py-4 rounded-lg shadow-md bg-gray-100">
-					<span class="block text-xl">Plan</span>
-					<ul class="text-gray-700 text-sm">
+				<div class="px-6 py-4 rounded-lg shadow-md bg-box">
+					<span class="block text-xl text-primary">Plan</span>
+					<ul class="text-fade-more text-sm">
 						<li class="mt-2">No plan yet</li>
 						<li class="mt-1 text-blue-600"><a class="hover:underline" href="#">Add a plan</a></li>
 					</ul>

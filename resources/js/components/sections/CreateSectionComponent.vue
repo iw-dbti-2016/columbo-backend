@@ -8,30 +8,30 @@
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
 				<div class="w-full mt-4">
-					<span class="mt-2 text-lg font-bold align-baseline">06/07/2020 <span class="text-xs font-light">(from report)</span></span>
+					<span class="mt-2 text-lg font-bold align-baseline text-primary">06/07/2020 <span class="text-xs font-light">(from report)</span></span>
 					<div class="mt-2 w-full flex flex-row justify-between">
 						<div class="flex-grow w-1/2 mr-4">
-							<label class="text-gray-700 mt-3 block" for="">Start time</label>
-							<input v-model="startTime" class="w-full block mt-2 px-4 py-3 bg-gray-800 text-gray-100 shadow rounded focus:outline-none focus:shadow-md" type="time">
+							<label class="text-fade mt-3 block" for="">Start time</label>
+							<input v-model="startTime" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="time">
 							<div>
 								<span></span>
 								<span></span>
 							</div>
 						</div>
 						<div class="flex-grow w-1/2">
-							<label class="text-gray-700 mt-3 block" for="">End time</label>
-							<input v-model="endTime" class="w-full block mt-2 px-4 py-3 bg-gray-800 text-gray-100 shadow rounded focus:outline-none focus:shadow-md" type="time">
+							<label class="text-fade mt-3 block" for="">End time</label>
+							<input v-model="endTime" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="time">
 							<div>
 								<span></span>
 								<span></span>
 							</div>
 						</div>
 					</div>
-					<span class="">Duration: {{ duration }}</span>
+					<span class="text-fade">Duration: {{ duration }}</span>
 					<RichTextInput label="Content" :content.sync="content"></RichTextInput>
 					<div>
-						<label class="text-gray-700 mt-3 block" for="draft">
-							<input v-model="draft" name="draft" id="draft" class="inline-block mt-2 px-4 py-3" type="checkbox">
+						<label class="text-primary mt-3 block" for="draft">
+							<input v-model="draft" name="draft" id="draft" class="text-primary inline-block mt-2 px-4 py-3" type="checkbox">
 							<span>This is a draft</span>
 						</label>
 						<div>
@@ -40,13 +40,13 @@
 						</div>
 					</div>
 					<input @click.prevent="submitSection" class="inline-block mt-4 px-4 py-3 bg-green-800 rounded text-white cursor-pointer focus:outline-none hover:bg-green-700 focus:bg-green-700 focus:shadow-lg" type="submit" :value="submitText">
-					<router-link :to="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-gray-800 text-gray-100 rounded shadow focus:outline-none hover:bg-gray-700 focus:bg-gray-700 focus:shadow-md">Cancel</router-link>
+					<router-link :to="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-box text-primary rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</router-link>
 				</div>
 			</div>
 			<div class="mt-12 w-1/3">
-				<div class="px-6 py-4 rounded-lg shadow-md bg-gray-800">
-					<span class="block text-xl text-gray-100">Location/POI</span>
-					<ul class="text-gray-400 text-sm">
+				<div class="px-6 py-4 rounded-lg shadow-md bg-box">
+					<span class="block text-xl text-primary">Location/POI</span>
+					<ul class="text-fade-more text-sm">
 						<li class="mt-2">No location or POI yet</li>
 						<li class="mt-1 text-blue-600"><a class="hover:underline" href="#">Add a location</a></li>
 						<li class="mt-1 text-blue-600"><a class="hover:underline" href="#">Add a POI</a></li>

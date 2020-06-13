@@ -1,9 +1,6 @@
 <template>
 	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
-		<ActionBarComponent
-				:backLink="{name: 'home'}"
-				:title="`This is you, ${user.first_name}`">
-		</ActionBarComponent>
+		<ActionBarComponent :title="`This is you, ${user.first_name}`"></ActionBarComponent>
         <h1 class="text-6xl tracking-wide uppercase">@{{ user.username }}</h1>
         <pre>
             {{ user }}

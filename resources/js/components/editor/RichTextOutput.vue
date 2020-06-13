@@ -23,7 +23,7 @@
 				);
 
                 return {
-                	template: `<div class="ProseMirror leading-snug mt-4 text-justify markdown text-gray-100">${parsedContent}</div>`,
+                	template: `<div class="ProseMirror">${parsedContent}</div>`,
                 };
             },
         },

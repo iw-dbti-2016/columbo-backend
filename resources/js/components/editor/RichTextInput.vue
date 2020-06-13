@@ -1,7 +1,7 @@
 <template>
 	<div class="editor mt-6">
 		<editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
-			<div class="menubar is-hidden flex bg-gray-900 px-2 py-2 pb-4 sticky top-0 z-10 border-b border-gray-700">
+			<div class="menubar is-hidden flex bg-primary px-2 py-2 pb-4 sticky top-0 z-10 border-b border-box-fade">
 				<EditorMenuButton icon="bold" :isActive="isActive.bold()" @click="commands.bold" title="Bold"></EditorMenuButton>
 				<EditorMenuButton icon="italic" :isActive="isActive.italic()" @click="commands.italic" title="Italic"></EditorMenuButton>
 				<EditorMenuButton icon="strikethrough" :isActive="isActive.strike()" @click="commands.strike" title="Strikthrough"></EditorMenuButton>
@@ -36,21 +36,21 @@
 
 		<EmbedSpotifyTrackModal ref="spotifyModal" @onConfirm="insertSpotifyEmbed"></EmbedSpotifyTrackModal>
 
-		<div class="bg-gray-800 shadow-xl p-2 text-base font-bold rounded-md" v-show="showSuggestions" ref="suggestions">
+		<div class="bg-box shadow-xl p-2 text-base font-bold rounded-md" v-show="showSuggestions" ref="suggestions">
 			<template v-if="hasResults">
 				<div v-for="(user, index) in filteredUsers" :key="user.username"
-				class="rounded px-2 py-2 mb-1 cursor-pointer last:mb-0 hover:bg-gray-700"
-				:class="{ 'bg-gray-700': navigatedUserIndex === index }"
+				class="rounded px-2 py-2 mb-1 cursor-pointer last:mb-0 text-primary hover:bg-box-fade"
+				:class="{ 'bg-box-fade': navigatedUserIndex === index }"
 				@click="selectUser(user)">
 					{{ user.name }}
 				</div>
 			</template>
-			<div v-else class="rounded-lg px-2 py-1 mb-0 cursor-pointer text-gray-400">
+			<div v-else class="rounded-lg px-2 py-1 mb-0 cursor-pointer text-fade-more">
 				No users found
 			</div>
 		</div>
 
-		<editor-content @click.native="clickeditor" :editor="editor" class="mt-2 pb-2 border-b border-gray-700"></editor-content>
+		<editor-content @click.native="clickeditor" :editor="editor" class="mt-2 pb-2 border-b border-box-fade"></editor-content>
 	</div>
 </template>
 
@@ -268,17 +268,14 @@
 				// ref: https://atomiks.github.io/tippyjs/v6/all-props/
 				this.popup = tippy('.page', {
 					getReferenceClientRect: node.getBoundingClientRect,
-					appendTo: () => document.body,
 					interactive: true,
 					sticky: true, // make sure position of tippy is updated when content changes
 					plugins: [sticky],
 					content: this.$refs.suggestions,
 					trigger: 'mouseenter', // manual
 					showOnCreate: true,
-					theme: 'dark',
 					placement: 'top-start',
-					inertia: true,
-					duration: [400, 200],
+					appendTo: () => document.getElementById("tippy-parent"),
 				})
 			},
 			destroyPopup() {

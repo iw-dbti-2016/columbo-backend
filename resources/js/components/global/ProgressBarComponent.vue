@@ -1,16 +1,18 @@
 <template>
-	<div class="w-full">
-		<div class="w-full bg-black h-2 rounded-full">
-			<div class="h-2 bg-green-800 rounded-full" :style="`width:${this.progress}%`"></div>
+	<div class="w-full" :title="`This trip is ${Math.round(progress)}% over`">
+		<div class="w-full bg-box-fade h-2 rounded-full">
+			<div class="h-2 bg-green-600 rounded-full" :style="`width:${this.progress}%`"></div>
 		</div>
-		<div class="flex justify-between">
-			<div class="text-white">{{this.start_date}}</div>
-			<div class="text-white">{{this.end_date}}</div>
+		<div class="flex justify-between mt-3">
+			<div class="text-primary text-lg ml-1">{{this.start_date}}</div>
+			<div class="text-primary text-lg mr-1">{{this.end_date}}</div>
 		</div>
 	</div>
 </template>
 
 <script>
+	import moment from 'moment'
+
 	export default {
 		props: {
 			start: {
@@ -20,30 +22,22 @@
 				type: String
 			},
 			current: {
-				type: Number
+				type: String
 			}
 		},
 		data() {
 			return {
-				start_date: 0,
-				end_date: 0,
-				progress: 0.0,
+				start_date: moment(this.start).format('DD/MM/YYYY'),
+				end_date: moment(this.end).format('DD/MM/YYYY'),
+				progress: this.cap(moment(this.start).diff(moment(this.current)) / moment(this.start).diff(moment(this.end))),
 			};
 		},
-		watch: {
-			start: function(value) {
-				this.start_date = Date.parse(value)
-				this.calculateProgress()
-			},
-			end: function(value) {
-				this.end_date = Date.parse(value)
-				this.calculateProgress()
-			}
+		create() {
+			this.calculateProgress()
 		},
 		methods: {
-			calculateProgress() {
-				let prog = (this.current - this.start_date) / (this.end_date - this.start_date)
-				this.progress = (prog > 1) ? 100 : prog * 100
+			cap(value) {
+				return (value > 1) ? 100 : ( (value < 0) ? 0 : value * 100 )
 			}
 		},
 	}

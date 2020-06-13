@@ -8,16 +8,16 @@
 			<div class="flex-grow pr-8 w-2/3 relative">
 				<div class="w-full mt-4">
 					<div>
-						<label class="text-gray-700 mt-3 block" for="name">Name</label>
-						<input v-model="trip.name" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" type="text">
+						<label class="text-fade mt-3 block" for="name">Name</label>
+						<input v-model="trip.name" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="text">
 						<div>
 							<span></span>
 							<span></span>
 						</div>
 					</div>
 					<div>
-						<label class="text-gray-700 mt-3 block" for="">Synopsis</label>
-						<input v-model="trip.synopsis" name="synopsis" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" type="text">
+						<label class="text-fade mt-3 block" for="">Synopsis</label>
+						<input v-model="trip.synopsis" name="synopsis" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="text">
 						<div>
 							<span></span>
 							<span></span>
@@ -25,16 +25,16 @@
 					</div>
 					<div class="w-full flex flex-row justify-between">
 						<div class="flex-grow w-1/2 mr-4">
-							<label class="text-gray-700 mt-3 block" for="">Start date</label>
-							<input v-model="trip.start_date" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" type="date">
+							<label class="text-fade mt-3 block" for="">Start date</label>
+							<input v-model="trip.start_date" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="date">
 							<div>
 								<span></span>
 								<span></span>
 							</div>
 						</div>
 						<div class="flex-grow w-1/2">
-							<label class="text-gray-700 mt-3 block" for="">End date</label>
-							<input v-model="trip.end_date" class="w-full block mt-2 px-4 py-3 bg-gray-100 shadow rounded focus:outline-none focus:shadow-md" type="date">
+							<label class="text-fade mt-3 block" for="">End date</label>
+							<input v-model="trip.end_date" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="date">
 							<div>
 								<span></span>
 								<span></span>
@@ -43,18 +43,18 @@
 					</div>
 					<RichTextInput label="Description" :content.sync="trip.description"></RichTextInput>
 					<input @click.prevent="updateTrip" class="inline-block mt-4 px-4 py-3 bg-green-500 rounded text-white cursor-pointer focus:outline-none hover:bg-green-600 focus:bg-green-600 focus:shadow-lg" type="submit" value="Update this trip!">
-					<router-link :to="{name: 'showTrip', params: {'tripId': $route.params.tripId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-gray-100 rounded shadow focus:outline-none hover:bg-gray-200 focus:bg-gray-200 focus:shadow-md">Cancel</router-link>
+					<router-link :to="{name: 'showTrip', params: {'tripId': $route.params.tripId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-box rounded shadow text-primary focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</router-link>
 				</div>
 			</div>
 			<div class="mt-12 w-1/3">
-				<div class="px-6 py-4 rounded-lg shadow-md bg-gray-100">
-					<span class="block text-xl">Members</span>
-					<ul class="text-gray-700 text-sm">
+				<div class="px-6 py-4 rounded-lg shadow-md bg-box">
+					<span class="block text-xl text-primary">Members</span>
+					<ul class="text-fade-more text-sm">
 						<li class="mt-2">No members yet</li>
 						<li class="mt-1 text-blue-600"><a class="hover:underline" href="#">Add some friends</a></li>
 					</ul>
-					<span class="block mt-3 text-xl">Visitors</span>
-					<ul class="text-gray-700 text-sm">
+					<span class="block mt-3 text-xl text-primary">Visitors</span>
+					<ul class="text-fade-more text-sm">
 						<li class="mt-2">No visitors on this trip.</li>
 						<li class="mt-1 text-blue-600"><a class="hover:underline" href="#">Add visitors</a></li>
 					</ul>

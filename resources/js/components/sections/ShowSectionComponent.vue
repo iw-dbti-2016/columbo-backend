@@ -9,7 +9,7 @@
 		</ActionBarComponent>
         <div class="flex flex-row justify-between">
 			<div class="flex-grow mr-8 w-2/3">
-				<span class="block ml-2 mt-1 text-gray-700 text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span>
+				<span class="block ml-2 mt-1 text-fade-more text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span>
 				<span class="block ml-2 mt-4 text-2xl">{{ section.published_at_diff }}</span>
                 <p class="leading-normal ml-2 mt-2 text-justify text-md">
                 	<RichTextOutput v-bind:content="section.content"></RichTextOutput>
@@ -20,11 +20,11 @@
 			</div>
 		</div>
 		<div class="mt-8" v-if="section.locationable != null">
-			<span class="block text-2xl">{{ section.locationable.name }}</span>
-			<div class="bg-gray-100 mt-2 rounded-lg flex flex-row overflow-hidden shadow-md">
-				<div class="flex-grow w-2/3 px-5 py-4 relative">{{ section.locationable.info }}</div>
+			<span class="block text-2xl text-primary">{{ section.locationable.location.name }}</span>
+			<div class="bg-box mt-2 rounded-lg flex flex-row overflow-hidden shadow-md">
+				<div class="flex-grow w-2/3 px-5 py-4 relative text-primary">{{ section.locationable.location.info }}</div>
 				<div class="flex flex-col flex-grow items-center justify-around w-1/3">
-					<img class="bg-white flex-grow-0 p-2 rounded" src="/img/example-map.png" alt="#">
+					<img class="bg-box flex-grow-0 rounded-lg" src="http://via.placeholder.com/500x250" alt="#">
 				</div>
 			</div>
 		</div>

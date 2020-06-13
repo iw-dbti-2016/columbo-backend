@@ -40,5 +40,20 @@ store.dispatch('auth/me').then(() => {
 		router,
 		store,
 		render: h => h(App),
+
+		data: {
+			theme: 'dark-mode',
+		},
+
+		mounted() {
+			this.$root.theme = localStorage.getItem("theme") || 'light-mode';
+		},
+
+		methods: {
+			toggleTheme() {
+				this.$root.theme = (this.theme === 'light-mode') ? 'dark-mode' : 'light-mode';
+				localStorage.setItem("theme", this.$root.theme);
+			}
+		}
 	}).$mount("#app")
 })

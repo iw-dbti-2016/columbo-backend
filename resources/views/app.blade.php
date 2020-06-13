@@ -14,20 +14,8 @@
 	<!-- Styles -->
 	<link href="{{ mix('css/app.css') }}" rel="stylesheet">
 </head>
-<body class="h-screen antialiased leading-none font-sans bg-gray-900">
-<div class="flex flex-col page">
-	@if(Route::has('login'))
-		<div class="absolute top-0 right-0 mt-2 mr-6">
-			<form id="logout" action="{{ route('logout') }}" method="post">
-				@csrf
-				<input class="focus:outline-none focus:font-semibold border-none bg-transparent py-2 cursor-pointer hover:underline" type="submit" value="Log out">
-			</form>
-		</div>
-	@endif
-	<div id="app">
-
-	</div>
-</div>
+<body class="bg-black">
+	<div id="app"></div>
 </body>
 <script src="{{ mix('js/app.js') }}"></script>
 </html>

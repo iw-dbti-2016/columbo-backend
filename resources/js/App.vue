@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="bg-primary page antialiased leading-none font-sans py-1 min-h-screen" :class="this.$root.theme" id="tippy-parent">
 		<SideBarComponent v-if="this.$router.currentRoute.meta.requiresAuthentication"></SideBarComponent>
 		<transition name="component-fade" mode="out-in">
 			<router-view></router-view>
