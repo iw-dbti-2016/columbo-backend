@@ -8,23 +8,14 @@
 				title="Read more">
 		</ActionBarComponent>
         <div class="flex flex-row justify-between">
-			<div class="flex-grow mr-8 w-2/3">
-				<span class="block ml-2 mt-1 text-fade-more text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span>
-				<span class="block ml-2 mt-4 text-2xl">{{ section.published_at_diff }}</span>
+		<div class="bg-primary mt-2">
+			<div class="border-b-2 border-box-fade last:border-b-0 pb-4 relative">
+				<div v-if="section.is_draft" class="w-full flex justify-around"><span class="px-4 py-2 text-white bg-green-500 rounded-full">DRAFT</span></div>
                 <p class="leading-normal ml-2 mt-2 text-justify text-md">
-                	<RichTextOutput v-bind:content="section.content"></RichTextOutput>
+				<RichTextOutput class="px-24" v-bind:content="section.content"></RichTextOutput>
                 </p> <!-- DESCRIPTION -->
-			</div>
-			<div class="flex-grow w-1/3">
-                <SectionSideCardComponent :section="section"></SectionSideCardComponent>
-			</div>
-		</div>
-		<div class="mt-8" v-if="section.locationable != null">
-			<span class="block text-2xl text-primary">{{ section.locationable.location.name }}</span>
-			<div class="bg-box mt-2 rounded-lg flex flex-row overflow-hidden shadow-md">
-				<div class="flex-grow w-2/3 px-5 py-4 relative text-primary">{{ section.locationable.location.info }}</div>
-				<div class="flex flex-col flex-grow items-center justify-around w-1/3">
-					<img class="bg-box flex-grow-0 rounded-lg" src="http://via.placeholder.com/500x250" alt="#">
+					<span class ="text-fade-more text-sm uppercase" :title="section.published_at">{{ section.published_at }}</span>
+					<span class="block mt-1 text-fade-more text-xs uppercase">by <router-link :to="{name: 'showProfile', params: {username: section.owner.username}}" class="cursor-pointer hover:underline text-blue-600">{{ section.owner.first_name }} {{ section.owner.middle_name }} {{ section.owner.last_name }}</router-link></span>
 				</div>
 			</div>
 		</div>

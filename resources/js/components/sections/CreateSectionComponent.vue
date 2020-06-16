@@ -8,52 +8,29 @@
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
 				<div class="w-full mt-4">
-					<span class="mt-2 text-lg font-bold align-baseline text-primary">06/07/2020 <span class="text-xs font-light">(from report)</span></span>
-					<div class="mt-2 w-full flex flex-row justify-between">
-						<div class="flex-grow w-1/2 mr-4">
-							<label class="text-fade mt-3 block" for="">Start time</label>
-							<input v-model="startTime" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="time">
-							<div>
-								<span></span>
-								<span></span>
-							</div>
-						</div>
-						<div class="flex-grow w-1/2">
-							<label class="text-fade mt-3 block" for="">End time</label>
-							<input v-model="endTime" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="time">
-							<div>
-								<span></span>
-								<span></span>
-							</div>
-						</div>
-					</div>
-					<span class="text-fade">Duration: {{ duration }}</span>
-					<RichTextInput label="Content" :content.sync="content"></RichTextInput>
-					<div>
-						<label class="text-primary mt-3 block" for="draft">
-							<input v-model="draft" name="draft" id="draft" class="text-primary inline-block mt-2 px-4 py-3" type="checkbox">
-							<span>This is a draft</span>
-						</label>
-						<div>
-							<span></span>
-							<span></span>
-						</div>
-					</div>
-					<input @click.prevent="submitSection" class="inline-block mt-4 px-4 py-3 bg-green-800 rounded text-white cursor-pointer focus:outline-none hover:bg-green-700 focus:bg-green-700 focus:shadow-lg" type="submit" :value="submitText">
-					<router-link :to="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-box text-primary rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</router-link>
+		<div class="mt-4 mx-24">
+			<div class="mt-2 w-full flex flex-row justify-between">
+				<div class="flex-grow w-1/2 mr-4">
+					<FormInput label="Start time" type="time" v-model="start_time"></FormInput>
+				</div>
+				<div class="flex-grow w-1/2">
+					<FormInput label="End time" type="time" v-model="end_time"></FormInput>
 				</div>
 			</div>
-			<div class="mt-12 w-1/3">
-				<div class="px-6 py-4 rounded-lg shadow-md bg-box">
-					<span class="block text-xl text-primary">Location/POI</span>
-					<ul class="text-fade-more text-sm">
-						<li class="mt-2">No location or POI yet</li>
-						<li class="mt-1 text-blue-600"><a class="hover:underline" href="#">Add a location</a></li>
-						<li class="mt-1 text-blue-600"><a class="hover:underline" href="#">Add a POI</a></li>
-						<li class="mt-4 font-bold">You can only add one location or one POI</li>
-					</ul>
+			<span class="text-fade">Duration: {{ duration }}</span>
+			<RichTextInput label="Content" :content.sync="content"></RichTextInput>
+			<div>
+				<label class="text-primary mt-3 block" for="draft">
+					<input v-model="draft" name="draft" id="draft" class="text-primary inline-block mt-2 px-4 py-3" type="checkbox">
+					<span>This is a draft</span>
+				</label>
+				<div>
+					<span></span>
+					<span></span>
 				</div>
 			</div>
+			<input @click.prevent="submitSection" class="inline-block mt-4 px-4 py-3 bg-green-800 rounded text-white cursor-pointer focus:outline-none hover:bg-green-700 focus:bg-green-700 focus:shadow-lg" type="submit" :value="submitText">
+			<router-link :to="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-box text-primary rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</router-link>
 		</div>
         <ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
@@ -62,18 +39,20 @@
 <script>
 	import NProgress from 'nprogress'
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
+	import FormInput from 'Vue/components/forms/FormInput'
 
 	export default {
 		name: 'create-section',
 
 		components: {
-			RichTextInput
+			RichTextInput,
+			FormInput,
 		},
 
 		data() {
 			return {
-				startTime: "",
-				endTime: "",
+				start_time: "",
+				end_time: "",
 				content: "",
 				draft: true,
 
@@ -99,8 +78,8 @@
 				let reportId = this.$route.params.reportId;
 
 				axios.post(`/api/v1/trips/${tripId}/reports/${reportId}/sections`, {
-					start_time: this.startTime,
-					end_time: this.endTime,
+					start_time: this.start_time,
+					end_time: this.end_time,
 					content: this.content,
 					is_draft: this.draft,
 					visibility: "friends", // TODO
@@ -112,8 +91,8 @@
 					.catch(this.handleError);
 			},
 			calculateDuration: function() {
-				let start = this.startTime.split(":");
-				let end = this.endTime.split(":");
+				let start = this.start_time.split(":");
+				let end = this.end_time.split(":");
 
 				if (start.length != 2 || end.length != 2) {
 					return 0;
@@ -133,9 +112,9 @@
 			draft: function(val) {
 				this.submitText = val ? 'Store this report!' : 'Create this report!';
 			},
-			startTime: function(val) {
+			start_time: function(val) {
 				let start = val.split(":");
-				let end = this.endTime.split(":");
+				let end = this.end_time.split(":");
 
 				if (start.length != 2 || end.length != 2) {
 					this.duration = "--";
@@ -144,8 +123,8 @@
 
 				this.duration = (end[0] - start[0]) * 60 + (end[1] - start[1]);
 			},
-			endTime: function(val) {
-				let start = this.startTime.split(":");
+			end_time: function(val) {
+				let start = this.start_time.split(":");
 				let end = val.split(":");
 
 				if (start.length != 2 || end.length != 2) {

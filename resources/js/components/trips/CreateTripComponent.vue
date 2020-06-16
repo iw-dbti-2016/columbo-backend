@@ -6,40 +6,15 @@
 		</ActionBarComponent>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
-
 				<div class="w-full mt-4">
-					<div>
-						<label class="text-fade mt-3 block" for="name">Name</label>
-						<input v-model="name" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="text">
-						<div>
-							<span></span>
-							<span></span>
-						</div>
-					</div>
-					<div>
-						<label class="text-fade mt-3 block" for="">Synopsis</label>
-						<input v-model="synopsis" name="synopsis" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="text">
-						<div>
-							<span></span>
-							<span></span>
-						</div>
-					</div>
+					<FormInput label="Name" v-model="name"></FormInput>
+					<FormInput label="Synopsis" v-model="synopsis"></FormInput>
 					<div class="w-full flex flex-row justify-between">
 						<div class="flex-grow w-1/2 mr-4">
-							<label class="text-fade mt-3 block" for="">Start date</label>
-							<input v-model="startDate" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="date">
-							<div>
-								<span></span>
-								<span></span>
-							</div>
+							<FormInput label="Start date" type="date" v-model="startDate"></FormInput>
 						</div>
 						<div class="flex-grow w-1/2">
-							<label class="text-fade mt-3 block" for="">End date</label>
-							<input v-model="endDate" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="date">
-							<div>
-								<span></span>
-								<span></span>
-							</div>
+							<FormInput label="End date" type="date" v-model="endDate"></FormInput>
 						</div>
 					</div>
 					<RichTextInput label="Description" :content.sync="description"></RichTextInput>
@@ -69,12 +44,14 @@
 <script>
 	import NProgress from 'nprogress'
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
+	import FormInput from 'Vue/components/forms/FormInput'
 
 	export default {
 		name: 'create-trip',
 
 		components: {
-			RichTextInput
+			RichTextInput,
+			FormInput,
 		},
 
 		data() {

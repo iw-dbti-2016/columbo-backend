@@ -7,22 +7,8 @@
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">
 				<div class="w-full mt-4">
-					<div>
-						<label class="text-fade mt-3 block" for="name">Title</label>
-						<input v-model="title" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="text">
-						<div>
-							<span></span>
-							<span></span>
-						</div>
-					</div>
-					<div>
-						<label class="text-fade mt-3 block" for="date">Date</label>
-						<input v-model="date" name="date" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md" type="date">
-						<div>
-							<span></span>
-							<span></span>
-						</div>
-					</div>
+					<FormInput label="Title" v-model="title"></FormInput>
+					<FormInput label="Date" type="date" v-model="date"></FormInput>
 					<RichTextInput label="Description" :content.sync="description"></RichTextInput>
 					<input @click.prevent="submitReport" class="inline-block mt-4 px-4 py-3 bg-green-500 rounded text-white cursor-pointer focus:outline-none hover:bg-green-600 focus:bg-green-600 focus:shadow-lg" type="submit" value="Create this report!">
 					<router-link :to="{name: 'showTrip', params: {tripId: this.$route.params.tripId}}" class="inline-block text-primary absolute right-0 mr-8 mt-4 px-4 py-3 bg-box rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</router-link>
@@ -45,12 +31,14 @@
 <script>
 	import NProgress from 'nprogress'
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
+	import FormInput from 'Vue/components/forms/FormInput'
 
 	export default {
 		name: 'create-report',
 
 		components: {
-			RichTextInput
+			RichTextInput,
+			FormInput,
 		},
 
 		data() {
