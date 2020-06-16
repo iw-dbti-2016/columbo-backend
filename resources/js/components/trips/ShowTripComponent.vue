@@ -1,11 +1,14 @@
 <template>
 	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
-				:backLink="{name: 'home'}"
-				:editLink="{name: 'editTrip', params: {'tripId': $route.params.tripId}}"
-				:showRemoveLink="true"
-				v-on:removeclick="removeTrip"
-				:title="trip.name">
+				:showBack="true"
+				v-on:back="$router.push({name: 'home'})"
+				:title="trip.name"
+				:showToggleTheme="true"
+				:showEdit="true"
+				v-on:edit="$router.push({name: 'editTrip', params: {'tripId': $route.params.tripId}})"
+				:showRemove="true"
+				v-on:remove="removeTrip">
 		</ActionBarComponent>
 		<ProgressBarComponent class="py-2 px-2 mt-3" :start="trip.start_date" :end="trip.end_date" :current="(new Date()).toISOString()"></ProgressBarComponent>
         <div class="flex flex-row justify-between">

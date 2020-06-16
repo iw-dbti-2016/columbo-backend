@@ -1,8 +1,10 @@
 <template>
 	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
-				:backLink="{name: 'showReport', params: {tripId: this.$route.params.tripId, reportId: this.$route.params.reportId}}"
-				title="Update report">
+				:showBack="true"
+				v-on:back="$router.push({name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}})"
+				title="Update report"
+				:showToggleTheme="true">
 		</ActionBarComponent>
 		<div class="flex flex-row justify-between">
 			<div class="flex-grow pr-8 w-2/3 relative">

@@ -1,11 +1,12 @@
 <template>
 	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
+				title="Columbo"
+				:showToggleTheme="true"
 				:showExtraActionLink="true"
-				extraActionIcon="door-open"
 				extraActionTitle="Log out"
-				v-on:extraactionclick="signout"
-				title="Columbo">
+				extraActionIcon="door-open"
+				v-on:extraaction="signout">
 		</ActionBarComponent>
 		<div class="flex justify-between">
 			<div class="w-3/4">

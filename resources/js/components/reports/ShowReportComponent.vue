@@ -1,11 +1,14 @@
 <template>
 	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
-				:backLink="{name: 'showTrip', params: {tripId: $route.params.tripId}}"
-				:editLink="{name: 'editReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}"
-				:showRemoveLink="true"
-				v-on:removeclick="removeReport"
-				:title="report.title">
+				:showBack="true"
+				v-on:back="$router.push({name: 'showTrip', params: {tripId: $route.params.tripId}})"
+				:title="report.title"
+				:showToggleTheme="true"
+				:showEdit="true"
+				v-on:edit="$router.push({name: 'editReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}})"
+				:showRemove="true"
+				v-on:remove="removeReport">
 		</ActionBarComponent>
 		<div>
 			<div class="text-primary">PLAN</div>

@@ -1,8 +1,10 @@
 <template>
 	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
-				:backLink="{name: 'showSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: $route.params.sectionId}}"
-				title="Update section">
+				:showBack="true"
+				v-on:back="$emit('back')"
+				title="Update section"
+				class="px-24">
 		</ActionBarComponent>
 		<div class="mt-4 px-24">
 			<div class="mt-2 w-full flex flex-row justify-between">

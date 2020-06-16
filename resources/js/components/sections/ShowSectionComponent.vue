@@ -1,11 +1,12 @@
 <template>
 	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
 		<ActionBarComponent
-				:backLink="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}"
-				:editLink="{name: 'editSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: $route.params.sectionId}}"
-				:showRemoveLink="true"
-				v-on:removeclick="removeSection"
-				title="Read more">
+				:title="section.start_time + ' - ' + section.end_time"
+				:showEdit="true"
+				v-on:edit="$emit('editing')"
+				:showRemove="true"
+				v-on:remove="removeSection"
+				class="px-24">
 		</ActionBarComponent>
         <div class="flex flex-row justify-between">
 		<div class="bg-primary mt-2">

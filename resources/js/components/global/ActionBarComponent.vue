@@ -1,32 +1,32 @@
 <template>
 	<div class="mt-4 flex justify-between">
 		<div class="flex justify-start items-center">
-			<router-link :to="this.backLink" v-if="this.backLink != null"
-					class="mr-8 focus:outline-none focus:text-fade hover:text-fade hover:bg-box w-12 h-12 rounded-full text-fade-more flex items-center justify-center"
+			<a @click.prevent="$emit('back')" v-if="this.showBack"
+					class="mr-8 cursor-pointer focus:outline-none focus:text-fade hover:text-fade hover:bg-box w-12 h-12 rounded-full text-fade-more flex items-center justify-center"
 					:title="this.backTitle">
 				<font-awesome-icon class="text-2xl" :icon="['fas', 'arrow-left']" />
-			</router-link>
-			<div class="w-20" v-else></div>
+			</a>
+			<div class="w-20" v-else-if="showOffset"></div>
 			<div class="text-primary text-3xl">{{ this.title }}</div>
 		</div>
 		<div class="flex justify-end items-baseline">
-			<a @click="$root.toggleTheme"
+			<a @click.prevent="$root.toggleTheme" v-if="showToggleTheme"
 					class="ml-4 cursor-pointer focus:outline-none focus:text-fade hover:text-fade hover:bg-box w-12 h-12 rounded-full text-fade-more flex items-center justify-center"
 					title="Toggle theme">
 				<font-awesome-icon class="text-2xl" :icon="['fas', 'moon']" v-if="$root.theme === 'light-mode'"/>
 				<font-awesome-icon class="text-2xl" :icon="['fas', 'sun']" v-else/>
 			</a>
-			<a v-if="this.showExtraActionLink" @click.prevent="$emit('extraactionclick')"
+			<a @click.prevent="$emit('extraaction')" v-if="this.showExtraAction"
 					class="ml-4 cursor-pointer focus:outline-none focus:text-fade hover:text-fade hover:bg-box w-12 h-12 rounded-full text-fade-more flex items-center justify-center"
 					:title="this.extraActionTitle">
 				<font-awesome-icon class="text-2xl" :icon="['fas', this.extraActionIcon]" />
 			</a>
-			<router-link :to="this.editLink" v-if="this.editLink != null"
-					class="ml-4 focus:outline-none focus:text-fade hover:text-fade hover:bg-box w-12 h-12 rounded-full text-fade-more flex items-center justify-center"
+			<a @click.prevent="$emit('edit')" v-if="this.showEdit"
+					class="ml-4 cursor-pointer focus:outline-none focus:text-fade hover:text-fade hover:bg-box w-12 h-12 rounded-full text-fade-more flex items-center justify-center"
 					title="Edit">
 				<font-awesome-icon class="text-2xl" :icon="['fas', 'pen']" />
-			</router-link>
-			<a v-if="this.showRemoveLink" @click.prevent="$emit('removeclick')"
+			</a>
+			<a @click.prevent="$emit('remove')" v-if="this.showRemove"
 					class="ml-4 cursor-pointer focus:outline-none focus:text-fade hover:text-fade hover:bg-box w-12 h-12 rounded-full text-fade-more flex items-center justify-center"
 					title="Remove">
 				<font-awesome-icon class="text-2xl" :icon="['fas', 'trash-alt']" />
@@ -38,41 +38,49 @@
 <script>
 	export default {
 		props: {
-			backLink: {
-				type: Object,
-				default: null,
+			showBack: {
+				type: Boolean,
+				default: false,
 			},
 			backTitle: {
 				type: String,
 				default: "Back",
 			},
-			editLink: {
-				type: Object,
-				default: null,
-			},
-			removeLink: {
-				type: Object,
-				default: null,
-			},
-			showRemoveLink: {
+			showOffset: {
 				type: Boolean,
 				default: false,
 			},
-			showExtraActionLink: {
-				type: Boolean,
-				default: false,
-			},
-			extraActionIcon: {
+
+			title: {
 				type: String,
-				default: "info",
+				default: "",
+			},
+
+			showToggleTheme: {
+				type: Boolean,
+				default: false,
+			},
+
+			showExtraAction: {
+				type: Boolean,
+				default: false,
 			},
 			extraActionTitle: {
 				type: String,
 				default: "info",
 			},
-			title: {
+			extraActionIcon: {
 				type: String,
-				default: "",
+				default: "info",
+			},
+
+			showEdit: {
+				type: Boolean,
+				default: false,
+			},
+			showRemove: {
+				type: Boolean,
+				default: false,
 			},
 		},
 	}
