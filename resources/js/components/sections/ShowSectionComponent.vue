@@ -12,7 +12,7 @@
 		<div class="bg-primary mt-2">
 			<div class="border-b-2 border-box-fade last:border-b-0 pb-4 relative">
 				<div v-if="section.is_draft" class="w-full flex justify-around"><span class="px-4 py-2 text-white bg-green-500 rounded-full">DRAFT</span></div>
-                <p class="leading-normal ml-2 mt-2 text-justify text-md">
+				<ShowLocationable :locationable="section.locationable"></ShowLocationable>
 				<RichTextOutput class="px-24" v-bind:content="section.content"></RichTextOutput>
 				<div class="px-24">
 					<span class ="text-fade-more text-sm uppercase" :title="section.published_at">{{ section.published_at }}</span>
@@ -26,6 +26,7 @@
 
 <script>
     import RichTextOutput from 'Vue/components/editor/RichTextOutput'
+	import ShowLocationable from 'Vue/components/locationables/ShowLocationable'
 
     export default {
     	name: 'show-section',
@@ -39,6 +40,7 @@
 
         components: {
             RichTextOutput,
+            ShowLocationable,
         },
 
         data() {
