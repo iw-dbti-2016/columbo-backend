@@ -16,7 +16,7 @@ require('laravel-mix-purgecss');
 mix.webpackConfig({
     resolve: {
         alias: {
-            Vue: path.resolve(__dirname, 'resources/js/')
+            Vue: path.resolve(__dirname, 'resources/js/'),
         }
     }
 });
