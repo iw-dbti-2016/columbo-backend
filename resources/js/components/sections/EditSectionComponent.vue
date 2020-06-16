@@ -1,5 +1,5 @@
 <template>
-	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
+	<div>
 		<ActionBarComponent
 				:showBack="true"
 				v-on:back="$emit('back')"
@@ -35,12 +35,18 @@
 </template>
 
 <script>
-	import NProgress from 'nprogress'
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
 	import FormInput from 'Vue/components/forms/FormInput'
 
 	export default {
 		name: 'edit-section',
+
+		props: {
+			value: {
+				type: Object,
+				default: {},
+			},
+		},
 
 		components: {
 			RichTextInput,
@@ -49,31 +55,13 @@
 
 		data() {
 			return {
-				section: {},
+				section: this.value,
 				duration: "--",
 				preview: false,
 
-				ready: false,
 				error: "",
 			};
 		},
-
-		beforeRouteEnter(to, from, next) {
-            next(component => {
-            	let tripId = component.$route.params.tripId;
-            	let reportId = component.$route.params.reportId;
-            	let sectionId = component.$route.params.sectionId;
-
-                axios.get(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${sectionId}`)
-                    .then(response => {
-                    	component.section = response.data;
-                    	component.ready = true;
-
-                        NProgress.done()
-                    })
-                    .catch(component.handleError)
-            })
-        },
 
 		methods: {
 			updateSection: function() {
@@ -90,7 +78,7 @@
 					//published_at for postponed publication
 				})
 					.then((response) => {
-						this.$router.push({name: 'showSection', params: {tripId: tripId, reportId: reportId, sectionId: response.data.id}});
+						this.$emit('input', this.section);
 					})
 					.catch(this.handleError)
 			},

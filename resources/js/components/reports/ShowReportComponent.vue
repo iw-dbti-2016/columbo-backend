@@ -20,27 +20,28 @@
 			<span class="block ml-2 mt-4 text-2xl text-primary">{{ report.date }}</span> <!-- DATE -->
 			<span class="block ml-2 mt-4 text-2xl text-primary">{{ report.published_at }}</span>
 			<span class="block ml-2 mt-4 text-2xl text-primary">{{ report.visibility }}</span>
-            <RichTextOutput v-bind:content="report.description"></RichTextOutput>
+			<RichTextOutput v-bind:content="report.description"></RichTextOutput>
 		</div>
-		<div class="mt-8 flex flex-row justify-between">
-			<div class="flex-grow mr-4 w-2/3"> <!-- SECTIONS -->
-				<span class="block text-2xl text-primary">Report</span>
-				<router-link :to="{name: 'createSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white">Add a section</router-link>
-				<div class="bg-box mt-2 rounded-lg" v-if="sections.length > 0">
-					<div class="border-b-8 border-primary last:border-0 px-5 py-4 relative" @mouseover="mouseOverSection(index)" :key="section.id" v-for="(section, index) in sections">
-						<span class="text-fade-more text-sm uppercase" :title="section.published_at">{{ section.published_at_diff }}</span>
-						<span class="block mt-1 text-fade-more text-xs uppercase">by <router-link :to="{name: 'showProfile', params: {username: section.owner.username}}" class="cursor-pointer hover:underline text-blue-600">{{ section.owner.first_name }} {{ section.owner.middle_name }} {{ section.owner.last_name }}</router-link></span>
-						<router-link :to="{name: 'showSection', params: {tripId: $route.params.tripId, reportId: $route.params.reportId, sectionId: section.id}}" class="absolute capitalize hover:underline mr-5 mt-4 right-0 text-blue-600 text-sm top-0 cursor-pointer">details</router-link>
-                        <RichTextOutput v-bind:content="section.content"></RichTextOutput>
-					</div>
-				</div>
-				<span class="block mt-2 text-fade-more" v-else-if="!ready">Loading sections.</span>
-				<span class="block mt-2 text-fade-more" v-else>No sections written yet.</span>
+		<div class="my-8 flex justify-between">
+			<div class="-ml-8 max-h-screen mt-0 py-2 sticky top-0 w-24">
+				<a v-if="activeSection > 0 && !editing && !creating" @click.prevent="previousSection"
+						class="cursor-pointer flex focus:outline-none focus:text-fade h-full hover:bg-box-fade hover:text-fade items-center justify-center mr-4 rounded-r-lg text-fade-more w-full"
+						title="Previous report">
+					<font-awesome-icon class="text-2xl" :icon="['fas', 'arrow-left']" />
+				</a>
 			</div>
-			<div class="flex-grow w-1/3">
-				<div class="sticky top-0 pt-8">
-					<SectionSideCardComponent :section="sections[sectionInfoIndex]" :loading="!ready"></SectionSideCardComponent>
-				</div>
+			<div class="mx-auto w-full max-w-5xl px-4 mt-1" v-if="sections.length > 0"> <!-- SECTIONS -->
+				<CreateSectionComponent v-if="creating" v-on:back="creating = false"></CreateSectionComponent>
+				<EditSectionComponent v-else-if="editing" v-model="sections[activeSection]" v-on:back="editing = false"></EditSectionComponent>
+				<ShowSectionComponent v-else :section="sections[activeSection]" v-on:creating="creating = true" v-on:editing="editing = true" v-on:removed=""></ShowSectionComponent>
+			</div>
+			<span class="block mt-2 text-fade-more" v-else>No sections written yet.</span>
+			<div class="-mr-4 max-h-screen mt-0 py-2 sticky top-0 w-24">
+				<a v-if="activeSection < sections.length - 1 && !editing && !creating" @click.prevent="nextSection"
+						class="cursor-pointer flex focus:outline-none focus:text-fade h-full hover:bg-box-fade hover:text-fade items-center justify-center ml-4 rounded-l-lg text-fade-more w-full"
+						title="Next report">
+					<font-awesome-icon class="text-2xl" :icon="['fas', 'arrow-right']" />
+				</a>
 			</div>
 		</div>
         <ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
@@ -49,22 +50,28 @@
 
 <script>
 	import NProgress from 'nprogress'
-    import SectionSideCardComponent from './../sections/SectionSideCardComponent.vue';
     import RichTextOutput from 'Vue/components/editor/RichTextOutput'
+    import CreateSectionComponent from 'Vue/components/sections/CreateSectionComponent'
+    import EditSectionComponent from 'Vue/components/sections/EditSectionComponent'
+    import ShowSectionComponent from 'Vue/components/sections/ShowSectionComponent'
 
 	export default {
 		name: 'show-report',
 
 		components: {
-            SectionSideCardComponent,
             RichTextOutput,
+            CreateSectionComponent,
+            EditSectionComponent,
+            ShowSectionComponent,
         },
 
         data() {
             return {
                 report: {},
                 sections: [],
-                sectionInfoIndex: 0,
+                activeSection: 0,
+                editing: false,
+                creating: false,
 
                 ready: false,
                 error: "",
@@ -82,6 +89,15 @@
                     	component.sections = response.data.sections;
                     	component.ready = true;
 
+						if (window.location.hash !== "") {
+							for (var i = component.sections.length - 1; i >= 0; i--) {
+								if ("#" + component.sections[i].id === window.location.hash) {
+									component.activeSection = i;
+									break;
+								}
+							}
+						}
+
                         NProgress.done()
                     })
                     .catch(component.handleError)
@@ -89,27 +105,46 @@
         },
 
         methods: {
-            mouseOverSection: function(index) {
-            	if (this.sectionInfoIndex != index) {
-            		this.sectionInfoIndex = index;
-            	}
-            },
-            removeReport: function() {
-                let tripId = this.$route.params.tripId;
+			nextSection: function() {
+				if (this.activeSection < this.sections.length - 1) {
+					this.activeSection++;
+					window.location.hash = this.sections[this.activeSection].id;
+					NProgress.done();
+				}
+			},
+			previousSection: function() {
+				if (this.activeSection > 0) {
+					this.activeSection--;
+					window.location.hash = this.sections[this.activeSection].id;
+					NProgress.done();
+				}
+			},
+			removeReport: function() {
+				let tripId = this.$route.params.tripId;
 
-                axios.delete(`/api/v1/trips/${tripId}/reports/${this.$route.params.reportId}`)
-                    .then((response) => {
-                        this.$router.push({name: 'showTrip', params: {tripId: tripId}});
-                    })
-                    .catch(this.handleError);
-            },
-            handleError: function(error) {
-                if (error.response.status == 401) {
-                    document.getElementById('logout').submit();
-                }
+				axios.delete(`/api/v1/trips/${tripId}/reports/${this.$route.params.reportId}`)
+					.then((response) => {
+						this.$router.push({name: 'showTrip', params: {tripId: tripId}});
+					})
+					.catch(this.handleError);
+			},
+			removeSection: function() {
+				let tripId = this.$route.params.tripId;
+				let reportId = this.$route.params.reportId;
 
-                this.error = error.response.data;
-            },
+				axios.delete(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${this.$route.params.sectionId}`)
+					.then((response) => {
+						this.$router.push({name: 'showReport', params: {tripId: tripId, reportId: reportId}});
+					})
+					.catch(this.handleError)
+			},
+			handleError: function(error) {
+				if (error.response.status == 401) {
+					document.getElementById('logout').submit();
+				}
+
+				this.error = error.response.data;
+			},
         },
     }
 </script>

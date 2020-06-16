@@ -1,14 +1,14 @@
 <template>
-	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
+	<div>
 		<ActionBarComponent
 				:showBack="true"
 				v-on:back="$emit('back')"
 				title="Create a new section"
 				class="px-24">
 		</ActionBarComponent>
-		<div class="flex flex-row justify-between">
-			<div class="flex-grow pr-8 w-2/3 relative">
-				<div class="w-full mt-4">
+		<div class="relative w-full pb-1/2">
+			<MapInputComponent class="absolute rounded-lg overflow-hidden w-full h-full" @selected="(e) => prt(e)"></MapInputComponent>
+		</div>
 		<div class="mt-4 mx-24">
 			<div class="mt-2 w-full flex flex-row justify-between">
 				<div class="flex-grow w-1/2 mr-4">
@@ -38,7 +38,6 @@
 </template>
 
 <script>
-	import NProgress from 'nprogress'
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
 	import FormInput from 'Vue/components/forms/FormInput'
 
@@ -60,20 +59,15 @@
 				submitText: "Store this report!",
 				duration: "--",
 
-				ready: false,
+				ready: true,
 				error: "",
 			};
 		},
 
-		beforeRouteEnter(to, from, next) {
-            next(component => {
-            	component.ready = true;
-
-                NProgress.done()
-            })
-        },
-
 		methods: {
+			prt: function(e) {
+				console.log(e);
+			},
 			submitSection: function() {
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;

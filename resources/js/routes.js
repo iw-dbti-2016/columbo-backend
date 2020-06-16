@@ -48,24 +48,6 @@ export default [
 		component: require('./components/reports/ShowReportComponent.vue').default,
 	},
 	{
-		path: '/app/trips/:tripId/reports/:reportId/sections/create',
-		name: 'createSection',
-		meta: {requiresAuthentication: true,},
-		component: require('./components/sections/CreateSectionComponent.vue').default,
-	},
-	{
-		path: '/app/trips/:tripId/reports/:reportId/sections/:sectionId/edit',
-		name: 'editSection',
-		meta: {requiresAuthentication: true,},
-		component: require('./components/sections/EditSectionComponent.vue').default,
-	},
-	{
-		path: '/app/trips/:tripId/reports/:reportId/sections/:sectionId',
-		name: 'showSection',
-		meta: {requiresAuthentication: true,},
-		component: require('./components/sections/ShowSectionComponent.vue').default,
-	},
-	{
 		path: '/app/auth/login',
 		name: 'login',
 		meta: {requiresAuthentication: false,},
