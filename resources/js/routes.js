@@ -66,7 +66,7 @@ export default [
 		redirect: '*',
 	},
 	{
-		path: '*',
+		path: '/app/*',
 		meta: {requiresAuthentication: null,},
 		component: require('./components/errors/404Component.vue').default,
 	}
