@@ -19,9 +19,9 @@
 	export default {
 		props: {
 			coordinates: {
-				type: Array,
+				type: Object,
 				default: () => {
-					return [5,51]
+					return {"longitude": 0, "latitude": 0};
 				},
 			},
 			zoom: {
@@ -31,7 +31,7 @@
 		},
 		data() {
 			return {
-				mapCoordinates: this.coordinates,
+				mapCoordinates: this.toLonLat(this.coordinates),
 				mapZoom: this.zoom,
 				map: null,
 				filter: null,
@@ -60,7 +60,7 @@
 					select: false
 				}),
 				controls: controlDefaults({
-					attribution: false,
+					attribution: true,
 					zoom: false,
 				}),
 			})
@@ -83,15 +83,40 @@
 			this.filter.setFilter({operation: 'difference', red:215, green: 255, blue: 255, value: 1});
 			this.filter.setActive(this.$root.theme !== 'light-mode')
 		},
+
+		methods: {
+			toLonLat: function(input) {
+				return [input["longitude"], input["latitude"]];
+			},
+		},
+
 		watch: {
 			mapCoordinates: function(value) {
 				this.map.getView().setCenter(fromLonLat(value));
+
+				this.map.getLayers().array_.forEach((item,_) => {
+					if (item instanceof OlLayerVector) {
+						this.map.removeLayer(item)
+					}
+				});
+
+				let m = new OlLayerVector({
+					source: new OlSourceVector({
+						features: [
+							new OlFeature({
+								geometry: new OlPoint(fromLonLat(value))
+							})
+						]
+					})
+				});
+
+				this.map.addLayer(m);
 			},
 			mapZoom: function(value) {
 				this.map.getView().setZoom(value);
 			},
 			coordinates: function(value) {
-				this.map.getView().setCenter(fromLonLat(value));
+				this.mapCoordinates = this.toLonLat(value);
 			},
 			zoom: function(value) {
 				this.map.getView().setZoom(value);

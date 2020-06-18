@@ -35,13 +35,13 @@ class Location extends Model implements TrackedByActions
     	'coordinates',
     ];
 
-    public function setCoordinatesAttribute($value) {
-        $this->attributes["coordinates"] = new Point($value[0], $value[1]);
-    }
+	public function setCoordinatesAttribute($value) {
+		$this->attributes["coordinates"] = new Point($value["latitude"], $value["longitude"]);
+	}
 
-    public function getCoordinatesAttribute($coordinates) {
-    	return [$coordinates->getLat(), $coordinates->getLng()];
-    }
+	public function getCoordinatesAttribute($coordinates) {
+		return ["latitude" => $coordinates->getLat(), "longitude" => $coordinates->getLng()];
+	}
 
     public function trip()
     {
