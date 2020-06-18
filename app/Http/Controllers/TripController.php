@@ -28,7 +28,12 @@ class TripController extends Controller
 	{
 		$this->authorize('view', $trip);
 
-		return new TripResource($trip->load('reports'));
+		return new TripResource($trip->load([
+			'reports',
+			'members' => function($query) {
+				$query->withPivot('role_label');
+			},
+		]));
 	}
 
 	public function store(StoreTrip $request)

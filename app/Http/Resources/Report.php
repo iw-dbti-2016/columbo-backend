@@ -27,6 +27,7 @@ class Report extends JsonResource
 			// "plan"         => new Plan($this->whenLoaded('plan')),
 			"owner"        => new User($this->whenLoaded('owner')),
 			"trip"         => new Trip($this->whenLoaded('trip')),
+			"visibility"   => $this->visibility,
 		];
 	}
 }

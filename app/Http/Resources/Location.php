@@ -22,6 +22,8 @@ class Location extends JsonResource
 			"name"         => $this->name,
 			"info"         => $this->info,
 			"published_at" => $this->published_at,
+			"visibility"   => $this->visibility,
+			"user_id"      => $this->user_id,
 		];
 	}
 }

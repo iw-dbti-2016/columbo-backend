@@ -3,7 +3,7 @@
 		<ActionBarComponent
 				:showBack="true"
 				v-on:back="$router.push({name: 'showTrip', params: {tripId: $route.params.tripId}})"
-				:title="report.title"
+				:title="formatDate(report.date) + ': ' + report.title"
 				:showToggleTheme="true"
 				:showEdit="true"
 				v-on:edit="$router.push({name: 'editReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}})"
@@ -17,8 +17,7 @@
 				<font-awesome-icon class="text-xl text-primary" v-else :icon="['fas', 'lock-open']"/>
 			</div>
 			<span class="block ml-2 mt-1 text-fade-more text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
-			<span class="block ml-2 mt-4 text-2xl text-primary">{{ report.date }}</span> <!-- DATE -->
-			<span class="block ml-2 mt-4 text-2xl text-primary">{{ report.published_at }}</span>
+			<span class="block ml-2 mt-4 text-2xl text-primary">{{ humanTimeDiff(report.published_at) }}</span>
 			<span class="block ml-2 mt-4 text-2xl text-primary">{{ report.visibility }}</span>
 			<RichTextOutput v-bind:content="report.description"></RichTextOutput>
 		</div>
@@ -31,9 +30,24 @@
 				</a>
 			</div>
 			<div class="mx-auto w-full max-w-5xl px-4 mt-1" v-if="sections.length > 0"> <!-- SECTIONS -->
-				<CreateSectionComponent v-if="creating" v-on:back="creating = false"></CreateSectionComponent>
-				<EditSectionComponent v-else-if="editing" v-model="sections[activeSection]" v-on:back="editing = false"></EditSectionComponent>
-				<ShowSectionComponent v-else :section="sections[activeSection]" v-on:creating="creating = true" v-on:editing="editing = true" v-on:removed=""></ShowSectionComponent>
+				<CreateSectionComponent
+						v-if="creating"
+						v-on:back="creating = false"
+						v-on:created="createSection">
+				</CreateSectionComponent>
+				<EditSectionComponent
+						v-else-if="editing"
+						v-model="sections[activeSection]"
+						v-on:back="editing = false"
+						v-on:updated="updateSection">
+				</EditSectionComponent>
+				<ShowSectionComponent
+						v-else
+						:section="sections[activeSection]"
+						v-on:creating="creating = true"
+						v-on:editing="editing = true"
+						v-on:removed="removeSection">
+				</ShowSectionComponent>
 			</div>
 			<span class="block mt-2 text-fade-more" v-else>No sections written yet.</span>
 			<div class="-mr-4 max-h-screen mt-0 py-2 sticky top-0 w-24">
@@ -76,6 +90,20 @@
                 ready: false,
                 error: "",
             };
+        },
+
+        created() {
+        	window.addEventListener('keyup', (e) => {
+        		if (this.editing || this.creating) {
+        			return;
+        		}
+
+        		if (e.key === "ArrowLeft") {
+        			this.previousSection();
+        		} else if (e.key === "ArrowRight") {
+        			this.nextSection();
+        		}
+        	});
         },
 
         beforeRouteEnter(to, from, next) {
@@ -128,15 +156,28 @@
 					})
 					.catch(this.handleError);
 			},
-			removeSection: function() {
-				let tripId = this.$route.params.tripId;
-				let reportId = this.$route.params.reportId;
+			createSection: function(e) {
+				this.sections.push(e);
+				this.sortSectionsByStartTime();
+				this.creating = false;
 
-				axios.delete(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${this.$route.params.sectionId}`)
-					.then((response) => {
-						this.$router.push({name: 'showReport', params: {tripId: tripId, reportId: reportId}});
-					})
-					.catch(this.handleError)
+				this.activeSection = this.sections.findIndex(x => x.id === e.id);
+				window.location.hash = e.id;
+				NProgress.done();
+			},
+			updateSection: function(e) {
+				// Section already updated in object by v-model
+				this.editing = false;
+
+				alert('updated');
+				NProgress.done();
+			},
+			removeSection: function(removedId) {
+				this.previousSection();
+
+				this.sections = this.sections.filter(section => section.id !== removedId);
+
+				NProgress.done();
 			},
 			handleError: function(error) {
 				if (error.response.status == 401) {
@@ -145,6 +186,15 @@
 
 				this.error = error.response.data;
 			},
+			sortSectionsByStartTime: function() {
+				this.sections = this.sections.sort(function(a, b) {
+					let timeA = a.start_time.split(':');
+					let timeB = b.start_time.split(':');
+
+					if (timeA[0] !== timeB[0]) return (timeA[0] < timeB[0]) ? -1 : 1;
+					else return (timeA[1] < timeB[1]) ? -1 : 1;
+				});
+			}
         },
     }
 </script>

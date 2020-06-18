@@ -22,11 +22,13 @@ class ReportController extends Controller
 	{
 		$this->authorize('viewAny', [Report::class, $trip]);
 
-		$reports = $trip->reports()->with(
-			'sections',
+		$reports = $trip->reports()->with([
+			'sections' =>  function ($query) {
+				$query->orderBy('start_time', 'asc');
+			},
 			'sections.locationable',
 			'trip'
-		)->get();
+		])->get();
 
 		return new ReportCollection($reports);
 	}
@@ -35,7 +37,13 @@ class ReportController extends Controller
 	{
 		$this->authorize('view', [$report, $trip]);
 
-		return new ReportResource($report->load('sections.owner','sections.locationable'));
+		return new ReportResource($report->load([
+			'sections' => function($query) {
+				$query->orderBy('start_time', 'asc');
+			},
+			'sections.owner',
+			'sections.locationable'
+		]));
 	}
 
 	public function store(StoreReport $request, Trip $trip)

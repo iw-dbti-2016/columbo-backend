@@ -2,13 +2,11 @@
 	<div>
 		<ActionBarComponent
 				:showBack="true"
-				v-on:back="$emit('back')"
+				v-on:back="goBack"
 				title="Create a new section"
 				class="px-24">
 		</ActionBarComponent>
-		<div class="relative w-full pb-1/2">
-			<MapInputComponent class="absolute rounded-lg overflow-hidden w-full h-full" @selected="(e) => prt(e)"></MapInputComponent>
-		</div>
+		<LocationableInput></LocationableInput>
 		<div class="mt-4 mx-24">
 			<div class="mt-2 w-full flex flex-row justify-between">
 				<div class="flex-grow w-1/2 mr-4">
@@ -31,7 +29,7 @@
 				</div>
 			</div>
 			<input @click.prevent="submitSection" class="inline-block mt-4 px-4 py-3 bg-green-800 rounded text-white cursor-pointer focus:outline-none hover:bg-green-700 focus:bg-green-700 focus:shadow-lg" type="submit" :value="submitText">
-			<router-link :to="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-box text-primary rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</router-link>
+			<a @click.prevent="goBack" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-box text-primary rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</a>
 		</div>
         <ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
@@ -40,6 +38,9 @@
 <script>
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
 	import FormInput from 'Vue/components/forms/FormInput'
+	import LocationableInput from 'Vue/components/locationables/LocationableInput'
+	import NProgress from 'nprogress'
+	import Swal from 'sweetalert2'
 
 	export default {
 		name: 'create-section',
@@ -47,6 +48,7 @@
 		components: {
 			RichTextInput,
 			FormInput,
+			LocationableInput,
 		},
 
 		data() {
@@ -68,7 +70,32 @@
 			prt: function(e) {
 				console.log(e);
 			},
+			goBack: function() {
+				if (this.start_time !== "" || this.end_time !== "" || this.content !== "") {
+					Swal.fire({
+						title: "Are you sure?",
+						text: "When you go back, you'll lose your new post!",
+						icon: "warning",
+						showCancelButton: true,
+						confirmButtonText: 'Yes, go back without saving!',
+						customClass: {
+							confirmButton: "green-button",
+							cancelButton: "red-button",
+						},
+						target: document.getElementById('parent-element'),
+					})
+					.then((result) => {
+						if (result.value) {
+							this.$emit('back');
+						}
+					});
+				} else {
+					this.$emit('back');
+				}
+			},
 			submitSection: function() {
+				NProgress.start();
+
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;
 
@@ -81,7 +108,7 @@
 					//published_at for postponed publication
 				})
 					.then((response) => {
-						this.$router.push({name: 'showSection', params: {tripId: tripId, reportId: reportId, sectionId: response.data.id}});
+						this.$emit('created', response.data);
 					})
 					.catch(this.handleError);
 			},
@@ -97,7 +124,7 @@
 			},
 			handleError: function(error) {
 				if (error.response.status == 401) {
-					document.getElementById('logout').submit();
+					// log out
 				}
 
 				this.error = error.response.data;

@@ -86,7 +86,7 @@ class SectionController extends Controller
 
 		event(new ResourceUpdated($request->user(), $section));
 
-		return new SectionResource($section);
+		return new SectionResource($section->load('locationable', 'owner'));
 	}
 
 	/**

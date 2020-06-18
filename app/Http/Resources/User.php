@@ -37,6 +37,9 @@ class User extends JsonResource
 			"language"          => $this->language,
 			"token"             => $this->when($this->token != null, $this->token),
 			"email_verified_at" => $this->email_verified_at,
+			"role_label" => $this->whenPivotLoaded('trip_user_role_members', function() {
+				return $this->pivot->role_label;
+			}),
 		];
 	}
 }

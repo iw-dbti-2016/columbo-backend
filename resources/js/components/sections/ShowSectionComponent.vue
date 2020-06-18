@@ -12,7 +12,7 @@
 		<div class="bg-primary mt-2">
 			<div class="border-b-2 border-box-fade last:border-b-0 pb-4 relative">
 				<div v-if="section.is_draft" class="w-full flex justify-around"><span class="px-4 py-2 text-white bg-green-500 rounded-full">DRAFT</span></div>
-				<ShowLocationable :locationable="section.locationable"></ShowLocationable>
+				<LocationableOutput :locationable="section.locationable"></LocationableOutput>
 				<RichTextOutput class="px-24" v-bind:content="section.content"></RichTextOutput>
 				<div class="px-24">
 					<span class ="text-fade-more text-sm uppercase" :title="section.published_at">{{ section.published_at }}</span>
@@ -26,7 +26,9 @@
 
 <script>
     import RichTextOutput from 'Vue/components/editor/RichTextOutput'
-	import ShowLocationable from 'Vue/components/locationables/ShowLocationable'
+	import LocationableOutput from 'Vue/components/locationables/LocationableOutput'
+	import NProgress from 'nprogress'
+	import Swal from 'sweetalert2'
 
     export default {
     	name: 'show-section',
@@ -34,13 +36,15 @@
 		props: {
 			section: {
 				type: Object,
-				default: {},
+				default: function() {
+					return {};
+				},
 			},
 		},
 
         components: {
             RichTextOutput,
-            ShowLocationable,
+            LocationableOutput,
         },
 
         data() {
@@ -52,19 +56,48 @@
         },
 
         methods: {
-            removeSection: function() {
-                let tripId = this.$route.params.tripId;
-                let reportId = this.$route.params.reportId;
+			removeSection: function() {
+				let toRemoveId = this.section.id;
 
-                axios.delete(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${this.$route.params.sectionId}`)
-                    .then((response) => {
-                        this.$emit('removed', this.section);
-                    })
-                    .catch(this.handleError)
+				Swal.fire({
+					title: "Are you sure?",
+					text: "Once deleted, you will not be able to recover this section!",
+					icon: "warning",
+					showCancelButton: true,
+					confirmButtonText: 'Yes, delete it!',
+					customClass: {
+						confirmButton: "green-button",
+						cancelButton: "red-button",
+					},
+					target: document.getElementById('parent-element'),
+				})
+				.then((result) => {
+					if (result.value) {
+
+						NProgress.start();
+
+						let tripId = this.$route.params.tripId;
+						let reportId = this.$route.params.reportId;
+
+						axios.delete(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${toRemoveId}`)
+							.then((response) => {
+								Swal.fire({
+									title: "This section has been deleted!",
+									icon: "success",
+									target: document.getElementById('parent-element'),
+								});
+
+								this.$emit('removed', toRemoveId);
+							})
+							.catch(this.handleError)
+					}
+				});
             },
             handleError(error) {
+            	NProgress.done();
+
                 if (error.response.status == 401) {
-                    document.getElementById('logout').submit();
+                	// log out
                     return;
                 }
 

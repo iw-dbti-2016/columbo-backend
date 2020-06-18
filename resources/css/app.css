@@ -211,6 +211,31 @@
 }
 
 
+/* SWEETALERT OVERRIDE */
+.swal2-popup {
+	@apply bg-box !important;
+}
+
+.swal2-popup * {
+	@apply text-fade !important;
+}
+
+.swal2-popup .green-button {
+	@apply text-white bg-green-700 rounded !important;
+}
+
+.swal2-popup .green-button:focus {
+	@apply shadow-md;
+}
+
+.swal2-popup .red-button {
+	@apply text-white bg-red-700 rounded !important;
+}
+
+.swal2-popup .red-button:focus {
+	@apply shadow-md;
+}
+
 /* NProgress JS */
 /* Make clicks pass-through */
 #nprogress {

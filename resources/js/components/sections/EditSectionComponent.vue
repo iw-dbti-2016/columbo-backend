@@ -2,10 +2,11 @@
 	<div>
 		<ActionBarComponent
 				:showBack="true"
-				v-on:back="$emit('back')"
+				v-on:back="goBack"
 				title="Update section"
 				class="px-24">
 		</ActionBarComponent>
+		<LocationableInput :locationable="section.locationable"></LocationableInput>
 		<div class="mt-4 px-24">
 			<div class="mt-2 w-full flex flex-row justify-between">
 				<div class="flex-grow w-1/2 mr-4">
@@ -28,7 +29,7 @@
 				</div>
 			</div>
 			<input @click.prevent="updateSection" class="inline-block mt-4 px-4 py-3 bg-green-500 rounded text-white cursor-pointer focus:outline-none hover:bg-green-600 focus:bg-green-600 focus:shadow-lg" type="submit" value="Update this report!">
-			<router-link :to="{name: 'showReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}}" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 text-primary bg-box rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</router-link>
+			<a @click.prevent="goBack" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 text-primary bg-box rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</a>
 		</div>
         <ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
@@ -37,6 +38,9 @@
 <script>
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
 	import FormInput from 'Vue/components/forms/FormInput'
+	import LocationableInput from 'Vue/components/locationables/LocationableInput'
+	import NProgress from 'nprogress'
+	import Swal from 'sweetalert2'
 
 	export default {
 		name: 'edit-section',
@@ -51,11 +55,12 @@
 		components: {
 			RichTextInput,
 			FormInput,
+			LocationableInput,
 		},
 
 		data() {
 			return {
-				section: this.value,
+				section: _.cloneDeep(this.value),
 				duration: "--",
 				preview: false,
 
@@ -64,12 +69,36 @@
 		},
 
 		methods: {
+			goBack: function() {
+				if (this.changed()) {
+					Swal.fire({
+						title: "Are you sure?",
+						text: "When you go back, you'll lose your changes to this post!",
+						icon: "warning",
+						showCancelButton: true,
+						confirmButtonText: 'Yes, go back without saving!',
+						customClass: {
+							confirmButton: "green-button",
+							cancelButton: "red-button",
+						},
+						target: document.getElementById('parent-element'),
+					})
+					.then((result) => {
+						if (result.value) {
+							this.$emit('back');
+						}
+					});
+				} else {
+					this.$emit('back');
+				}
+			},
 			updateSection: function() {
+				NProgress.start();
+
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;
-				let sectionId = this.$route.params.sectionId;
 
-				axios.patch(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${sectionId}`, {
+				axios.patch(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${this.section.id}`, {
 					start_time: this.section.start_time,
 					end_time: this.section.end_time,
 					content: this.section.content,
@@ -78,7 +107,8 @@
 					//published_at for postponed publication
 				})
 					.then((response) => {
-						this.$emit('input', this.section);
+						this.$emit('input', response.data);
+						this.$emit('updated');
 					})
 					.catch(this.handleError)
 			},
@@ -94,11 +124,20 @@
 			},
             handleError: function(error) {
 				if (error.response.status == 401) {
-					document.getElementById('logout').submit();
+					// log out
 				}
 
 				this.error = error.response.data;
             },
+			changed: function() {
+				if (this.value.start_time !== this.section.start_time ||
+					this.value.end_time !== this.section.end_time ||
+					this.value.content !== this.section.content) {
+					return true;
+				} else {
+					return false;
+				}
+			}
 		},
 	}
 </script>
