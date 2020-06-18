@@ -23,7 +23,7 @@
 				);
 
                 return {
-                	template: `<div class="ProseMirror">${parsedContent}</div>`,
+                	template: `<div class="ProseMirror pt-1 mt-5">${parsedContent}</div>`,
                 };
             },
         },

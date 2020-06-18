@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;700&display=swap');
 
 /**
  * This injects Tailwind's base styles, which is a combination of
@@ -75,6 +76,7 @@
 	--bg-primary: #f7fafc;
 	--bg-box: #edf2f7;
 	--bg-box-fade: #e2e8f0;
+	--bg-box-invert: #718096;
 
 	--text-primary: black;
 	--text-fade: #4a5568;
@@ -85,6 +87,7 @@
 	--bg-primary: #1a202c;
 	--bg-box: #2d3748;
 	--bg-box-fade: #4a5568;
+	--bg-box-invert: #cbd5e0;
 
 	--text-primary: #f7fafc;
 	--text-fade: #e2e8f0;
@@ -131,7 +134,7 @@
 
 /* EDITOR CONTENT STYLES */
 .ProseMirror {
-	@apply text-primary;
+	@apply text-primary font-serif font-normal;
 }
 
 .ProseMirror:focus {
@@ -147,11 +150,11 @@
 }
 
 .ProseMirror h3 {
-	@apply text-lg font-bold my-4 leading-6;
+	@apply text-lg font-bold my-4 leading-8;
 }
 
 .ProseMirror p {
-	@apply text-lg my-2 leading-6 text-justify;
+	@apply text-lg my-6 leading-8 text-justify;
 }
 
 .ProseMirror code {
@@ -159,19 +162,30 @@
 }
 
 .ProseMirror ul {
-	@apply list-disc my-4 list-outside leading-6 ml-6;
+	@apply list-disc my-2 list-outside ml-6;
 }
 
 .ProseMirror ol {
-	@apply list-decimal my-4 list-outside leading-6 ml-6;
+	@apply list-decimal my-2 list-outside ml-6;
+}
+
+.ProseMirror ol ul,
+.ProseMirror ol ol,
+.ProseMirror ul ul,
+.ProseMirror ul ol {
+	@apply my-0;
 }
 
 .ProseMirror li p {
-	@apply my-2 inline leading-6 text-justify relative ml-2;
+	@apply my-2 inline text-justify relative ml-2;
 }
 
 .ProseMirror blockquote {
-	@apply border-l-4 text-lg border-box-fade pl-4 italic my-4 leading-6;
+	@apply border-l-4 text-lg border-box-invert pl-4 italic my-2 py-2;
+}
+
+.ProseMirror blockquote p {
+	@apply leading-6;
 }
 
 .ProseMirror blockquote p,
