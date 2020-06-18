@@ -1,9 +1,10 @@
 import Vue from 'vue'
-import routes from './routes'
-import { store } from './store'
+import routes from 'Vue/routes'
+import { store } from 'Vue/store'
 import VueRouter from 'vue-router'
 import NProgress from 'nprogress'
-import App from './App.vue'
+import App from 'Vue/App.vue'
+import TimeHelperMixin from 'Vue/mixins/TimeHelperMixin'
 
 require('./bootstrap')
 require('./font-awesome')
@@ -15,6 +16,7 @@ Vue.component('ProgressBarComponent', require('./components/global/ProgressBarCo
 Vue.component('ActionBarComponent', require('./components/global/ActionBarComponent.vue').default);
 
 Vue.use(VueRouter);
+Vue.mixin(TimeHelperMixin);
 
 const router = new VueRouter({
 	routes: routes,
