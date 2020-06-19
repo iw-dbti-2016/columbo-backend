@@ -6,7 +6,7 @@
 				title="Create a new section"
 				class="px-24">
 		</ActionBarComponent>
-		<LocationableInput></LocationableInput>
+		<LocationableInput v-on:selectlocationable="(e) => selectedLocationable = e"></LocationableInput>
 		<div class="mt-4 mx-24">
 			<div class="mt-2 w-full flex flex-row justify-between">
 				<div class="flex-grow w-1/2 mr-4">
@@ -60,6 +60,7 @@
 
 				submitText: "Store this report!",
 				duration: "--",
+				selectedLocationable: null,
 
 				ready: true,
 				error: "",
@@ -71,7 +72,8 @@
 				console.log(e);
 			},
 			goBack: function() {
-				if (this.start_time !== "" || this.end_time !== "" || this.content !== "") {
+				if (this.start_time !== "" || this.end_time !== "" || this.content !== "" ||
+					(this.selectedLocationable !== null && Object.keys(this.selectedLocationable).length !== 0)) {
 					Swal.fire({
 						title: "Are you sure?",
 						text: "When you go back, you'll lose your new post!",
@@ -104,10 +106,18 @@
 					end_time: this.end_time,
 					content: this.content,
 					is_draft: this.draft,
+					locationable: this.selectedLocationable,
 					visibility: "friends", // TODO
 					//published_at for postponed publication
 				})
 					.then((response) => {
+						Swal.fire({
+							title: "Done!",
+							text: "This section has been created, nice work!",
+							icon: "success",
+							target: document.getElementById('parent-element'),
+						});
+
 						this.$emit('created', response.data);
 					})
 					.catch(this.handleError);
@@ -130,6 +140,7 @@
 				this.error = error.response.data;
 			}
 		},
+
 		watch: {
 			draft: function(val) {
 				this.submitText = val ? 'Store this report!' : 'Create this report!';

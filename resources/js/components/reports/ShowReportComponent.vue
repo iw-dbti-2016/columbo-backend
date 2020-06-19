@@ -168,8 +168,6 @@
 			updateSection: function(e) {
 				// Section already updated in object by v-model
 				this.editing = false;
-
-				alert('updated');
 				NProgress.done();
 			},
 			removeSection: function(removedId) {

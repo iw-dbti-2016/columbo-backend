@@ -17,6 +17,15 @@ class Section extends Model implements TrackedByActions
 {
     use SoftDeletes, Visibility;
 
+    public function __construct(array $attributes = [])
+	{
+	    $this->setRawAttributes([
+	    	"published_at" => Carbon::now(),
+	    ], true);
+
+	    parent::__construct($attributes);
+	}
+
     protected $fillable = [
         "content",
         "image",

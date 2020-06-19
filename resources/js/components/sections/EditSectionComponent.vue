@@ -6,7 +6,7 @@
 				title="Update section"
 				class="px-24">
 		</ActionBarComponent>
-		<LocationableInput :locationable="section.locationable"></LocationableInput>
+		<LocationableInput :locationable="section.locationable" v-on:selectlocationable="(e) => selectedLocationable = e"></LocationableInput>
 		<div class="mt-4 px-24">
 			<div class="mt-2 w-full flex flex-row justify-between">
 				<div class="flex-grow w-1/2 mr-4">
@@ -63,6 +63,7 @@
 				section: _.cloneDeep(this.value),
 				duration: "--",
 				preview: false,
+				selectedLocationable: null,
 
 				error: "",
 			};
@@ -103,10 +104,18 @@
 					end_time: this.section.end_time,
 					content: this.section.content,
 					is_draft: this.section.is_draft,
+					...(this.selectedLocationable !== null) ? {locationable: this.selectedLocationable} : {},
 					visibility: "friends", // TODO
 					//published_at for postponed publication
 				})
 					.then((response) => {
+						Swal.fire({
+							title: "Done!",
+							text: "This section has been updated, you rock!",
+							icon: "success",
+							target: document.getElementById('parent-element'),
+						});
+
 						this.$emit('input', response.data);
 						this.$emit('updated');
 					})
@@ -132,7 +141,11 @@
 			changed: function() {
 				if (this.value.start_time !== this.section.start_time ||
 					this.value.end_time !== this.section.end_time ||
-					this.value.content !== this.section.content) {
+					this.value.content !== this.section.content ||
+					(this.selectedLocationable !== null &&
+						(Object.keys(this.selectedLocationable).length !== 0 ||
+						this.value.locationable !== null)
+					) ) {
 					return true;
 				} else {
 					return false;

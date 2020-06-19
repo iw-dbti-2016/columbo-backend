@@ -7,10 +7,13 @@ use Columbo\Events\ResourceDeleted;
 use Columbo\Events\ResourceUpdated;
 use Columbo\Http\Requests\StoreTrip;
 use Columbo\Http\Requests\UpdateTrip;
+use Columbo\Http\Resources\Locationable;
 use Columbo\Http\Resources\Trip as TripResource;
 use Columbo\Http\Resources\TripCollection;
+use Columbo\POI;
 use Columbo\Traits\APIResponses;
 use Columbo\Trip;
+use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Http\Request;
 
 class TripController extends Controller
@@ -70,5 +73,29 @@ class TripController extends Controller
 		event(new ResourceDeleted($request->user(), $trip));
 
 		return response()->json(["meta" => []], 200);
+	}
+
+	public function locationables(Request $request, Trip $trip)
+	{
+		$request->validate([
+			'coordinates.latitude'  => 'required|numeric|min:-90|max:90',
+			'coordinates.longitude' => 'required|numeric|min:-180|max:180'
+		]);
+
+		$coordinate = new Point($request["coordinates"]["latitude"], $request["coordinates"]["longitude"]);
+
+		$locations = $trip->locations()
+				->distanceSphereValue('coordinates', $coordinate)
+				->distanceSphere('coordinates', $coordinate, 250000)
+				->limit(10)->get();
+
+		$pois = POI::distanceSphereValue('coordinates', $coordinate)
+				->distanceSphere('coordinates', $coordinate, 250000)
+				->limit(10)->get();
+
+		return Locationable::collection(
+					$locations->merge($pois)
+							->sortBy('distance')
+				);
 	}
 }

@@ -9,6 +9,8 @@ use Columbo\Http\Requests\StoreSection;
 use Columbo\Http\Requests\UpdateSection;
 use Columbo\Http\Resources\Section as SectionResource;
 use Columbo\Http\Resources\SectionCollection;
+use Columbo\Location;
+use Columbo\POI;
 use Columbo\Report;
 use Columbo\Section;
 use Columbo\Trip;
@@ -64,6 +66,21 @@ class SectionController extends Controller
 		$section->owner()->associate($request->user());
 		$section->report()->associate($report);
 
+		if ($request->has('locationable') && $request->locationable !== null) {
+			$locationable = null;
+			if ($request->locationable["type"] === "poi") {
+				$locationable = POI::where("uuid", $request->locationable["id"])->first();
+			} else {
+				$locationable = Location::find($request->locationable["id"]);
+			}
+
+			if ($locationable === null) {
+				return request()->json(["error" => "No such " . $request->locationable["type"]], 419);
+			}
+
+			$section->locationable()->associate($locationable);
+		}
+
 		$section->save();
 
 		event(new ResourceCreated($request->user(), $section));
@@ -83,6 +100,27 @@ class SectionController extends Controller
 	public function update(UpdateSection $request, Trip $trip, Report $report, Section $section)
 	{
 		$section->update($request->all());
+
+		if ($request->has('locationable')) {
+			if (empty($request->locationable)) {
+				$section->locationable()->associate(null);
+			} else {
+				$locationable = null;
+				if ($request->locationable["type"] === "poi") {
+					$locationable = POI::where("uuid", $request->locationable["id"])->first();
+				} else {
+					$locationable = Location::find($request->locationable["id"]);
+				}
+
+				if ($locationable === null) {
+					return request()->json(["error" => "No such " . $request->locationable["type"]], 419);
+				}
+
+				$section->locationable()->associate($locationable);
+			}
+
+			$section->save();
+		}
 
 		event(new ResourceUpdated($request->user(), $section));
 

@@ -47,6 +47,8 @@ Route::group(['prefix' => 'v1'], function() {
 				'locations' => 'location:id',
 			],
 		]);
+
+		Route::post('trips/{trip}/locationables', 'TripController@locationables');
 	});
 });
 

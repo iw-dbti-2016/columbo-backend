@@ -8,22 +8,22 @@
 			</div>
 			<div v-else class="flex flex-col h-full">
 				<div class="bg-green-700 cursor-pointer px-4 py-4 rounded text-center text-white">Create a new location at these coordinates</div>
-				<div v-if="hasLocationable" @click.prevent="selectLocationable(locationable[locationableType].id)" class="bg-box-fade cursor-pointer flex items-center mt-2 rounded text-primary">
-					<div class="p-3 rounded-l text-2xl text-white bg-green-700" :class="{'text-primary bg-box-fade': selectedLocationableId !== locationable[locationableType].id}">
-						<font-awesome-icon :icon="['far', 'square']" v-if="selectedLocationableId !== locationable[locationableType].id"></font-awesome-icon>
+				<div v-if="hasLocationable" @click.prevent="selectLocationable(locationable)" class="bg-box-fade cursor-pointer flex items-center mt-2 rounded text-primary">
+					<div class="p-3 rounded-l text-2xl text-white bg-green-700" :class="{'text-primary bg-box-fade': !isSelected(locationable)}">
+						<font-awesome-icon :icon="['far', 'square']" v-if="!isSelected(locationable)"></font-awesome-icon>
 						<font-awesome-icon :icon="['far', 'check-square']" v-else></font-awesome-icon>
 					</div>
 					<div class="ml-3">{{ locationable[locationableType].name }}</div>
 				</div>
-				<div v-if="loading" class="flex flex-1 items-center justify-center text-fade-more">Loading suggestions...</div>
+				<div v-if="loading && this.suggestions.length === 0" class="flex flex-1 items-center justify-center text-fade-more">Loading suggestions...</div>
 				<div v-else-if="this.suggestions.length === 0" class="flex flex-1 items-center justify-center text-fade-more">No suggestions for now :(</div>
 				<div v-else class="border-t-2 border-box-fade mt-4 pt-2">
-					<div v-for="sug in suggestions" :key="sug.id" @click.prevent="selectLocationable(sug.id)" class="bg-box-fade cursor-pointer flex items-center mt-2 rounded text-primary">
-						<div class="p-3 rounded-l text-2xl text-white bg-green-700" :class="{'text-primary bg-box-fade': selectedLocationableId !== sug.id}">
-							<font-awesome-icon :icon="['far', 'square']" v-if="selectedLocationableId !== sug.id"></font-awesome-icon>
+					<div v-for="sug in suggestions" :key="sug[getType(sug)].id" @click.prevent="selectLocationable(sug)" class="bg-box-fade cursor-pointer flex items-center mt-2 rounded text-primary">
+						<div class="p-3 rounded-l text-2xl text-white bg-green-700" :class="{'text-primary bg-box-fade': !isSelected(sug)}">
+							<font-awesome-icon :icon="['far', 'square']" v-if="!isSelected(sug)"></font-awesome-icon>
 							<font-awesome-icon :icon="['far', 'check-square']" v-else></font-awesome-icon>
 						</div>
-						<div class="ml-3">{{ sug.name }}</div>
+						<div class="ml-3">{{ sug[getType(sug)].name }} ({{ Math.round(sug[getType(sug)].distance / 10) / 100 }} km)</div>
 					</div>
 				</div>
 			</div>
@@ -58,16 +58,16 @@
 		data() {
 			return {
 				suggestions: [],
-				selectedLocationableId: null,
+				selectedLocationable: null,
 				loading: true,
 				selected: false,
 			};
 		},
 
 		created() {
-			if (this.$options.propsData.hasOwnProperty('locationable')) {
-				this.selectedLocationableId = this.locationable[this.locationableType].id;
-				this.updateLocation(this.locationable[this.locationableType].coordinates);
+			if (this.$options.propsData.hasOwnProperty('locationable') && this.hasLocationable) {
+				this.selectedLocationable = this.locationable;
+				this.updateLocation({"coordinates": this.locationable[this.locationableType].coordinates});
 			}
 		},
 
@@ -78,12 +78,6 @@
 				this.selected = true;
 				this.loading = true;
 
-				// Plan:
-				// 	+ show instructions,
-				// 	X on select run query for POI's and locations in neighborhood
-				// 	- list results and
-				// 	+ show option to add new location.
-
 				// Implementation:
 				// 	Selecting POI or location emits it as chosen location and indicator in this component
 				// 	Add new location show form with data:
@@ -93,9 +87,7 @@
 				// 		- visibility
 				// 		- published_at
 
-
-				// BE CARFUL! THIS IS NOT THE CORRECT QUERY, ONE NEEDS TO BE IMPLEMENTED!
-				axios.get(`/api/v1/trips/${this.$route.params.tripId}/locations`)
+				axios.post(`/api/v1/trips/${this.$route.params.tripId}/locationables`, e)
 					.then((response) => {
 						this.suggestions = response.data;
 						this.loading = false;
@@ -104,28 +96,59 @@
 					})
 					.catch((error) => console.log(error));
 			},
-			selectLocationable: function(locationableId) {
-				this.selectedLocationableId = (this.selectedLocationableId == locationableId) ? null : locationableId;
+			selectLocationable: function(locationable) {
+				if (this.isSelected(locationable)) {
+					this.selectedLocationable = null;
+
+					this.$emit('selectlocationable', {});
+				} else {
+					this.selectedLocationable = locationable;
+
+					if (this.locationableEquals(this.locationable, locationable)) {
+						this.$emit('selectlocationable', null);
+					} else {
+						this.$emit('selectlocationable', {
+							"type": this.getType(this.selectedLocationable),
+							"id": this.selectedLocationable[this.getType(this.selectedLocationable)].id,
+						});
+					}
+				}
 			},
+			isSelected: function(locationable) {
+				return this.locationableEquals(locationable, this.selectedLocationable);
+			},
+			locationableEquals: function(l1, l2) {
+				let l1Type = this.getType(l1);
+				let l2Type = this.getType(l2);
+
+				return (l1Type && l2Type && l1Type === l2Type && l1[l1Type].id === l2[l2Type].id);
+			},
+			getType: function(locationable) {
+				if (locationable === null || Object.keys(locationable).length === 0) {
+					return false;
+				}
+
+				return locationable.hasOwnProperty('location') ? 'location' : 'poi';
+			}
 		},
 
 		computed: {
 			coordinates: function() {
-				if (Object.keys(this.locationable).length === 0) {
-					return {};
-				} else {
+				if (this.locationable !== null && Object.keys(this.locationable).length !== 0) {
 					return this.locationable[this.locationableType].coordinates;
+				} else {
+					return {};
 				}
 			},
 			zoom: function() {
-				if (Object.keys(this.locationable).length === 0) {
-					return this.$options.propsData.hasOwnProperty('suggestion') ? 6 : 2;
-				} else {
+				if (this.locationable !== null && Object.keys(this.locationable).length !== 0) {
 					return this.locationable[this.locationableType].map_zoom;
+				} else {
+					return this.$options.propsData.hasOwnProperty('suggestion') ? 6 : 2;
 				}
 			},
 			hasLocationable: function() {
-				return Object.keys(this.locationable).length !== 0;
+				return this.locationable !== null && Object.keys(this.locationable).length !== 0;
 			},
 			locationableType: function() {
 				return this.hasLocationable && this.locationable.hasOwnProperty('location') ? 'location' : 'poi';

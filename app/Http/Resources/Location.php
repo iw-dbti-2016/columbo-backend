@@ -24,6 +24,7 @@ class Location extends JsonResource
 			"published_at" => $this->published_at,
 			"visibility"   => $this->visibility,
 			"user_id"      => $this->user_id,
+			"distance"     => $this->distance,
 		];
 	}
 }
