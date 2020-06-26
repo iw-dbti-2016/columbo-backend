@@ -40,7 +40,7 @@
 				<router-link :to="{name: 'createReport', params: {tripId: $route.params.tripId}}" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white">Create a new report</router-link>
 				<span v-if="reports.length == 0" class="block mt-2 text-fade">No reports written yet.</span>
 				<div v-else class="bg-box mt-2 rounded-lg shadow-md">
-					<div v-for="report in reports" @click.prevent="$router.push({name: 'showReport', params: {tripId: $route.params.tripId, reportId: report.id}})" class="border-b-2 border-primary last:border-b-0 px-5 py-4 text-md cursor-pointer text-fade">{{ report.title }}</div>
+					<div v-for="report in reports" @click.prevent="$router.push({name: 'showReport', params: {tripId: $route.params.tripId, reportId: report.id}})" class="border-b-2 border-primary last:border-b-0 px-5 py-4 text-md cursor-pointer text-fade">{{ formatDate(report.date) }} - {{ report.title }}</div>
 				</div>
 			</div>
 			<div class="flex-grow w-1/2"> <!-- PLANS -->

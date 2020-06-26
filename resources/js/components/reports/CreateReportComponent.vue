@@ -4,9 +4,10 @@
 				:showBack="true"
 				v-on:back="$router.push({name: 'showTrip', params: {tripId: $route.params.tripId}})"
 				title="Create a new report"
-				:showToggleTheme="true">
+				:showToggleTheme="true"
+				class="mt-4">
 		</ActionBarComponent>
-		<div class="flex flex-row justify-between">
+		<div class="flex flex-row justify-between mt-4">
 			<div class="flex-grow pr-8 w-2/3 relative">
 				<div class="w-full mt-4">
 					<FormInput label="Title" v-model="title"></FormInput>

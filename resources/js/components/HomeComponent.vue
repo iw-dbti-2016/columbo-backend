@@ -6,7 +6,8 @@
 				:showExtraActionLink="true"
 				extraActionTitle="Log out"
 				extraActionIcon="door-open"
-				v-on:extraaction="signout">
+				v-on:extraaction="signout"
+				class="mt-4">
 		</ActionBarComponent>
 		<div class="flex justify-between">
 			<div class="w-3/4">

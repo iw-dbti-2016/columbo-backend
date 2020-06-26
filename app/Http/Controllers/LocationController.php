@@ -9,6 +9,7 @@ use Columbo\Http\Requests\StoreLocation;
 use Columbo\Http\Requests\UpdateLocation;
 use Columbo\Http\Resources\Location as LocationResource;
 use Columbo\Http\Resources\LocationCollection;
+use Columbo\Http\Resources\Locationable;
 use Columbo\Location;
 use Columbo\Trip;
 use Illuminate\Http\Request;
@@ -52,7 +53,7 @@ class LocationController extends Controller
 
 		event(new ResourceCreated($request->user(), $location));
 
-		return (new LocationResource($location))
+		return (new Locationable($location))
 					->response()
 					->setStatusCode(201);
 	}

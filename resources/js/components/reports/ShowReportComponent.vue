@@ -1,5 +1,5 @@
 <template>
-	<div class="m-auto pl-8 pr-24 w-full" v-if="ready">
+	<div class="m-auto pr-16 w-full" v-if="ready">
 		<ActionBarComponent
 				:showBack="true"
 				v-on:back="$router.push({name: 'showTrip', params: {tripId: $route.params.tripId}})"
@@ -8,28 +8,43 @@
 				:showEdit="true"
 				v-on:edit="$router.push({name: 'editReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}})"
 				:showRemove="true"
-				v-on:remove="removeReport">
+				v-on:remove="removeReport"
+				class="mt-4 px-8">
 		</ActionBarComponent>
-		<div>
-			<div class="text-primary">PLAN</div>
-			<div class="absolute right-0 mr-24 top-0 mt-24" :title="`This report is ${report.is_locked ? 'locked' : 'open'}`">
-				<font-awesome-icon class="text-xl text-primary" v-if="report.is_locked" :icon="['fas', 'lock']"/>
-				<font-awesome-icon class="text-xl text-primary" v-else :icon="['fas', 'lock-open']"/>
+		<div class="mt-5 max-w-5xl mx-auto px-4">
+			<div class="px-24">
+				<div class="bg-box" v-if="report.hasOwnProperty('plan')">
+					program: Some text descriping the planning<br>
+					driving distance: 35 km<br>
+					wifi available: false<br>
+					sleeping location: Alpha Campsite, Beta<br>
+					estimated price: 82.20<br>
+					currency: USD<br>
+					status sleep: TODO/IN PROGRESS<br>
+					status activities: TO CONFIRM/DONE<br>
+					visibility: friends<br>
+					published at: 24/04/2021<br>
+				</div>
+				<div class="mt-4" :title="`This report is ${report.is_locked ? 'locked' : 'open'}`">
+					<font-awesome-icon class="text-xl text-primary" v-if="report.is_locked" :icon="['fas', 'lock']"/>
+					<font-awesome-icon class="text-xl text-primary" v-else :icon="['fas', 'lock-open']"/>
+				</div>
+				<span class="block ml-2 mt-1 text-fade-more text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
+				<span class="block ml-2 mt-4 text-2xl text-primary">{{ humanTimeDiff(report.published_at) }}</span>
+				<span class="block ml-2 mt-4 text-2xl text-primary">{{ report.visibility }}</span>
+				<RichTextOutput v-bind:content="report.description"></RichTextOutput>
+				<div @click.prevent="() => {creating = true;editing=false;}" v-if="!creating" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white cursor-pointer">Add a section</div>
 			</div>
-			<span class="block ml-2 mt-1 text-fade-more text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
-			<span class="block ml-2 mt-4 text-2xl text-primary">{{ humanTimeDiff(report.published_at) }}</span>
-			<span class="block ml-2 mt-4 text-2xl text-primary">{{ report.visibility }}</span>
-			<RichTextOutput v-bind:content="report.description"></RichTextOutput>
 		</div>
-		<div class="my-8 flex justify-between">
-			<div class="-ml-8 max-h-screen mt-0 py-2 sticky top-0 w-24">
+		<div class="my-8 flex justify-between" id="sections-top">
+			<div class="max-h-screen mt-0 py-2 sticky top-0 w-24">
 				<a v-if="activeSection > 0 && !editing && !creating" @click.prevent="previousSection"
-						class="cursor-pointer flex focus:outline-none focus:text-fade h-full hover:bg-box-fade hover:text-fade items-center justify-center mr-4 rounded-r-lg text-fade-more w-full"
+						class="cursor-pointer flex focus:outline-none focus:text-fade h-full hover:bg-box-fade hover:text-fade items-center justify-center rounded-r-lg text-fade-more w-full"
 						title="Previous report">
 					<font-awesome-icon class="text-2xl" :icon="['fas', 'arrow-left']" />
 				</a>
 			</div>
-			<div class="mx-auto w-full max-w-5xl px-4 mt-1" v-if="sections.length > 0"> <!-- SECTIONS -->
+			<div class="mx-auto w-full max-w-5xl px-4 mt-1" v-if="sections.length > 0 || creating"> <!-- SECTIONS -->
 				<CreateSectionComponent
 						v-if="creating"
 						v-on:back="creating = false"
@@ -44,15 +59,14 @@
 				<ShowSectionComponent
 						v-else
 						:section="sections[activeSection]"
-						v-on:creating="creating = true"
 						v-on:editing="editing = true"
 						v-on:removed="removeSection">
 				</ShowSectionComponent>
 			</div>
 			<span class="block mt-2 text-fade-more" v-else>No sections written yet.</span>
-			<div class="-mr-4 max-h-screen mt-0 py-2 sticky top-0 w-24">
+			<div class="max-h-screen mt-0 py-2 sticky top-0 w-24">
 				<a v-if="activeSection < sections.length - 1 && !editing && !creating" @click.prevent="nextSection"
-						class="cursor-pointer flex focus:outline-none focus:text-fade h-full hover:bg-box-fade hover:text-fade items-center justify-center ml-4 rounded-l-lg text-fade-more w-full"
+						class="cursor-pointer flex focus:outline-none focus:text-fade h-full hover:bg-box-fade hover:text-fade items-center justify-center rounded-l-lg text-fade-more w-full"
 						title="Next report">
 					<font-awesome-icon class="text-2xl" :icon="['fas', 'arrow-right']" />
 				</a>

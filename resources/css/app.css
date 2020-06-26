@@ -137,6 +137,15 @@
 	@apply text-primary font-serif font-normal;
 }
 
+div:not(.ProseMirror-editor) > .ProseMirror > *:not(div):not(iframe) {
+	@apply px-24;
+}
+
+div:not(.ProseMirror-editor) > .ProseMirror > iframe {
+	@apply mx-24;
+	width: calc(100% - 12rem);
+}
+
 .ProseMirror:focus {
 	@apply outline-none;
 }
@@ -181,11 +190,17 @@
 }
 
 .ProseMirror blockquote {
-	@apply border-l-4 text-lg border-box-invert pl-4 italic my-2 py-2;
+	@apply text-lg italic my-2 py-2;
 }
 
-.ProseMirror blockquote p {
-	@apply leading-6;
+.ProseMirror blockquote > * {
+	@apply leading-6 border-l-4 border-box-invert pl-4;
+	@apply ml-0 my-0 !important;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+	@apply pl-10 !important;
 }
 
 .ProseMirror blockquote p,
@@ -196,7 +211,11 @@
 }
 
 .ProseMirror iframe {
-	@apply my-6;
+	@apply my-12 rounded-lg shadow-lg;
+}
+
+.ProseMirror > div {
+	@apply my-12;
 }
 
 /* EDITOR MENTIONS */

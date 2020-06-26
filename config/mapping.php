@@ -40,7 +40,7 @@ return [
 	 */
 	"status" => [
 		"TODO" => 0,
-		"IN PROCESS" => 1,
+		"IN PROGRESS" => 1,
 		"TO CONFIRM" => 2,
 		"DONE" => 3,
 	],

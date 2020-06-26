@@ -13,7 +13,7 @@
 				<div v-if="section.is_draft" class="w-full flex justify-around"><span class="px-4 py-2 text-white bg-green-500 rounded-full">DRAFT</span></div>
 				<RichTextOutput v-bind:content="section.content" :locationables="section.locationables"></RichTextOutput>
 				<div class="px-24">
-					<span class ="text-fade-more text-sm uppercase" :title="section.published_at">{{ section.published_at }}</span>
+					<span class ="text-fade-more text-sm uppercase" :title="humanTimeDiff(section.published_at)">{{ humanTimeDiff(section.published_at) }}</span>
 					<span class="block mt-1 text-fade-more text-xs uppercase">by <router-link :to="{name: 'showProfile', params: {username: section.owner.username}}" class="cursor-pointer hover:underline text-blue-600">{{ section.owner.first_name }} {{ section.owner.middle_name }} {{ section.owner.last_name }}</router-link></span>
 				</div>
 			</div>

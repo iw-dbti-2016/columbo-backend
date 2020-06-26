@@ -1,5 +1,5 @@
 <template>
-	<div class="mt-4 flex justify-between">
+	<div class="flex justify-between">
 		<div class="flex justify-start items-center">
 			<a @click.prevent="$emit('back')" v-if="this.showBack"
 					class="mr-8 cursor-pointer focus:outline-none focus:text-fade hover:text-fade hover:bg-box w-12 h-12 rounded-full text-fade-more flex items-center justify-center"

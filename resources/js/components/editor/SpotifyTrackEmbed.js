@@ -27,7 +27,7 @@ export default class SpotifyTrackEmbed extends Node {
 				frameborder: '0',
 				allowtransparency: 'true',
 				allow: 'encrypted-media',
-				class: 'rounded',
+				// class: 'rounded-lg',
 			}],
 		}
 	}
