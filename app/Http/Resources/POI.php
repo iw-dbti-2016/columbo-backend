@@ -15,6 +15,7 @@ class POI extends JsonResource
 	public function toArray($request)
 	{
 		return [
+			"type"        => "poi",
 			"id"          => $this->uuid,
 			"coordinates" => $this->coordinates,
 			"map_zoom"    => $this->map_zoom,

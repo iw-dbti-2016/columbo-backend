@@ -1,8 +1,10 @@
 <template>
-	<component v-bind:is="parsed" @click.native="clickcont"></component>
+	<component v-bind:is="parsed" @click.native="clickcont" :locationables="locationables"></component>
 </template>
 
 <script>
+	import LocationableOutput from 'Vue/components/locationables/LocationableOutput'
+
 	export default {
 		name: 'rich-text-output',
 
@@ -11,19 +13,30 @@
 				type: String,
 				default: ""
 			},
+			locationables: {
+				type: Array,
+				default: null,
+			}
 		},
         computed: {
             parsed() {
             	let parsedContent = dompurify.sanitize(
 					this.content,
 					{
-						ALLOWED_TAGS: ['h1', 'h2', 'h3', 'br', 'p', 'span', 'strong', 'em', 's', 'u', 'ul', 'ol', 'li', 'blockquote', 'code', 'iframe'],
-						ALLOWED_ATTR: ['src', 'width', 'height', 'allowTransparancy', 'allow', 'class']
+						ALLOWED_TAGS: ['h1', 'h2', 'h3', 'br', 'p', 'span', 'strong', 'em', 's', 'u', 'ul', 'ol', 'li', 'blockquote', 'code', 'iframe', 'locationable-embed-item'],
+						ALLOWED_ATTR: ['src', 'width', 'height', 'allowTransparancy', 'allow', 'class', 'data-id', 'data-type']
 					}
 				);
 
+            	parsedContent = parsedContent.replace(
+            			/<locationable-embed-item data-id="([0-9]+|[0-9a-f-]{36})" data-type="(poi|location)"[^<>]+><\/locationable-embed-item>/g,
+            			"<LocationableOutput locationableid='$1' locationabletype='$2' :locationables='locationables'></LocationableOutput>"
+            		)
+
                 return {
-                	template: `<div class="ProseMirror pt-1 mt-5">${parsedContent}</div>`,
+                	props: {locationables: {type:Array, default:null,}},
+                	components: {LocationableOutput},
+                	template: `<div class="ProseMirror pt-1 -mt-1">${parsedContent}</div>`,
                 };
             },
         },

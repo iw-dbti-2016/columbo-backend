@@ -1,23 +1,24 @@
 <template>
-	<div v-if="locationable !== null" class="relative w-full pb-1/2 mt-6">
+	<div v-if="showLocationable !== null" :class="{'pb-1/3': locationableType === 'location'}" class="relative w-full pb-1/2 mt-6 shadow-lg rounded-lg overflow-hidden">
 		<keep-alive>
 			<div v-if="showMap">
-				<MapOutputComponent class="absolute rounded-l-lg overflow-hidden w-1/3 h-full" :zoom="Math.max(0, locationable[locationableType].map_zoom - extraZoom)" :coordinates="locationable[locationableType].coordinates"></MapOutputComponent>
-				<div class="absolute right-0 w-2/3 bg-box rounded-r-lg h-full py-6 px-8 text-primary overflow-auto">
+				<MapOutputComponent class="absolute rounded-l-lg overflow-hidden w-1/3 h-full" :zoom="Math.max(0, showLocationable.map_zoom - extraZoom)" :coordinates="showLocationable.coordinates"></MapOutputComponent>
+				<div class="absolute right-0 top-0 w-2/3 bg-box rounded-r-lg h-full py-6 px-8 text-primary overflow-auto">
 					<div v-if="locationableType === 'poi'" class="flex text-3xl mb-4 items-end">
 						<font-awesome-icon class="text-yellow-600" :icon="['fas', 'star']" title="Point of Interest"></font-awesome-icon>
 						<div class="ml-2">Point of Interest</div>
 					</div>
 
-					<div class="text-3xl font-bold leading-8 font-serif">{{ locationable[locationableType].name }}</div>
+					<div class="text-3xl font-bold leading-8 font-serif">{{ showLocationable.name }}</div>
 					<img v-if="locationableType === 'poi'" class="rounded-lg mt-4 w-full" src="http://via.placeholder.com/500x250" alt="#">
-					<div class="mt-4 leading-6 font-serif text-justify">{{ locationable[locationableType].info }}</div>
+					<div v-if="locationableType === 'poi'">{{ showLocationable.image_caption }}</div>
+					<div class="mt-4 leading-6 font-serif text-justify">{{ showLocationable.info }}</div>
 
 					<div v-if="locationableType === 'location'">
-						<div v-if="locationable[locationableType].is_draft" class="absolute bg-green-500 px-4 py-2 right-0 rounded-bl-lg rounded-tr-lg text-white top-0">DRAFT</div>
-						<div class="mt-4">{{ humanTimeDiff(locationable[locationableType].published_at) }}</div>
-						<div class="mt-4">{{ locationable[locationableType].visibility }}</div>
-						<div class="">{{ locationable[locationableType].user_id }}</div>
+						<div v-if="showLocationable.is_draft" class="absolute bg-green-500 px-4 py-2 right-0 rounded-bl-lg rounded-tr-lg text-white top-0">DRAFT</div>
+						<div class="mt-4">{{ humanTimeDiff(showLocationable.published_at) }}</div>
+						<div class="mt-4">{{ showLocationable.visibility }}</div>
+						<div class="">{{ showLocationable.user_id }}</div>
 					</div>
 				</div>
 			</div>
@@ -43,10 +44,37 @@
 				type: Object,
 				default: null,
 			},
+			locationables: {
+				type: Array,
+				default: null,
+			},
+			locationableid: {
+				type: String,
+				default: "",
+			},
+			locationabletype: {
+				type: String,
+				default: "",
+			},
+		},
+
+		created() {
+			if (this.locationabletype !== '' && this.locationableid !== '') {
+				for (var i = this.locationables.length - 1; i >= 0; i--) {
+					if (this.locationables[i].type == this.locationabletype) {
+						if (this.locationables[i].id == this.locationableid) {
+							this.showLocationable = this.locationables[i];
+							break;
+						}
+					}
+				}
+			}
+			console.log(this.showLocationable);
 		},
 
 		data() {
 			return {
+				showLocationable: this.locationable,
 				extraZoom: 0,
 				showMap: true,
 				showLocationableImage: false,
@@ -55,8 +83,18 @@
 
 		computed: {
 			locationableType: function() {
-				return this.locationable !== null && this.locationable.hasOwnProperty('location') ? 'location' : 'poi';
+				if (this.locationabletype !== "") {
+					return this.locationabletype;
+				}
+
+				return this.showLocationable.type;
 			}
 		},
+
+		watch: {
+			locationable: function(value) {
+				this.showLocationable = value;
+			}
+		}
 	}
 </script>

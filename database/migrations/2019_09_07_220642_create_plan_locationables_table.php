@@ -15,7 +15,7 @@ class CreatePlanLocationablesTable extends Migration
     {
         Schema::create('plan_locationables', function (Blueprint $table) {
             $table->bigInteger('plan_id')->unsigned()->index();
-            $table->morphs('locationable');
+            $table->morphs('plan_locationable', 'plan_locationable_id_type_index');
 
             /* DATA */
             $table->text('description')->nullable();
@@ -30,7 +30,6 @@ class CreatePlanLocationablesTable extends Migration
                     ->onDelete('cascade');
 
             $table->primary(['locationable_id', 'locationable_type', 'plan_id'], 'location_plan_locationable_plan_id_primary');
-            $table->index(['locationable_id', 'locationable_type']);
         });
     }
 

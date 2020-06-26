@@ -6,7 +6,6 @@
 				title="Update section"
 				class="px-24">
 		</ActionBarComponent>
-		<LocationableInput :locationable="section.locationable" v-on:selectlocationable="(e) => selectedLocationable = e"></LocationableInput>
 		<div class="mt-4 px-24">
 			<div class="mt-2 w-full flex flex-row justify-between">
 				<div class="flex-grow w-1/2 mr-4">
@@ -17,7 +16,7 @@
 				</div>
 			</div>
 			<span class="text-fade">Duration: {{ section.duration_minutes }}</span>
-			<RichTextInput :content.sync="section.content"></RichTextInput>
+			<RichTextInput :content.sync="section.content" :locationables="locationables" @selectlocationable="addLocationable"  @detachlocationable="detachLocationable"></RichTextInput>
 			<div>
 				<label class="text-primary mt-3 block" for="draft">
 					<input v-model="section.is_draft" name="draft" id="draft" class="inline-block mt-2 px-4 py-3" type="checkbox">
@@ -63,13 +62,25 @@
 				section: _.cloneDeep(this.value),
 				duration: "--",
 				preview: false,
-				selectedLocationable: null,
+				locationables: _.cloneDeep(this.value.locationables),
 
 				error: "",
 			};
 		},
 
 		methods: {
+			addLocationable(e) {
+				if (! this.locationables.some(value => {
+					return value.type === e.type && value.id == e.id;
+				})) {
+					this.locationables.push(e);
+				}
+			},
+			detachLocationable(e) {
+				this.locationables = this.locationables.filter(value => {
+					return ! (value.type === e.type && value.id == e.id);
+				});
+			},
 			goBack: function() {
 				if (this.changed()) {
 					Swal.fire({
@@ -104,7 +115,7 @@
 					end_time: this.section.end_time,
 					content: this.section.content,
 					is_draft: this.section.is_draft,
-					...(this.selectedLocationable !== null) ? {locationable: this.selectedLocationable} : {},
+					...(this.locationables !== null) ? {locationables: this.locationables} : {},
 					visibility: "friends", // TODO
 					//published_at for postponed publication
 				})
@@ -142,10 +153,7 @@
 				if (this.value.start_time !== this.section.start_time ||
 					this.value.end_time !== this.section.end_time ||
 					this.value.content !== this.section.content ||
-					(this.selectedLocationable !== null &&
-						(Object.keys(this.selectedLocationable).length !== 0 ||
-						this.value.locationable !== null)
-					) ) {
+					this.locationables.length !== this.value.locationables.length) {
 					return true;
 				} else {
 					return false;

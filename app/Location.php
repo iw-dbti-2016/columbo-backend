@@ -50,7 +50,7 @@ class Location extends Model implements TrackedByActions
 
     public function sections()
     {
-        return $this->morphMany(Section::class, 'locationable');
+        return $this->morphToMany(Section::class, 'section_locationable');
     }
 
     public function actions()

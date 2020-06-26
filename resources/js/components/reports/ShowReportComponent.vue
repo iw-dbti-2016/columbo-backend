@@ -93,17 +93,11 @@
         },
 
         created() {
-        	window.addEventListener('keyup', (e) => {
-        		if (this.editing || this.creating) {
-        			return;
-        		}
+        	window.addEventListener('keyup', this.onKeyUp);
+        },
 
-        		if (e.key === "ArrowLeft") {
-        			this.previousSection();
-        		} else if (e.key === "ArrowRight") {
-        			this.nextSection();
-        		}
-        	});
+        destroyed() {
+        	window.removeEventListener('keyup', this.onKeyUp);
         },
 
         beforeRouteEnter(to, from, next) {
@@ -133,10 +127,22 @@
         },
 
         methods: {
+        	onKeyUp: function(e) {
+				if (this.editing || this.creating) {
+					return;
+				}
+
+				if (e.key === "ArrowLeft") {
+					this.previousSection();
+				} else if (e.key === "ArrowRight") {
+					this.nextSection();
+				}
+        	},
 			nextSection: function() {
 				if (this.activeSection < this.sections.length - 1) {
 					this.activeSection++;
 					window.location.hash = this.sections[this.activeSection].id;
+					document.getElementById('sections-top').scrollIntoView();
 					NProgress.done();
 				}
 			},
@@ -144,6 +150,7 @@
 				if (this.activeSection > 0) {
 					this.activeSection--;
 					window.location.hash = this.sections[this.activeSection].id;
+					document.getElementById('sections-top').scrollIntoView();
 					NProgress.done();
 				}
 			},

@@ -8,7 +8,8 @@
 				:showEdit="true"
 				v-on:edit="$router.push({name: 'editTrip', params: {'tripId': $route.params.tripId}})"
 				:showRemove="true"
-				v-on:remove="removeTrip">
+				v-on:remove="removeTrip"
+				class="mt-4">
 		</ActionBarComponent>
 		<ProgressBarComponent class="py-2 px-2 mt-3" :start="trip.start_date" :end="trip.end_date" :current="(new Date()).toISOString()"></ProgressBarComponent>
         <div class="flex flex-row justify-between">

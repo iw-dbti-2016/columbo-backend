@@ -6,7 +6,6 @@
 				title="Create a new section"
 				class="px-24">
 		</ActionBarComponent>
-		<LocationableInput v-on:selectlocationable="(e) => selectedLocationable = e"></LocationableInput>
 		<div class="mt-4 mx-24">
 			<div class="mt-2 w-full flex flex-row justify-between">
 				<div class="flex-grow w-1/2 mr-4">
@@ -17,7 +16,7 @@
 				</div>
 			</div>
 			<span class="text-fade">Duration: {{ duration }}</span>
-			<RichTextInput label="Content" :content.sync="content"></RichTextInput>
+			<RichTextInput label="Content" :content.sync="content" :locationables="locationables" @selectlocationable="addLocationable"  @detachlocationable="detachLocationable"></RichTextInput>
 			<div>
 				<label class="text-primary mt-3 block" for="draft">
 					<input v-model="draft" name="draft" id="draft" class="text-primary inline-block mt-2 px-4 py-3" type="checkbox">
@@ -60,7 +59,7 @@
 
 				submitText: "Store this report!",
 				duration: "--",
-				selectedLocationable: null,
+				locationables: [],
 
 				ready: true,
 				error: "",
@@ -68,12 +67,21 @@
 		},
 
 		methods: {
-			prt: function(e) {
-				console.log(e);
+			addLocationable(e) {
+				if (! this.locationables.some(value => {
+					return value.type === e.type && value.id == e.id;
+				})) {
+					this.locationables.push(e);
+				}
+			},
+			detachLocationable(e) {
+				this.locationables = this.locationables.filter(value => {
+					return ! (value.type === e.type && value.id == e.id);
+				});
 			},
 			goBack: function() {
 				if (this.start_time !== "" || this.end_time !== "" || this.content !== "" ||
-					(this.selectedLocationable !== null && Object.keys(this.selectedLocationable).length !== 0)) {
+					this.locationables.length !== 0) {
 					Swal.fire({
 						title: "Are you sure?",
 						text: "When you go back, you'll lose your new post!",
@@ -106,7 +114,7 @@
 					end_time: this.end_time,
 					content: this.content,
 					is_draft: this.draft,
-					locationable: this.selectedLocationable,
+					locationables: this.locationables,
 					visibility: "friends", // TODO
 					//published_at for postponed publication
 				})

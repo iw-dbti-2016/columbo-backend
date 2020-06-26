@@ -5,6 +5,7 @@ namespace Columbo;
 use Columbo\Action;
 use Columbo\Interfaces\TrackedByActions;
 use Columbo\Location;
+use Columbo\POI;
 use Columbo\Report;
 use Columbo\Traits\Visibility;
 use Columbo\Trip;
@@ -92,11 +93,6 @@ class Section extends Model implements TrackedByActions
         return ($end_time == null) ? $end_time : substr($end_time, 0, 5);
     }
 
-    public function getPublishedAtDiffAttribute()
-    {
-        return Carbon::parse($this->published_at)->diffForHumans();
-    }
-
     public function owner()
     {
     	return $this->belongsTo(User::class, 'user_id');
@@ -107,9 +103,14 @@ class Section extends Model implements TrackedByActions
     	return $this->belongsTo(Report::class);
     }
 
-    public function locationable()
+    public function locations()
     {
-    	return $this->morphTo('locationable');
+    	return $this->morphedByMany(Location::class, 'section_locationable');
+    }
+
+    public function pois()
+    {
+    	return $this->morphedByMany(POI::class, 'section_locationable');
     }
 
     public function actions()

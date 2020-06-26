@@ -1,5 +1,5 @@
 <template>
-	<div id="map" class="bg-primary"></div>
+	<div :id="`map-${mapId}`" class="bg-primary"></div>
 </template>
 
 <script>
@@ -13,7 +13,7 @@ import 'ol/ol.css';
 	import OSM from 'ol/source/OSM';
 	import {fromLonLat,toLonLat} from 'ol/proj';
 	import {defaults as interactionDefaults} from 'ol/interaction.js';
-	import {defaults as controlDefaults} from 'ol/control.js';
+	import {defaults as controlDefaults, Zoom} from 'ol/control.js';
 	import Colorize from 'ol-ext/filter/Colorize'
 
 	export default {
@@ -37,6 +37,10 @@ import 'ol/ol.css';
 				type: Number,
 				default: 2,
 			},
+			disable: {
+				type: Boolean,
+				default: false,
+			},
 		},
 		data() {
 			return {
@@ -44,7 +48,11 @@ import 'ol/ol.css';
 				mapSuggestion: this.toLonLat(this.suggestion),
 				mapZoom: this.zoom,
 				map: null,
+				interactions: null,
+				controls: null,
 				filter: null,
+				selectedPoint: null,
+				mapId: Math.floor(Math.random() * Math.floor(1000000000)),
 			};
 		},
 		mounted() {
@@ -54,8 +62,24 @@ import 'ol/ol.css';
 				source: new OlSourceVector(),
 			});
 
+			this.interactions = interactionDefaults({
+				doubleClickZoom: true,
+				dragAndDrop: true,
+				dragPan: true,
+				keyboardPan: true,
+				keyboardZoom: true,
+				mouseWheelZoom: true,
+				pointer: true,
+				select: true
+			});
+
+			this.controls = controlDefaults({
+				attribution: true,
+				zoom: true,
+			});
+
 			this.map = new Map({
-				target: 'map',
+				target: 'map-' + this.mapId,
 				layers: [
 					layer
 				],
@@ -63,20 +87,8 @@ import 'ol/ol.css';
 					center: fromLonLat(this.mapCoordinates),
 					zoom: this.mapZoom,
 				}),
-				interactions: interactionDefaults({
-					doubleClickZoom: true,
-					dragAndDrop: true,
-					dragPan: true,
-					keyboardPan: true,
-					keyboardZoom: true,
-					mouseWheelZoom: true,
-					pointer: true,
-					select: true
-				}),
-				controls: controlDefaults({
-					attribution: true,
-					zoom: true,
-				}),
+				interactions: this.interactions,
+				controls: this.controls,
 			})
 
 			if (this.mapCoordinates.length !== 0) {
@@ -96,6 +108,12 @@ import 'ol/ol.css';
 			}
 
 			this.map.on('click', (evt) => {
+				if (this.disable) {
+					return;
+				}
+
+				this.selectedPoint = evt.coordinate;
+
 				this.map.getView().setCenter(evt.coordinate);
 
 				this.map.getLayers().array_.forEach((item,_) => {
@@ -148,6 +166,23 @@ import 'ol/ol.css';
 			},
 			suggestion: function(value) {
 				this.mapSuggestion = this.toLonLat(value);
+			},
+			disable: function(value) {
+				for (let interaction of this.interactions.getArray()) {
+					interaction.setActive(!value);
+				}
+
+				if (value) {
+					this.map.getView().setCenter(this.selectedPoint);
+
+					for (let control of this.controls.getArray()) {
+						if (control instanceof Zoom) {
+							this.map.removeControl(control);
+						}
+					}
+				} else {
+					this.map.addControl(new Zoom());
+				}
 			},
 			'$root.theme': function(value) {
 				this.filter.setActive(value !== 'light-mode')

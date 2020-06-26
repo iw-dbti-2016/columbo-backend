@@ -22,8 +22,9 @@ class UpdateSection extends FormRequest
 			"visibility"   => ["required", new Visibility],
 			"published_at" => "nullable|date_format:Y-m-d H:i:s",
 
-			"locationable.type" => "nullable|in:location,poi",
-			"locationable.id" => "required_if:locationable.type,location,poi",
+			"locationables" => "nullable|array",
+			"locationables.*.type" => "in:location,poi",
+			"locationables.*.id" => "required|distinct",
 		];
 	}
 }

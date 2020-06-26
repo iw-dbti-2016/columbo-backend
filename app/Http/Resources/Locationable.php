@@ -20,10 +20,10 @@ class Locationable extends JsonResource
 		return $this->when(true, function() {
 			switch (true) {
 				case $this->resource instanceof \Columbo\Location:
-					return ["location" => new Location($this->resource)];
+					return new Location($this->resource);
 
 				case $this->resource instanceof \Columbo\POI:
-					return ["poi" => new POI($this->resource)];
+					return new POI($this->resource);
 			}
 		});
 	}

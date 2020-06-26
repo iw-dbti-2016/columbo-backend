@@ -29,7 +29,7 @@ class Section extends JsonResource
 			"published_at"  => $this->published_at,
 			"report"        => new Report($this->whenLoaded('report')),
 			"owner"         => new User($this->whenLoaded('owner')),
-			"locationable"  => new Locationable($this->whenLoaded('locationable')),
+			"locationables" => Locationable::collection(collect([])->merge($this->whenLoaded('locations'))->merge($this->whenLoaded('pois'))),
 		];
 	}
 }

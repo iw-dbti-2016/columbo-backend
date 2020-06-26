@@ -8,12 +8,10 @@
 				v-on:remove="removeSection"
 				class="px-24">
 		</ActionBarComponent>
-		<div @click.prevent="$emit('creating')" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white cursor-pointer">Add a section</div>
-		<div class="bg-primary mt-2">
+		<div class="bg-primary">
 			<div class="border-b-2 border-box-fade last:border-b-0 pb-4 relative">
 				<div v-if="section.is_draft" class="w-full flex justify-around"><span class="px-4 py-2 text-white bg-green-500 rounded-full">DRAFT</span></div>
-				<LocationableOutput :locationable="section.locationable"></LocationableOutput>
-				<RichTextOutput class="px-24" v-bind:content="section.content"></RichTextOutput>
+				<RichTextOutput v-bind:content="section.content" :locationables="section.locationables"></RichTextOutput>
 				<div class="px-24">
 					<span class ="text-fade-more text-sm uppercase" :title="section.published_at">{{ section.published_at }}</span>
 					<span class="block mt-1 text-fade-more text-xs uppercase">by <router-link :to="{name: 'showProfile', params: {username: section.owner.username}}" class="cursor-pointer hover:underline text-blue-600">{{ section.owner.first_name }} {{ section.owner.middle_name }} {{ section.owner.last_name }}</router-link></span>

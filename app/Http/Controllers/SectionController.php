@@ -27,7 +27,8 @@ class SectionController extends Controller
 				'report',//:id,date,trip_id',
 				'report.trip',//:id,name',
 				'owner',//:id,username',
-				'locationable'
+				'locations',
+				'pois',
 			)->get();
 			// ->noDraft()
 			// ->published()
@@ -46,7 +47,8 @@ class SectionController extends Controller
 		$this->authorize('view', $section);
 
 		$data = $section
-			->with('locationable:id,is_draft,coordinates,name,info,visibility')
+			->with('locations:id,is_draft,coordinates,name,info,visibility')
+			->with('pois:id,coordinates,name,info')
 			->with('owner:id,first_name,middle_name,last_name,username')
 			->find($section->id);
 
@@ -66,26 +68,34 @@ class SectionController extends Controller
 		$section->owner()->associate($request->user());
 		$section->report()->associate($report);
 
-		if ($request->has('locationable') && $request->locationable !== null) {
-			$locationable = null;
-			if ($request->locationable["type"] === "poi") {
-				$locationable = POI::where("uuid", $request->locationable["id"])->first();
-			} else {
-				$locationable = Location::find($request->locationable["id"]);
+		$section->save();
+
+		if ($request->has('locationables')) {
+			$collection = collect($request->locationables);
+
+			$grouped = $collection->mapToGroups(function($item, $key) {
+			 	return [$item['type'] => $item['id']];
+			});
+
+			$locationables = $grouped->toArray();
+
+			if (! empty($locationables['location'])) {
+				$section->locations()->sync($locationables['location']);
 			}
 
-			if ($locationable === null) {
-				return request()->json(["error" => "No such " . $request->locationable["type"]], 419);
+			if (! empty($locationables['poi'])) {
+				$poiIds = POI::whereIn('uuid', $locationables['poi'])->pluck('id')->toArray();
+				$section->pois()->sync($poiIds);
 			}
 
-			$section->locationable()->associate($locationable);
+			$section->save();
 		}
 
 		$section->save();
 
 		event(new ResourceCreated($request->user(), $section));
 
-		return (new SectionResource($section))
+		return (new SectionResource($section->load('locations', 'pois')))
 				->response()
 				->setStatusCode(201);
 	}
@@ -101,22 +111,22 @@ class SectionController extends Controller
 	{
 		$section->update($request->all());
 
-		if ($request->has('locationable')) {
-			if (empty($request->locationable)) {
-				$section->locationable()->associate(null);
-			} else {
-				$locationable = null;
-				if ($request->locationable["type"] === "poi") {
-					$locationable = POI::where("uuid", $request->locationable["id"])->first();
-				} else {
-					$locationable = Location::find($request->locationable["id"]);
-				}
+		if ($request->has('locationables')) {
+			$collection = collect($request->locationables);
 
-				if ($locationable === null) {
-					return request()->json(["error" => "No such " . $request->locationable["type"]], 419);
-				}
+			$grouped = $collection->mapToGroups(function($item, $key) {
+			 	return [$item['type'] => $item['id']];
+			});
 
-				$section->locationable()->associate($locationable);
+			$locationables = $grouped->toArray();
+
+			if (! empty($locationables['location'])) {
+				$section->locations()->sync($locationables['location']);
+			}
+
+			if (! empty($locationables['poi'])) {
+				$poiIds = POI::whereIn('uuid', $locationables['poi'])->pluck('id')->toArray();
+				$section->pois()->sync($poiIds);
 			}
 
 			$section->save();
@@ -124,7 +134,7 @@ class SectionController extends Controller
 
 		event(new ResourceUpdated($request->user(), $section));
 
-		return new SectionResource($section->load('locationable', 'owner'));
+		return new SectionResource($section->load('locations', 'pois', 'owner'));
 	}
 
 	/**

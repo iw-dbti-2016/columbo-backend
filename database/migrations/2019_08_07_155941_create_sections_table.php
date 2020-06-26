@@ -16,7 +16,7 @@ class CreateSectionsTable extends Migration
         Schema::create('sections', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('report_id')->unsigned()->nullable()->index();
-            $table->nullableMorphs('locationable');
+
             // Owner
             $table->bigInteger('user_id')->unsigned()->index();
 

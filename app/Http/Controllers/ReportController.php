@@ -26,7 +26,8 @@ class ReportController extends Controller
 			'sections' =>  function ($query) {
 				$query->orderBy('start_time', 'asc');
 			},
-			'sections.locationable',
+			'sections.locations',
+			'sections.pois',
 			'trip'
 		])->get();
 
@@ -42,7 +43,8 @@ class ReportController extends Controller
 				$query->orderBy('start_time', 'asc');
 			},
 			'sections.owner',
-			'sections.locationable'
+			'sections.locations',
+			'sections.pois',
 		]));
 	}
 

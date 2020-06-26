@@ -1,5 +1,5 @@
 <template>
-	<div id="map" class="bg-primary"></div>
+	<div :id="`map-${mapId}`" class="bg-primary"></div>
 </template>
 
 <script>
@@ -35,13 +35,14 @@
 				mapZoom: this.zoom,
 				map: null,
 				filter: null,
+				mapId: Math.floor(Math.random() * Math.floor(1000000000)),
 			};
 		},
 		mounted() {
 			let layer = new TileLayer({source: new OSM()})
 
 			this.map = new Map({
-				target: 'map',
+				target: 'map-' + this.mapId,
 				layers: [
 					layer
 				],

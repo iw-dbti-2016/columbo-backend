@@ -15,6 +15,7 @@
 				<EditorMenuButton icon="list-ol" :isActive="isActive.ordered_list()" @click="commands.ordered_list" title="Ordered list"></EditorMenuButton>
 				<EditorMenuButton icon="quote-left" :isActive="isActive.blockquote()" @click="commands.blockquote" title="Blockquote"></EditorMenuButton>
 				<EditorMenuButton icon="spotify" iconType="b" @click="showSpotifyModal(commands.spotify_track_embed)" title="Spotify Track"></EditorMenuButton>
+				<EditorMenuButton icon="map-marker-alt" @click="showLocationableModal(commands.locationable_embed)" title="Location or POI"></EditorMenuButton>
 				<EditorMenuButton icon="undo-alt" @click="commands.undo" title="Undo"></EditorMenuButton>
 				<EditorMenuButton icon="redo-alt" @click="commands.redo" title="Redo"></EditorMenuButton>
 				<span v-show="maxLength > 0 && content.length > maxLength" class="absolute font-bold text-red-500 text-xl right-0 top-0 mr-2 mt-3">{{label}} Too Long!</span>
@@ -31,10 +32,12 @@
 				<EditorMenuButton icon="list-ol" :isActive="isActive.ordered_list()" @click="commands.ordered_list" title="Ordered list"></EditorMenuButton>
 				<EditorMenuButton icon="quote-left" :isActive="isActive.blockquote()" @click="commands.blockquote" title="Blockquote"></EditorMenuButton>
 				<EditorMenuButton icon="spotify" iconType="b" @click="showSpotifyModal(commands.spotify_track_embed)" title="Spotify Track"></EditorMenuButton>
+				<EditorMenuButton icon="map-marker-alt" @click="showLocationableModal(commands.locationable_embed)" title="Location or POI"></EditorMenuButton>
 			</div>
 		</editor-floating-menu>
 
 		<EmbedSpotifyTrackModal ref="spotifyModal" @onConfirm="insertSpotifyEmbed"></EmbedSpotifyTrackModal>
+		<EmbedLocationableModal ref="locationableModal" @onConfirm="insertLocationableEmbed"></EmbedLocationableModal>
 
 		<div class="bg-box shadow-xl p-2 text-base font-bold rounded-md" v-show="showSuggestions" ref="suggestions">
 			<template v-if="hasResults">
@@ -50,7 +53,7 @@
 			</div>
 		</div>
 
-		<editor-content @click.native="clickeditor" :editor="editor" class="mt-2 pb-2 border-b border-box-fade"></editor-content>
+		<editor-content @click.native="clickeditor" :editor="editor" class="mt-2 pb-2 border-b border-box-fade ProseMirror-editor"></editor-content>
 	</div>
 </template>
 
@@ -66,6 +69,8 @@
 	import SpotifyTrackEmbed from './SpotifyTrackEmbed.js'
 	import EmbedSpotifyTrackModal from './EmbedSpotifyTrackModal'
 	import EditorMenuButton from './EditorMenuButton'
+	import DragItem from './DragItem.js'
+	import EmbedLocationableModal from './EmbedLocationableModal'
 
 	export default {
 		name: 'rich-text-input',
@@ -76,6 +81,7 @@
 			EditorMenuBar,
 			EmbedSpotifyTrackModal,
 			EditorMenuButton,
+			EmbedLocationableModal,
 		},
 
 		props: {
@@ -99,6 +105,11 @@
 			}
 		},
 
+		created() {
+			console.log(this.editor);
+
+		},
+
 		data() {
 			return {
 				editor: new Editor({
@@ -106,6 +117,7 @@
 					extensions: [
 						// CUSTOM
 						new SpotifyTrackEmbed(),
+						new DragItem(),
 
 						// BASIC DEFAULT
 						new Blockquote(), new BulletList(),  new HardBreak(),
@@ -212,12 +224,31 @@
 			// 	generates the html based on the state of the plugin
 			// 	and not the content of the editor.
 			clickeditor(clickInfo) {
+				let el = clickInfo.srcElement;
+
+				while (el.tagName !== "DIV") {
+					if (el.tagName === "A") {
+						if (el.getAttribute('data-action') !== null) {
+							let locationable = document.querySelector(`[data-id="${el.getAttribute('data-l-id')}"]`)
+
+							let lId = locationable.getAttribute('data-id');
+							let lType = locationable.getAttribute('data-type');
+
+							this.$emit('detachlocationable', {type: lType, id: lId});
+							locationable.remove();
+						} else {
+							break;
+						}
+					}
+					el = el.parentElement;
+				}
+
 				// let span = clickInfo.srcElement;
 
 				// if (! span.classList.contains("mention")) {
 				// 	return
 				// }
-
+				//
 				// if (span.hasAttribute("data-mention-fulltext")) {
 				// 	let fulltext = span.getAttribute("data-mention-fulltext")
 				// 	span.removeAttribute("data-mention-fulltext")
@@ -236,6 +267,17 @@
 				if (data.command !== null) {
 					data.command(data.data)
 				}
+			},
+
+			// Locationable
+			showLocationableModal(command) {
+				this.$refs.locationableModal.showModal(command)
+			},
+			insertLocationableEmbed(data) {
+				if (data.command !== null) {
+					data.command(data.data)
+				}
+				this.$emit('selectlocationable', data.data);
 			},
 
 			// MENTIONS
