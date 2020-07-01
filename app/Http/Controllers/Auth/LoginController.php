@@ -28,6 +28,7 @@ class LoginController extends Controller
 	{
 		$validator = Validator::make($request->all(), [
 			$this->username() => 'required|string|email',
+			'remember'        => 'nullable|boolean',
 			'password'        => 'required|string',
 			'device_name'     => 'required',
 		]);
@@ -49,7 +50,9 @@ class LoginController extends Controller
 		$user = $this->attemptLogin($request);
 		if ($user) {
 			if ($request->attributes->get('sanctum') === true) {
-				Auth::login($user);
+				$remember_user = $request->has('remember') && $request->remember;
+
+				Auth::login($user, $remember_user);
 			} else {
 				$this->token = $user->createToken($request->device_name)->plainTextToken;
 			}
