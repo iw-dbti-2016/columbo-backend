@@ -3,12 +3,16 @@
 		<ActionBarComponent
 				:showBack="true"
 				v-on:back="$router.push({name: 'showTrip', params: {tripId: $route.params.tripId}})"
-				:title="formatDate(report.date) + ': ' + report.title"
+				:title="formatDate(report.date)"
 				:showToggleTheme="true"
 				:showEdit="true"
 				v-on:edit="$router.push({name: 'editReport', params: {tripId: $route.params.tripId, reportId: $route.params.reportId}})"
 				:showRemove="true"
 				v-on:remove="removeReport"
+				:showExtraAction="true"
+				:extraActionTitle="report.is_locked ? 'Re-open this report' : 'Lock this report'"
+				:extraActionIcon="report.is_locked ? 'lock' : 'lock-open'"
+				v-on:extraaction="toggleLock"
 				class="mt-4 px-8">
 		</ActionBarComponent>
 		<div class="mt-5 max-w-5xl mx-auto px-4">
@@ -25,18 +29,43 @@
 					visibility: friends<br>
 					published at: 24/04/2021<br>
 				</div>
-				<div class="mt-4" :title="`This report is ${report.is_locked ? 'locked' : 'open'}`">
-					<font-awesome-icon class="text-xl text-primary" v-if="report.is_locked" :icon="['fas', 'lock']"/>
-					<font-awesome-icon class="text-xl text-primary" v-else :icon="['fas', 'lock-open']"/>
+				<div class="text-primary text-5xl">{{ report.title}}</div>
+				<!-- <div class="text-primary text-xl mt-2">{{ formatDate(report.date) }}</div> -->
+				<!-- <span class="block mt-4 text-md text-fade-more">Shared with: {{ report.visibility }}</span> -->
+				<!-- <div class="mt-2 flex items-center justify-between">
+					<span class="block text-fade-more uppercase">
+						<router-link :to="{name: 'showProfile', params: {username: report.owner.username}}" class="cursor-pointer hover:underline text-blue-400 flex items-center">
+							<img class="w-6 h-6 mx-auto rounded-full" :src="(report.owner.image == null) ? 'https://www.gravatar.com/avatar/' + report.owner.email_hash : report.owner.image" alt="">
+							<span class="ml-2 text-md py-1">{{ report.owner.first_name }} {{ report.owner.middle_name }} {{ report.owner.last_name }}</span>
+						</router-link>
+					</span>
+					<span class="block ml-2 mt-4 text-fade-more text-md uppercase">{{ humanTimeDiff(report.published_at) }}</span>
+				</div> -->
+			</div>
+			<RichTextOutput v-bind:content="report.description"></RichTextOutput>
+			<div class="px-24 relative">
+				<div class="flex items-center h-12">
+					<a @click.prevent="() => {creating = true;editing=false;}" v-if="!creating && !editing"
+							class="flex-shrink-0 cursor-pointer focus:outline-none focus:text-fade hover:text-fade hover:bg-box-fade bg-box w-12 h-12 rounded-full text-fade-more flex items-center justify-center"
+							title="Create a new section">
+						<font-awesome-icon class="text-2xl" :icon="['fas', 'plus']" />
+					</a>
+					<hr class="border-box w-full border-b-2">
+					<a @click.prevent="editing = true" v-if="!creating && !editing"
+							class="flex-shrink-0 cursor-pointer focus:outline-none focus:text-fade hover:text-fade hover:bg-box-fade bg-box w-12 h-12 rounded-full text-fade-more flex items-center justify-center"
+							title="Edit this section">
+						<font-awesome-icon class="text-2xl" :icon="['fas', 'pen']" />
+					</a>
+					<hr class="border-box border-b-2 w-2">
+					<a @click.prevent="removeSection" v-if="!creating && !editing"
+							class="flex-shrink-0 cursor-pointer focus:outline-none focus:text-fade hover:text-fade hover:bg-box-fade bg-box w-12 h-12 rounded-full text-fade-more flex items-center justify-center"
+							title="Remove this section">
+						<font-awesome-icon class="text-2xl" :icon="['fas', 'trash-alt']" />
+					</a>
 				</div>
-				<span class="block ml-2 mt-1 text-fade-more text-xs tracking-wider uppercase">by <a class="hover:underline text-blue-600" href="#">Vik Vanderlinden</a></span> <!-- OWNER -->
-				<span class="block ml-2 mt-4 text-2xl text-primary">{{ humanTimeDiff(report.published_at) }}</span>
-				<span class="block ml-2 mt-4 text-2xl text-primary">{{ report.visibility }}</span>
-				<RichTextOutput v-bind:content="report.description"></RichTextOutput>
-				<div @click.prevent="() => {creating = true;editing=false;}" v-if="!creating" class="bg-blue-600 inline-block mt-2 px-4 py-2 rounded text-white cursor-pointer">Add a section</div>
 			</div>
 		</div>
-		<div class="my-8 flex justify-between" id="sections-top">
+		<div class="flex justify-between" id="sections-top">
 			<div class="max-h-screen mt-0 py-2 sticky top-0 w-24">
 				<a v-if="activeSection > 0 && !editing && !creating" @click.prevent="previousSection"
 						class="cursor-pointer flex focus:outline-none focus:text-fade h-full hover:bg-box-fade hover:text-fade items-center justify-center rounded-r-lg text-fade-more w-full"
@@ -44,7 +73,7 @@
 					<font-awesome-icon class="text-2xl" :icon="['fas', 'arrow-left']" />
 				</a>
 			</div>
-			<div class="mx-auto w-full max-w-5xl px-4 mt-1" v-if="sections.length > 0 || creating"> <!-- SECTIONS -->
+			<div class="mb-8 mx-auto w-full min-h-screen max-w-5xl px-4" v-if="sections.length > 0 || creating"> <!-- SECTIONS -->
 				<CreateSectionComponent
 						v-if="creating"
 						v-on:back="creating = false"
@@ -59,8 +88,7 @@
 				<ShowSectionComponent
 						v-else
 						:section="sections[activeSection]"
-						v-on:editing="editing = true"
-						v-on:removed="removeSection">
+						class="mt-8">
 				</ShowSectionComponent>
 			</div>
 			<span class="block mt-2 text-fade-more" v-else>No sections written yet.</span>
@@ -82,6 +110,7 @@
     import CreateSectionComponent from 'Vue/components/sections/CreateSectionComponent'
     import EditSectionComponent from 'Vue/components/sections/EditSectionComponent'
     import ShowSectionComponent from 'Vue/components/sections/ShowSectionComponent'
+	import Swal from 'sweetalert2'
 
 	export default {
 		name: 'show-report',
@@ -141,6 +170,10 @@
         },
 
         methods: {
+        	toggleLock: function() {
+        		console.error('Lock/Unlock not implemented');
+        		alert('Lock/Unlock not implemented');
+        	},
         	onKeyUp: function(e) {
 				if (this.editing || this.creating) {
 					return;
@@ -191,7 +224,44 @@
 				this.editing = false;
 				NProgress.done();
 			},
-			removeSection: function(removedId) {
+			removeSection: function() {
+				let toRemoveId = this.sections[this.activeSection].id;
+
+				Swal.fire({
+					title: "Are you sure?",
+					text: "Once deleted, you will not be able to recover this section!",
+					icon: "warning",
+					showCancelButton: true,
+					confirmButtonText: 'Yes, delete it!',
+					customClass: {
+						confirmButton: "green-button",
+						cancelButton: "red-button",
+					},
+					target: document.getElementById('parent-element'),
+				})
+				.then((result) => {
+					if (result.value) {
+
+						NProgress.start();
+
+						let tripId = this.$route.params.tripId;
+						let reportId = this.$route.params.reportId;
+
+						axios.delete(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${toRemoveId}`)
+							.then((response) => {
+								Swal.fire({
+									title: "This section has been deleted!",
+									icon: "success",
+									target: document.getElementById('parent-element'),
+								});
+
+								this.filterSection(toRemoveId);
+							})
+							.catch(this.handleError)
+					}
+				});
+			},
+			filterSection: function(removedId) {
 				this.previousSection();
 
 				this.sections = this.sections.filter(section => section.id !== removedId);

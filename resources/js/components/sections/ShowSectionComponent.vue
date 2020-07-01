@@ -1,25 +1,35 @@
 <template>
 	<div>
-		<ActionBarComponent
-				:title="section.start_time + ' - ' + section.end_time"
-				:showEdit="true"
-				v-on:edit="$emit('editing')"
-				:showRemove="true"
-				v-on:remove="removeSection"
-				class="px-24">
-		</ActionBarComponent>
 		<div class="bg-primary">
 			<div class="border-b-2 border-box-fade last:border-b-0 pb-4 relative">
 				<img v-if="section.image" :src="`/storage/section-img/${section.image}_original.png`" :alt="section.image_caption">
 				<div v-if="section.image">{{ section.image_caption }}</div>
-				<RichTextOutput v-bind:content="section.content" :locationables="section.locationables"></RichTextOutput>
 				<div class="px-24">
-					<span class ="text-fade-more text-sm uppercase" :title="humanTimeDiff(section.published_at)">{{ humanTimeDiff(section.published_at) }}</span>
-					<span class="block mt-1 text-fade-more text-xs uppercase">by <router-link :to="{name: 'showProfile', params: {username: section.owner.username}}" class="cursor-pointer hover:underline text-blue-600">{{ section.owner.first_name }} {{ section.owner.middle_name }} {{ section.owner.last_name }}</router-link></span>
+					<div class="relative bg-box rounded-lg shadow-md px-4 py-4 mt-3 flex items-center justify-between">
+						<div class="text-primary text-4xl">{{ section.start_time }} - {{ section.end_time }}</div>
+						<div v-if="section.temperature != null" class="text-primary text-3xl flex items-center">
+							<font-awesome-icon class="text-3xl text-gray-500" v-if="section.start_time < '08:00' || section.start_time > '20:00'" :icon="['fas', 'moon']" />
+							<font-awesome-icon class="text-3xl text-yellow-500" v-else :icon="['fas', 'sun']" />
+							<div class="ml-2">{{ section.temperature }}°C</div>
+						</div>
+						<div class="absolute left-0 top-0 w-full flex justify-around">
+							<span v-if="section.is_draft" class="px-4 py-2 text-white bg-green-500 rounded-b-lg">DRAFT</span>
+						</div>
+					</div>
 				</div>
+				<RichTextOutput v-bind:content="section.content" :locationables="section.locationables"></RichTextOutput>
+				<div class="px-24 flex items-center justify-between">
+					<span class="block text-fade-more uppercase">
+						<router-link :to="{name: 'showProfile', params: {username: section.owner.username}}" class="cursor-pointer hover:underline text-blue-400 flex items-center">
+							<img class="w-6 h-6 mx-auto rounded-full" :src="(section.owner.image == null) ? 'https://www.gravatar.com/avatar/' + section.owner.email_hash : section.owner.image" alt="">
+							<span class="ml-2 text-md py-1">{{ section.owner.first_name }} {{ section.owner.middle_name }} {{ section.owner.last_name }}</span>
+						</router-link>
+					</span>
+					<span class="text-fade-more text-md uppercase" :title="humanTimeDiff(section.published_at)">{{ humanTimeDiff(section.published_at) }}</span>
+				</div>
+				<div class="px-24 mt-4 text-fade-more text-sm">This section is shared with: {{ section.visibility }}, which means only the friends of the members and visitors can see this section.</div>
 			</div>
 		</div>
-        <ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
 </template>
 
@@ -49,62 +59,11 @@
         data() {
             return {
                 showMap: true,
-
-                error: "",
             };
         },
 
         methods: {
-			removeSection: function() {
-				let toRemoveId = this.section.id;
 
-				Swal.fire({
-					title: "Are you sure?",
-					text: "Once deleted, you will not be able to recover this section!",
-					icon: "warning",
-					showCancelButton: true,
-					confirmButtonText: 'Yes, delete it!',
-					customClass: {
-						confirmButton: "green-button",
-						cancelButton: "red-button",
-					},
-					target: document.getElementById('parent-element'),
-				})
-				.then((result) => {
-					if (result.value) {
-
-						NProgress.start();
-
-						let tripId = this.$route.params.tripId;
-						let reportId = this.$route.params.reportId;
-
-						axios.delete(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${toRemoveId}`)
-							.then((response) => {
-								Swal.fire({
-									title: "This section has been deleted!",
-									icon: "success",
-									target: document.getElementById('parent-element'),
-								});
-
-								this.$emit('removed', toRemoveId);
-							})
-							.catch(this.handleError)
-					}
-				});
-            },
-            handleError(error) {
-            	NProgress.done();
-
-                if (error.response.status == 401) {
-                	// log out
-                    return;
-                }
-
-                this.error = error.response.data;
-            },
-            noResponse() {
-                this.error = "No response...";
-            },
         },
     }
 </script>

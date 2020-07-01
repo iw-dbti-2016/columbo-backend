@@ -3,7 +3,7 @@
 		<ActionBarComponent
 				title="Columbo"
 				:showToggleTheme="true"
-				:showExtraActionLink="true"
+				:showExtraAction="true"
 				extraActionTitle="Log out"
 				extraActionIcon="door-open"
 				v-on:extraaction="signout"

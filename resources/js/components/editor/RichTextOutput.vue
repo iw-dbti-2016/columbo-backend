@@ -36,7 +36,7 @@
                 return {
                 	props: {locationables: {type:Array, default:null,}},
                 	components: {LocationableOutput},
-                	template: `<div class="ProseMirror pt-1 -mt-1">${parsedContent}</div>`,
+                	template: `<div class="ProseMirror py-4 -mt-1">${parsedContent}</div>`,
                 };
             },
         },

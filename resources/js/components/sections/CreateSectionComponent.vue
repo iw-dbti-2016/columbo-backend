@@ -46,7 +46,7 @@
 				</div>
 			</div>
 			<input @click.prevent="submitSection" class="inline-block mt-4 px-4 py-3 bg-green-800 rounded text-white cursor-pointer focus:outline-none hover:bg-green-700 focus:bg-green-700 focus:shadow-lg" type="submit" :value="submitText">
-			<a @click.prevent="goBack" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 bg-box text-primary rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</a>
+			<a @click.prevent="goBack" class="inline-block ml-4 px-4 py-3 bg-box text-primary rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</a>
 		</div>
         <ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
 	</div>
