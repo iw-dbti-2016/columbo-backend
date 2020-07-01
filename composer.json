@@ -13,6 +13,7 @@
         "facade/ignition": "^2.0",
         "fideloper/proxy": "^4.0",
         "grimzy/laravel-mysql-spatial": "^2.2",
+        "intervention/image": "^2.5",
         "laravel-frontend-presets/tailwindcss": "^4.0",
         "laravel/framework": "^7.0",
         "laravel/sanctum": "^2.0",

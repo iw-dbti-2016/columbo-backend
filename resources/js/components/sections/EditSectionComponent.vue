@@ -15,7 +15,25 @@
 					<FormInput label="End time" type="time" v-model="section.end_time"></FormInput>
 				</div>
 			</div>
-			<span class="text-fade">Duration: {{ section.duration_minutes }}</span>
+			<div class="mt-2 w-full flex flex-row justify-between">
+				<div class="flex-grow w-1/2 mr-4">
+					<FormInput label="Temperature" type="number" v-model="section.temperature"></FormInput>
+				</div>
+				<div class="flex-grow w-1/2">
+					<div>
+						<label class="text-fade mt-3 block" for="image">Image</label>
+						<input
+								@change="onImageChange"
+								name="image"
+								id="image"
+								autocomplete="off"
+								spellcheck="false"
+								type="file"
+								class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md">
+					</div>
+				</div>
+			</div>
+			<FormInput label="Image caption" v-model="section.image_caption"></FormInput>
 			<RichTextInput :content.sync="section.content" :locationables="locationables" @selectlocationable="addLocationable"  @detachlocationable="detachLocationable"></RichTextInput>
 			<div>
 				<label class="text-primary mt-3 block" for="draft">

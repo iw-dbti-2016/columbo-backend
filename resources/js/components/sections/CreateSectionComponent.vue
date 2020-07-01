@@ -15,7 +15,25 @@
 					<FormInput label="End time" type="time" v-model="end_time"></FormInput>
 				</div>
 			</div>
-			<span class="text-fade">Duration: {{ duration }}</span>
+			<div class="mt-2 w-full flex flex-row justify-between">
+				<div class="flex-grow w-1/2 mr-4">
+					<FormInput label="Temperature" type="number" v-model="temperature"></FormInput>
+				</div>
+				<div class="flex-grow w-1/2">
+					<div>
+						<label class="text-fade mt-3 block" for="image">Image</label>
+						<input
+								@change="onImageChange"
+								name="image"
+								id="image"
+								autocomplete="off"
+								spellcheck="false"
+								type="file"
+								class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md">
+					</div>
+				</div>
+			</div>
+			<FormInput label="Image caption" v-model="image_caption"></FormInput>
 			<RichTextInput label="Content" :content.sync="content" :locationables="locationables" @selectlocationable="addLocationable"  @detachlocationable="detachLocationable"></RichTextInput>
 			<div>
 				<label class="text-primary mt-3 block" for="draft">
@@ -54,6 +72,9 @@
 			return {
 				start_time: "",
 				end_time: "",
+				temperature: null,
+				image: null,
+				image_caption: null,
 				content: "",
 				draft: true,
 
@@ -67,6 +88,10 @@
 		},
 
 		methods: {
+            onImageChange(e){
+                console.log(e.target.files[0]);
+                this.image = e.target.files[0];
+            },
 			addLocationable(e) {
 				if (! this.locationables.some(value => {
 					return value.type === e.type && value.id == e.id;
@@ -109,15 +134,20 @@
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;
 
-				axios.post(`/api/v1/trips/${tripId}/reports/${reportId}/sections`, {
-					start_time: this.start_time,
-					end_time: this.end_time,
-					content: this.content,
-					is_draft: this.draft,
-					locationables: this.locationables,
-					visibility: "friends", // TODO
-					//published_at for postponed publication
-				})
+				let data = new FormData();
+				data.append('start_time', this.start_time);
+				data.append('end_time', this.end_time);
+				data.append('temperature', this.temperature);
+				data.append('image_file', this.image);
+				data.append('image_caption', this.image_caption);
+				data.append('content', this.content);
+				data.append('is_draft', this.draft);
+				data.append('locationables', this.locationables);
+				data.append('visibility', "friends");
+
+				let config = {header: {'Content-Type': 'multipart/form-data'}};
+
+				axios.post(`/api/v1/trips/${tripId}/reports/${reportId}/sections`, data)
 					.then((response) => {
 						Swal.fire({
 							title: "Done!",

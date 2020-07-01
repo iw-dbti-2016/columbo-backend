@@ -16,12 +16,14 @@ class StoreSection extends FormRequest
 	public function rules()
 	{
 		return [
-			"content"      => "required",
-			"image"        => "nullable",
-			"start_time"   => "required|date_format:H:i",
-			"end_time"     => "required|date_format:H:i",
-			"visibility"   => ["required", new Visibility],
-			"published_at" => "nullable|date_format:Y-m-d H:i:s",
+			"content"       => "required",
+			"temperature"   => "nullable|integer",
+			"image_file"    => "nullable|image",
+			"image_caption" => "nullable",
+			"start_time"    => "required|date_format:H:i",
+			"end_time"      => "required|date_format:H:i",
+			"visibility"    => ["required", new Visibility],
+			"published_at"  => "nullable|date_format:Y-m-d H:i:s",
 
 			"locationables" => "nullable|array",
 			"locationables.*.type" => "in:location,poi",

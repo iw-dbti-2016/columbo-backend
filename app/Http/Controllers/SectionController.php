@@ -15,6 +15,9 @@ use Columbo\Report;
 use Columbo\Section;
 use Columbo\Trip;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 class SectionController extends Controller
 {
@@ -67,6 +70,28 @@ class SectionController extends Controller
 
 		$section->owner()->associate($request->user());
 		$section->report()->associate($report);
+
+		if ($request->has('image_file')) {
+			$image = Image::make($request->image_file);
+			$image_path = storage_path('app/public/section-img') . '/';
+
+			if (!file_exists($image_path)) {
+				mkdir($image_path, 666, true);
+			}
+
+			$random_id = Str::random(30);
+
+			$image->encode('png');
+			$image->save($image_path . $random_id . "_original.png");
+			$image->resize(300, null, function($constraint) {
+				$constraint->aspectRatio();
+			});
+			$image->save($image_path . $random_id . "_w300.png");
+
+			$section->image = $random_id;
+		}
+
+		$section->is_draft = json_decode($section->is_draft);
 
 		$section->save();
 

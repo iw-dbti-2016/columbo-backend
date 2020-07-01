@@ -10,7 +10,8 @@
 		</ActionBarComponent>
 		<div class="bg-primary">
 			<div class="border-b-2 border-box-fade last:border-b-0 pb-4 relative">
-				<div v-if="section.is_draft" class="w-full flex justify-around"><span class="px-4 py-2 text-white bg-green-500 rounded-full">DRAFT</span></div>
+				<img v-if="section.image" :src="`/storage/section-img/${section.image}_original.png`" :alt="section.image_caption">
+				<div v-if="section.image">{{ section.image_caption }}</div>
 				<RichTextOutput v-bind:content="section.content" :locationables="section.locationables"></RichTextOutput>
 				<div class="px-24">
 					<span class ="text-fade-more text-sm uppercase" :title="humanTimeDiff(section.published_at)">{{ humanTimeDiff(section.published_at) }}</span>

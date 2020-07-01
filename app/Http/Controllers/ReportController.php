@@ -45,6 +45,7 @@ class ReportController extends Controller
 			'sections.owner',
 			'sections.locations',
 			'sections.pois',
+			'owner',
 		]));
 	}
 
