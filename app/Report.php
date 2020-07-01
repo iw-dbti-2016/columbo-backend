@@ -19,6 +19,7 @@ class Report extends Model implements TrackedByActions
         "title",
         "date",
         "description",
+        "is_locked",
         "visibility",
         "published_at",
     ];

@@ -50,11 +50,8 @@ class Section extends Model implements TrackedByActions
         "temperature",
         "visibility", // Sometimes???
         "published_at",
-        "deleted_at",
         "created_at",
         "updated_at",
-        "published_at_diff",
-        "locationable",
         "owner",
     ];
 

@@ -27,6 +27,7 @@ class Section extends JsonResource
 			"end_time"      => $this->end_time,
 			"temperature"   => $this->temperature,
 			"published_at"  => $this->published_at,
+			"visibility"    => $this->visibility,
 			"report"        => new Report($this->whenLoaded('report')),
 			"owner"         => new User($this->whenLoaded('owner')),
 			"locationables" => Locationable::collection(collect([])->merge($this->whenLoaded('locations'))->merge($this->whenLoaded('pois'))),

@@ -23,6 +23,7 @@ class Report extends JsonResource
 			"date"         => $this->date,
 			"description"  => $this->description,
 			"published_at" => $this->published_at,
+			"is_locked"    => $this->is_locked,
 			"sections"     => Section::collection($this->whenLoaded('sections')),
 			// "plan"         => new Plan($this->whenLoaded('plan')),
 			"owner"        => new User($this->whenLoaded('owner')),
