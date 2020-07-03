@@ -105,11 +105,6 @@
 			}
 		},
 
-		created() {
-			console.log(this.editor);
-
-		},
-
 		data() {
 			return {
 				editor: new Editor({

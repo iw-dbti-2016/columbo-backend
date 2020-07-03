@@ -26,17 +26,22 @@
 			<FileInput @selected="(img) => image = img"></FileInput>
 			<FormInput class="mt-2" label="Image caption" v-model="image_caption"></FormInput>
 			<RichTextInput label="Content" :content.sync="content" :locationables="locationables" @selectlocationable="addLocationable"  @detachlocationable="detachLocationable"></RichTextInput>
-			<div>
-				<label class="text-primary mt-3 block" for="draft">
-					<input v-model="draft" name="draft" id="draft" class="text-primary inline-block mt-2 px-4 py-3" type="checkbox">
-					<span>This is a draft</span>
-				</label>
-				<div>
-					<span></span>
-					<span></span>
+			<div @click.prevent="is_draft = !is_draft" class="bg-box cursor-pointer flex items-center mt-10 rounded text-primary">
+				<div class="p-3 rounded-l text-2xl text-white bg-green-700" :class="{'text-primary bg-box': !is_draft}">
+					<font-awesome-icon :icon="['far', 'square']" v-if="!is_draft"></font-awesome-icon>
+					<font-awesome-icon :icon="['far', 'check-square']" v-else></font-awesome-icon>
 				</div>
+				<div class="ml-3">This is a draft</div>
 			</div>
-			<input @click.prevent="submitSection" class="inline-block mt-4 px-4 py-3 bg-green-800 rounded text-white cursor-pointer focus:outline-none hover:bg-green-700 focus:bg-green-700 focus:shadow-lg" type="submit" :value="submitText">
+			<div v-if="!is_draft" @click.prevent="delayed_publishing = !delayed_publishing" class="bg-box cursor-pointer flex items-center mt-2 rounded text-primary">
+				<div class="p-3 rounded-l text-2xl text-white bg-green-700" :class="{'text-primary bg-box': !delayed_publishing}">
+					<font-awesome-icon :icon="['far', 'square']" v-if="!delayed_publishing"></font-awesome-icon>
+					<font-awesome-icon :icon="['far', 'check-square']" v-else></font-awesome-icon>
+				</div>
+				<div class="ml-3">Publish date and time</div>
+			</div>
+			<FormInput v-if="!is_draft && delayed_publishing" class="mt-2" label="Publish date and time" type="datetime-local" v-model="published_at"></FormInput>
+			<input @click.prevent="submitSection" class="inline-block mt-5 px-4 py-3 bg-green-800 rounded text-white cursor-pointer focus:outline-none hover:bg-green-700 focus:bg-green-700 focus:shadow-lg" type="submit" :value="submitText">
 			<a @click.prevent="goBack" class="inline-block ml-4 px-4 py-3 bg-box text-primary rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</a>
 		</div>
         <ErrorHandlerComponent :error.sync="error"></ErrorHandlerComponent>
@@ -71,11 +76,13 @@
 				image: null,
 				image_caption: null,
 				content: "",
-				draft: true,
+				is_draft: true,
+				published_at: null,
 				weather_icon: 'thermometer-half',
 
 				submitText: "Store this report!",
 				duration: "--",
+				delayed_publishing: false,
 				locationables: [],
 
 				ready: true,
@@ -129,20 +136,19 @@
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;
 
-				let data = new FormData();
-				data.append('start_time', this.start_time);
-				data.append('end_time', this.end_time);
-				data.append('temperature', this.temperature);
-				data.append('image_file', this.image);
-				data.append('image_caption', this.image_caption);
-				data.append('content', this.content);
-				data.append('is_draft', this.draft);
-				data.append('locationables', this.locationables);
-				data.append('visibility', "friends");
-
-				let config = {header: {'Content-Type': 'multipart/form-data'}};
-
-				axios.post(`/api/v1/trips/${tripId}/reports/${reportId}/sections`, data)
+				axios.post(`/api/v1/trips/${tripId}/reports/${reportId}/sections`, {
+					start_time: this.start_time,
+					end_time: this.end_time,
+					weather_icon: this.weather_icon,
+					temperature: this.temperature,
+					...(this.image !== null) ? {image_file: this.image} : {},
+					image_caption: this.image_caption,
+					content: this.content,
+					is_draft: this.is_draft,
+					...(this.locationables !== null) ? {locationables: this.locationables} : {},
+					...(this.delayed_publishing) ? {published_at: this.toUTC(this.published_at)} : {},
+					visibility: "friends", // TODO
+				})
 					.then((response) => {
 						Swal.fire({
 							title: "Done!",
@@ -170,13 +176,18 @@
 					// log out
 				}
 
-				this.error = error.response.data;
+				console.log(error.response);
+
+				//this.error = error.response.data;
 			}
 		},
 
 		watch: {
-			draft: function(val) {
-				this.submitText = val ? 'Store this report!' : 'Create this report!';
+			is_draft: function(val) {
+				this.submitText = val ? 'Save this section!' : 'Publish this section!';
+			},
+			delayed_publishing: function(val) {
+				this.submitText = val ? 'Plan the publishing of this section!' : 'Publish this section!';
 			},
 			start_time: function(val) {
 				let start = val.split(":");

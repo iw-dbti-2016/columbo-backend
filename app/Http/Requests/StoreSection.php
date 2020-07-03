@@ -18,19 +18,20 @@ class StoreSection extends FormRequest
 	public function rules()
 	{
 		return [
-			"content"       => "required",
-			"temperature"   => "nullable|integer",
 			"start_time"    => "required|date_format:H:i",
 			"end_time"      => "required|date_format:H:i",
 			"weather_icon"  => ["required", new WeatherIcon],
+			"temperature"   => "nullable|integer",
 			"image_file"    => ["nullable", "max:11250000", new ImageBase64(["image/jpeg","image/png"])],
 			"image_caption" => "nullable|max:100|regex:/[^<>{}=\[\]]*/",
+			"content"       => ["required", "max:10000"],
+			"is_draft"      => "required|boolean",
+			"published_at"  => "nullable|exclude_if:is_draft,true|date_format:Y-m-d\\TH:i",
 			"visibility"    => ["required", new Visibility],
-			"published_at"  => "nullable|date_format:Y-m-d H:i:s",
 
-			"locationables" => "nullable|array",
-			"locationables.*.type" => "in:location,poi",
-			"locationables.*.id" => "required|distinct",
+			"locationables"        => "nullable|array|max:4",
+			"locationables.*.type" => "required|in:location,poi",
+			"locationables.*.id"   => "required|distinct",
 		];
 	}
 }

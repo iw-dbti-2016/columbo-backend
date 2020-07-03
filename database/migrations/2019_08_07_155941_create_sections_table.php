@@ -33,7 +33,7 @@ class CreateSectionsTable extends Migration
 
             /* VISIBILITY */
             $table->tinyInteger('visibility')->unsigned()->index();
-            $table->timestamp('published_at')->useCurrent();
+            $table->timestamp('published_at')->nullable()->useCurrent();
 
             $table->softDeletes();
             $table->timestamps();

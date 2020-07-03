@@ -62,7 +62,6 @@
 					}
 				}
 			}
-			console.log(this.showLocationable);
 		},
 
 		data() {

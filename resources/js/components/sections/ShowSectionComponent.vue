@@ -2,8 +2,7 @@
 	<div>
 		<div class="bg-primary">
 			<div class="border-b-2 border-box-fade last:border-b-0 pb-4 relative">
-				<img v-if="section.image" :src="`/storage/section-img/${section.image}_original.png`" :alt="section.image_caption">
-				<div v-if="section.image">{{ section.image_caption }}</div>
+				<ShowImage v-if="section.image" :image="section.image" :caption="section.image_caption" class="mt-6 mb-10"></ShowImage>
 				<div class="px-24">
 					<div class="relative bg-box rounded-lg shadow-md px-4 py-4 mt-3 flex items-center justify-between">
 						<div class="text-primary text-4xl">{{ section.start_time }} - {{ section.end_time }}</div>
@@ -37,6 +36,7 @@
 	import LocationableOutput from 'Vue/components/locationables/LocationableOutput'
 	import NProgress from 'nprogress'
 	import Swal from 'sweetalert2'
+	import ShowImage from 'Vue/components/sections/ShowImage'
 
     export default {
     	name: 'show-section',
@@ -53,11 +53,13 @@
         components: {
             RichTextOutput,
             LocationableOutput,
+            ShowImage,
         },
 
         data() {
             return {
                 showMap: true,
+                showFullImage: false,
             };
         },
 

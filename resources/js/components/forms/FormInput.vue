@@ -1,16 +1,18 @@
 <template>
-	<div>
+	<div class="flex flex-col h-full">
 		<label class="text-fade mt-3 block" :for="name">{{label}}</label>
-		<input v-model="content"
-				@input="onInput"
-				:name="name"
-				:id="name"
-				:placeholder="label"
-				autocomplete="off"
-				spellcheck="false"
-				:type="type"
-				:class="{'bg-box-fade': fade}"
-				class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md">
+		<div class="flex flex-auto flex-col flex-grow flex-shrink justify-center">
+			<input v-model="content"
+					@input="onInput"
+					:name="name"
+					:id="name"
+					:placeholder="label"
+					autocomplete="off"
+					spellcheck="false"
+					:type="type"
+					:class="{'bg-box-fade': fade}"
+					class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md">
+		</div>
 		<div>
 			<span v-if="info !== null">{{info}}</span>
 			<span v-if="errors !== null">
