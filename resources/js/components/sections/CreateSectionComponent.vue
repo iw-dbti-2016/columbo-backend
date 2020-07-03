@@ -17,10 +17,10 @@
 			</div>
 			<div class="mt-2 w-full flex flex-row justify-between">
 				<div class="flex-grow w-1/2 mr-4">
-					<FormInput label="Temperature" type="number" v-model="temperature"></FormInput>
+					<WeatherIconInput @selected="selectWeatherIcon"></WeatherIconInput>
 				</div>
 				<div class="flex-grow w-1/2">
-					<div>
+					<FormInput label="Temperature" type="number" v-model="temperature"></FormInput>
 						<label class="text-fade mt-3 block" for="image">Image</label>
 						<input
 								@change="onImageChange"
@@ -55,6 +55,7 @@
 <script>
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
 	import FormInput from 'Vue/components/forms/FormInput'
+	import WeatherIconInput from 'Vue/components/forms/WeatherIconInput'
 	import LocationableInput from 'Vue/components/locationables/LocationableInput'
 	import NProgress from 'nprogress'
 	import Swal from 'sweetalert2'
@@ -65,6 +66,7 @@
 		components: {
 			RichTextInput,
 			FormInput,
+			WeatherIconInput,
 			LocationableInput,
 		},
 
@@ -77,6 +79,7 @@
 				image_caption: null,
 				content: "",
 				draft: true,
+				weather_icon: 'thermometer-half',
 
 				submitText: "Store this report!",
 				duration: "--",
@@ -88,10 +91,9 @@
 		},
 
 		methods: {
-            onImageChange(e){
-                console.log(e.target.files[0]);
-                this.image = e.target.files[0];
-            },
+			selectWeatherIcon(icon) {
+				this.weather_icon = icon;
+			},
 			addLocationable(e) {
 				if (! this.locationables.some(value => {
 					return value.type === e.type && value.id == e.id;

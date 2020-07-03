@@ -17,10 +17,10 @@
 			</div>
 			<div class="mt-2 w-full flex flex-row justify-between">
 				<div class="flex-grow w-1/2 mr-4">
-					<FormInput label="Temperature" type="number" v-model="section.temperature"></FormInput>
+					<WeatherIconInput :initialIcon="section.weather_icon" @selected="selectWeatherIcon"></WeatherIconInput>
 				</div>
 				<div class="flex-grow w-1/2">
-					<div>
+					<FormInput label="Temperature" type="number" @input="(e) => section.temperature = e" :value="String(section.temperature)"></FormInput>
 						<label class="text-fade mt-3 block" for="image">Image</label>
 						<input
 								@change="onImageChange"
@@ -58,6 +58,7 @@
 	import LocationableInput from 'Vue/components/locationables/LocationableInput'
 	import NProgress from 'nprogress'
 	import Swal from 'sweetalert2'
+	import WeatherIconInput from 'Vue/components/forms/WeatherIconInput'
 
 	export default {
 		name: 'edit-section',
@@ -73,6 +74,7 @@
 			RichTextInput,
 			FormInput,
 			LocationableInput,
+			WeatherIconInput,
 		},
 
 		data() {
@@ -87,6 +89,9 @@
 		},
 
 		methods: {
+			selectWeatherIcon(icon) {
+				this.section.weather_icon = icon;
+			},
 			addLocationable(e) {
 				if (! this.locationables.some(value => {
 					return value.type === e.type && value.id == e.id;
@@ -131,6 +136,8 @@
 				axios.patch(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${this.section.id}`, {
 					start_time: this.section.start_time,
 					end_time: this.section.end_time,
+					weather_icon: this.section.weather_icon,
+					temperature: this.section.temperature,
 					content: this.section.content,
 					is_draft: this.section.is_draft,
 					...(this.locationables !== null) ? {locationables: this.locationables} : {},

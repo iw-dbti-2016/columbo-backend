@@ -3,6 +3,7 @@
 namespace Columbo;
 
 use Columbo\Action;
+use Columbo\Casts\WeatherIcon;
 use Columbo\Interfaces\TrackedByActions;
 use Columbo\Location;
 use Columbo\POI;
@@ -33,6 +34,7 @@ class Section extends Model implements TrackedByActions
         "image_caption",
         "start_time",
         "end_time",
+        "weather_icon",
         "temperature",
         "is_draft",
         "visibility",
@@ -47,6 +49,7 @@ class Section extends Model implements TrackedByActions
         "image_caption",
         "start_time",
         "end_time",
+        "weather_icon",
         "temperature",
         "visibility", // Sometimes???
         "published_at",
@@ -58,6 +61,7 @@ class Section extends Model implements TrackedByActions
     protected $casts = [
         "published_at" => "datetime:d/m/Y H:i",
         "is_draft" => "boolean",
+        "weather_icon" => WeatherIcon::class,
     ];
 
     protected $appends = [

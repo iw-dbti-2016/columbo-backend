@@ -44,4 +44,21 @@ return [
 		"TO CONFIRM" => 2,
 		"DONE" => 3,
 	],
+
+	/**
+	 * When entering a temperature, we also
+	 * want a type of weather so the icon
+	 * can be correctly represented.
+	 */
+	"weathericons" => [
+		"thermometer-half"    => 0,
+		"sun"                 => 1,
+		"cloud-sun"           => 2,
+		"cloud-sun-rain"      => 3,
+		"moon"                => 4,
+		"cloud-moon"          => 5,
+		"cloud-moon-rain"     => 6,
+		"cloud"               => 7,
+		"cloud-showers-heavy" => 8,
+	],
 ];

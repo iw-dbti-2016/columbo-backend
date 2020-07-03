@@ -28,6 +28,7 @@ class CreateSectionsTable extends Migration
             $table->string('image_caption', 100)->nullable();
             $table->time('start_time');
             $table->time('end_time');
+            $table->unsignedTinyInteger('weather_icon')->default(0);
             $table->integer('temperature')->nullable();
 
             /* VISIBILITY */

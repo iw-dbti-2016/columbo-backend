@@ -8,8 +8,7 @@
 					<div class="relative bg-box rounded-lg shadow-md px-4 py-4 mt-3 flex items-center justify-between">
 						<div class="text-primary text-4xl">{{ section.start_time }} - {{ section.end_time }}</div>
 						<div v-if="section.temperature != null" class="text-primary text-3xl flex items-center">
-							<font-awesome-icon class="text-3xl text-gray-500" v-if="section.start_time < '08:00' || section.start_time > '20:00'" :icon="['fas', 'moon']" />
-							<font-awesome-icon class="text-3xl text-yellow-500" v-else :icon="['fas', 'sun']" />
+							<font-awesome-icon class="text-3xl text-fade-more" :icon="['fas', section.weather_icon]" />
 							<div class="ml-2">{{ section.temperature }}°C</div>
 						</div>
 						<div class="absolute left-0 top-0 w-full flex justify-around">

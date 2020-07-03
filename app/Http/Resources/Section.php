@@ -25,6 +25,7 @@ class Section extends JsonResource
 			"image_caption" => $this->image_caption,
 			"start_time"    => $this->start_time,
 			"end_time"      => $this->end_time,
+			"weather_icon"  => $this->weather_icon,
 			"temperature"   => $this->temperature,
 			"published_at"  => $this->published_at,
 			"visibility"    => $this->visibility,
