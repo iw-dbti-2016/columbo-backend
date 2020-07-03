@@ -21,18 +21,12 @@
 				</div>
 				<div class="flex-grow w-1/2">
 					<FormInput label="Temperature" type="number" @input="(e) => section.temperature = e" :value="String(section.temperature)"></FormInput>
-						<label class="text-fade mt-3 block" for="image">Image</label>
-						<input
-								@change="onImageChange"
-								name="image"
-								id="image"
-								autocomplete="off"
-								spellcheck="false"
-								type="file"
-								class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md">
-					</div>
 				</div>
 			</div>
+			<FileInput @selected="(img) => image = img"></FileInput>
+
+			</div>
+
 			<FormInput label="Image caption" v-model="section.image_caption"></FormInput>
 			<RichTextInput :content.sync="section.content" :locationables="locationables" @selectlocationable="addLocationable"  @detachlocationable="detachLocationable"></RichTextInput>
 			<div>
@@ -58,6 +52,7 @@
 	import LocationableInput from 'Vue/components/locationables/LocationableInput'
 	import NProgress from 'nprogress'
 	import Swal from 'sweetalert2'
+	import FileInput from 'Vue/components/forms/FileInput'
 	import WeatherIconInput from 'Vue/components/forms/WeatherIconInput'
 
 	export default {
@@ -74,12 +69,14 @@
 			RichTextInput,
 			FormInput,
 			LocationableInput,
+			FileInput,
 			WeatherIconInput,
 		},
 
 		data() {
 			return {
 				section: _.cloneDeep(this.value),
+				image: null,
 				duration: "--",
 				preview: false,
 				locationables: _.cloneDeep(this.value.locationables),
@@ -138,6 +135,7 @@
 					end_time: this.section.end_time,
 					weather_icon: this.section.weather_icon,
 					temperature: this.section.temperature,
+					...(this.image !== null) ? {image_file: this.image} : {},
 					content: this.section.content,
 					is_draft: this.section.is_draft,
 					...(this.locationables !== null) ? {locationables: this.locationables} : {},

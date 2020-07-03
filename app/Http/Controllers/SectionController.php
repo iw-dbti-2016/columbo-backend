@@ -72,17 +72,20 @@ class SectionController extends Controller
 		$section->report()->associate($report);
 
 		if ($request->has('image_file')) {
-			$image = Image::make($request->image_file);
+			$image = Image::make($request->get('image_file'));
 			$image_path = storage_path('app/public/section-img') . '/';
 
 			if (!file_exists($image_path)) {
 				mkdir($image_path, 666, true);
 			}
 
-			$random_id = Str::random(30);
+			$random_id = Str::random(99);
 
 			$image->encode('png');
-			$image->save($image_path . $random_id . "_original.png");
+			$image->resize(1000, null, function($constraint) {
+				$constraint->aspectRatio();
+			});
+			$image->save($image_path . $random_id . "_w1k.png");
 			$image->resize(300, null, function($constraint) {
 				$constraint->aspectRatio();
 			});
@@ -91,7 +94,9 @@ class SectionController extends Controller
 			$section->image = $random_id;
 		}
 
-		$section->is_draft = json_decode($section->is_draft);
+		if ($section->is_draft) {
+			$section->published_at = null;
+		}
 
 		$section->save();
 
@@ -135,6 +140,33 @@ class SectionController extends Controller
 	public function update(UpdateSection $request, Trip $trip, Report $report, Section $section)
 	{
 		$section->update($request->all());
+
+		if ($request->remove_image) {
+			$section->image = null;
+		} else if ($request->has('image_file')) {
+			$image = Image::make($request->get('image_file'));
+			$image_path = storage_path('app/public/section-img') . '/';
+
+			if (!file_exists($image_path)) {
+				mkdir($image_path, 666, true);
+			}
+
+			$random_id = Str::random(99);
+
+			$image->encode('png');
+			$image->resize(1000, null, function($constraint) {
+				$constraint->aspectRatio();
+			});
+			$image->save($image_path . $random_id . "_w1k.png");
+			$image->resize(300, null, function($constraint) {
+				$constraint->aspectRatio();
+			});
+			$image->save($image_path . $random_id . "_w300.png");
+
+			$section->image = $random_id;
+		}
+
+		$section->save();
 
 		if ($request->has('locationables')) {
 			$collection = collect($request->locationables);

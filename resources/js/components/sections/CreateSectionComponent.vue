@@ -21,19 +21,10 @@
 				</div>
 				<div class="flex-grow w-1/2">
 					<FormInput label="Temperature" type="number" v-model="temperature"></FormInput>
-						<label class="text-fade mt-3 block" for="image">Image</label>
-						<input
-								@change="onImageChange"
-								name="image"
-								id="image"
-								autocomplete="off"
-								spellcheck="false"
-								type="file"
-								class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md">
-					</div>
 				</div>
 			</div>
-			<FormInput label="Image caption" v-model="image_caption"></FormInput>
+			<FileInput @selected="(img) => image = img"></FileInput>
+			<FormInput class="mt-2" label="Image caption" v-model="image_caption"></FormInput>
 			<RichTextInput label="Content" :content.sync="content" :locationables="locationables" @selectlocationable="addLocationable"  @detachlocationable="detachLocationable"></RichTextInput>
 			<div>
 				<label class="text-primary mt-3 block" for="draft">
@@ -55,6 +46,7 @@
 <script>
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
 	import FormInput from 'Vue/components/forms/FormInput'
+	import FileInput from 'Vue/components/forms/FileInput'
 	import WeatherIconInput from 'Vue/components/forms/WeatherIconInput'
 	import LocationableInput from 'Vue/components/locationables/LocationableInput'
 	import NProgress from 'nprogress'
@@ -66,6 +58,7 @@
 		components: {
 			RichTextInput,
 			FormInput,
+			FileInput,
 			WeatherIconInput,
 			LocationableInput,
 		},
