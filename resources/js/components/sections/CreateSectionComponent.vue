@@ -6,6 +6,7 @@
 				title="Create a new section"
 				class="px-24">
 		</ActionBarComponent>
+
 		<div class="mt-4 mx-24">
 			<div class="mt-2 w-full flex flex-row justify-between">
 				<div class="flex-grow w-1/2 mr-4">
@@ -23,24 +24,31 @@
 					<FormInput label="Temperature" type="number" v-model="temperature"></FormInput>
 				</div>
 			</div>
+
 			<FileInput @selected="(img) => image = img"></FileInput>
+			<ShowImage v-if="image" :imagesrc="image" :caption="image_caption" class="mt-5 mb-3"></ShowImage>
 			<FormInput class="mt-2" label="Image caption" v-model="image_caption"></FormInput>
+
 			<RichTextInput label="Content" :content.sync="content" :locationables="locationables" @selectlocationable="addLocationable"  @detachlocationable="detachLocationable"></RichTextInput>
-			<div @click.prevent="is_draft = !is_draft" class="bg-box cursor-pointer flex items-center mt-10 rounded text-primary">
-				<div class="p-3 rounded-l text-2xl text-white bg-green-700" :class="{'text-primary bg-box': !is_draft}">
-					<font-awesome-icon :icon="['far', 'square']" v-if="!is_draft"></font-awesome-icon>
-					<font-awesome-icon :icon="['far', 'check-square']" v-else></font-awesome-icon>
-				</div>
-				<div class="ml-3">This is a draft</div>
-			</div>
-			<div v-if="!is_draft" @click.prevent="delayed_publishing = !delayed_publishing" class="bg-box cursor-pointer flex items-center mt-2 rounded text-primary">
-				<div class="p-3 rounded-l text-2xl text-white bg-green-700" :class="{'text-primary bg-box': !delayed_publishing}">
-					<font-awesome-icon :icon="['far', 'square']" v-if="!delayed_publishing"></font-awesome-icon>
-					<font-awesome-icon :icon="['far', 'check-square']" v-else></font-awesome-icon>
-				</div>
-				<div class="ml-3">Publish date and time</div>
-			</div>
-			<FormInput v-if="!is_draft && delayed_publishing" class="mt-2" label="Publish date and time" type="datetime-local" v-model="published_at"></FormInput>
+
+			<CheckboxInput
+					class="mt-10"
+					v-model="is_draft"
+					title="This is a draft">
+			</CheckboxInput>
+			<CheckboxInput
+					v-if="!is_draft"
+					v-model="delayed_publishing"
+					title="Delay publishing">
+			</CheckboxInput>
+			<FormInput
+					v-if="!is_draft && delayed_publishing"
+					class="mt-2"
+					label="Publish date and time"
+					type="datetime-local"
+					v-model="published_at">
+			</FormInput>
+
 			<input @click.prevent="submitSection" class="inline-block mt-5 px-4 py-3 bg-green-800 rounded text-white cursor-pointer focus:outline-none hover:bg-green-700 focus:bg-green-700 focus:shadow-lg" type="submit" :value="submitText">
 			<a @click.prevent="goBack" class="inline-block ml-4 px-4 py-3 bg-box text-primary rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</a>
 		</div>
@@ -52,8 +60,9 @@
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
 	import FormInput from 'Vue/components/forms/FormInput'
 	import FileInput from 'Vue/components/forms/FileInput'
+	import CheckboxInput from 'Vue/components/forms/CheckboxInput'
+	import ShowImage from 'Vue/components/sections/ShowImage'
 	import WeatherIconInput from 'Vue/components/forms/WeatherIconInput'
-	import LocationableInput from 'Vue/components/locationables/LocationableInput'
 	import NProgress from 'nprogress'
 	import Swal from 'sweetalert2'
 
@@ -65,7 +74,8 @@
 			FormInput,
 			FileInput,
 			WeatherIconInput,
-			LocationableInput,
+			CheckboxInput,
+			ShowImage,
 		},
 
 		data() {

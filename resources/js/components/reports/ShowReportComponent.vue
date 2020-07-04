@@ -188,17 +188,23 @@
 			nextSection: function() {
 				if (this.activeSection < this.sections.length - 1) {
 					this.activeSection++;
-					window.location.hash = this.sections[this.activeSection].id;
-					document.getElementById('sections-top').scrollIntoView();
-					NProgress.done();
+
+					setTimeout(() => {
+						window.location.hash = this.sections[this.activeSection].id;
+						document.getElementById('sections-top').scrollIntoView(true);
+						NProgress.done();
+					}, 0);
 				}
 			},
 			previousSection: function() {
 				if (this.activeSection > 0) {
 					this.activeSection--;
-					window.location.hash = this.sections[this.activeSection].id;
-					document.getElementById('sections-top').scrollIntoView();
-					NProgress.done();
+
+					setTimeout(() => {
+						window.location.hash = this.sections[this.activeSection].id;
+						document.getElementById('sections-top').scrollIntoView(true);
+						NProgress.done();
+					}, 0);
 				}
 			},
 			removeReport: function() {

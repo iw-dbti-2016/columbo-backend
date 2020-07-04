@@ -52,7 +52,7 @@
 					'cloud-sun': "It's sunny with some clouds",
 					'cloud-sun-rain': "It's sunny with some rain",
 					'moon': "The moon is visible",
-					'cloud-moon': "The moon is visible behind some clouds",
+					'cloud-moon': "The moon is visible with some clouds",
 					'cloud-moon-rain': "The moon is visible with some rain",
 					'cloud': "It's overcast",
 					'cloud-showers-heavy': "It's raining"

@@ -5,24 +5,19 @@
 				v-on:back="$emit('back')"
 				title="New location">
 		</ActionBarComponent>
-		<FormInput v-model="name" label="Name" :fade="true"></FormInput>
+
+		<FormInput v-model="name" label="Name"></FormInput>
 		<div>
 			<label class="text-fade mt-3 block" for="Info">Info</label>
-			<textarea v-model="info" name="info" id="info" placeholder="Write some info about this location" autocomplete="off" spellcheck="false" class="text-primary w-full block mt-2 px-4 py-3 bg-box-fade shadow rounded focus:outline-none focus:shadow-md"></textarea>
+			<textarea v-model="info" name="info" id="info" placeholder="Write some info about this location" autocomplete="off" spellcheck="false" class="text-primary w-full block mt-2 px-4 py-3 bg-box shadow rounded focus:outline-none focus:shadow-md"></textarea>
 			<div>
 
 			</div>
 		</div>
-		<div>
-			<label class="text-primary mt-3 block" for="draft">
-				<input v-model="draft" name="draft" id="draft" class="text-primary inline-block mt-2 px-4 py-3" type="checkbox">
-				<span>This is a draft</span>
-			</label>
-			<div>
-				<span></span>
-				<span></span>
-			</div>
-		</div>
+		<CheckboxInput
+				v-model="draft"
+				title="This is a draft">
+		</CheckboxInput>
 		<input @click.prevent="submitLocation" class="block mt-4 px-4 py-3 bg-green-500 rounded text-white cursor-pointer focus:outline-none hover:bg-green-600 focus:bg-green-600 focus:shadow-lg" type="submit" value="Create this location!">
 	</div>
 </template>
@@ -31,12 +26,14 @@
 	import NProgress from 'nprogress'
 	import Swal from 'sweetalert2'
 	import FormInput from 'Vue/components/forms/FormInput'
+	import CheckboxInput from 'Vue/components/forms/CheckboxInput'
 
 	export default {
 		name: 'create-location',
 
 		components: {
 			FormInput,
+			CheckboxInput,
 		},
 
 		props: {

@@ -23,7 +23,8 @@
 							<span class="ml-2 text-md py-1">{{ section.owner.first_name }} {{ section.owner.middle_name }} {{ section.owner.last_name }}</span>
 						</router-link>
 					</span>
-					<span class="text-fade-more text-md uppercase" :title="humanTimeDiff(section.published_at)">{{ humanTimeDiff(section.published_at) }}</span>
+					<span class="text-fade-more text-md uppercase" v-if="section.published_at" :title="formatDateTime(section.published_at)">{{ humanTimeDiff(section.published_at) }}</span>
+					<span class="text-fade-more text-md uppercase" v-else>Not yet published</span>
 				</div>
 				<div class="px-24 mt-4 text-fade-more text-sm">This section is shared with: {{ section.visibility }}, which means only the friends of the members and visitors can see this section.</div>
 			</div>
@@ -33,9 +34,6 @@
 
 <script>
     import RichTextOutput from 'Vue/components/editor/RichTextOutput'
-	import LocationableOutput from 'Vue/components/locationables/LocationableOutput'
-	import NProgress from 'nprogress'
-	import Swal from 'sweetalert2'
 	import ShowImage from 'Vue/components/sections/ShowImage'
 
     export default {
@@ -52,7 +50,6 @@
 
         components: {
             RichTextOutput,
-            LocationableOutput,
             ShowImage,
         },
 

@@ -1,7 +1,8 @@
 <template>
 	<div v-if="image || imagesrc" class="relative w-full pb-2/3 shadow-lg rounded-lg overflow-hidden bg-box">
 		<div class="absolute h-full w-full">
-			<img class="w-full h-full object-center" :class="{'pb-10': caption, 'object-cover': !showFullImage, 'object-contain': showFullImage}" :src="imagesource" :alt="caption">
+			<div class="absolute justify-center left-0 top-0 w-full h-full text-center flex items-center italic text-xl text-primary">Loading image...</div>
+			<img class="relative w-full h-full object-center" :class="{'pb-10': caption, 'object-cover': !showFullImage, 'object-contain': showFullImage}" :src="imagesource" :alt="caption">
 			<div v-if="caption" class="absolute text-primary bg-box font-serif text-xl w-full bottom-0 h-10 px-4 flex items-center">
 				<span class="truncate py-1">{{ caption }}</span>
 			</div>

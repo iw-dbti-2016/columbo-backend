@@ -34,24 +34,34 @@
 					<font-awesome-icon class="text-2xl" :icon="['fas', 'times']"></font-awesome-icon>
 				</a>
 			</div>
-
 			<FormInput label="Image caption" v-model="section.image_caption"></FormInput>
-			<RichTextInput :content.sync="section.content" :locationables="locationables" @selectlocationable="addLocationable"  @detachlocationable="detachLocationable"></RichTextInput>
-			<div v-if="value.published_at == null || timeIsInFuture(value.published_at)" @click.prevent="section.is_draft = !section.is_draft" class="bg-box cursor-pointer flex items-center mt-10 rounded text-primary">
-				<div class="p-3 rounded-l text-2xl text-white bg-green-700" :class="{'text-primary bg-box': !section.is_draft}">
-					<font-awesome-icon :icon="['far', 'square']" v-if="!section.is_draft"></font-awesome-icon>
-					<font-awesome-icon :icon="['far', 'check-square']" v-else></font-awesome-icon>
-				</div>
-				<div class="ml-3">This is a draft</div>
-			</div>
-			<div v-if="!section.is_draft && (value.published_at == null || timeIsInFuture(value.published_at))" @click.prevent="delayed_publishing = !delayed_publishing" class="bg-box cursor-pointer flex items-center mt-2 rounded text-primary">
-				<div class="p-3 rounded-l text-2xl text-white bg-green-700" :class="{'text-primary bg-box': !delayed_publishing}">
-					<font-awesome-icon :icon="['far', 'square']" v-if="!delayed_publishing"></font-awesome-icon>
-					<font-awesome-icon :icon="['far', 'check-square']" v-else></font-awesome-icon>
-				</div>
-				<div class="ml-3">Publish date and time</div>
-			</div>
-			<FormInput v-if="!section.is_draft && delayed_publishing" class="mt-2" label="Publish date and time" type="datetime-local" v-model="section.published_at"></FormInput>
+
+			<RichTextInput
+					:content.sync="section.content"
+					:locationables="locationables"
+					@selectlocationable="addLocationable"
+					@detachlocationable="detachLocationable">
+			</RichTextInput>
+
+			<CheckboxInput
+					class="mt-10"
+					v-if="value.published_at == null || timeIsInFuture(value.published_at)"
+					v-model="section.is_draft"
+					title="This is a draft">
+			</CheckboxInput>
+			<CheckboxInput
+					v-if="!section.is_draft && (value.published_at == null || timeIsInFuture(value.published_at))"
+					v-model="delayed_publishing"
+					title="Delay publishing">
+			</CheckboxInput>
+			<FormInput
+					v-if="!section.is_draft && delayed_publishing"
+					class="mt-2"
+					label="Publish date and time"
+					type="datetime-local"
+					v-model="section.published_at">
+			</FormInput>
+
 			<input @click.prevent="updateSection" class="inline-block mt-4 px-4 py-3 bg-green-500 rounded text-white cursor-pointer focus:outline-none hover:bg-green-600 focus:bg-green-600 focus:shadow-lg" type="submit" value="Update this report!">
 			<a @click.prevent="goBack" class="inline-block absolute right-0 mr-8 mt-4 px-4 py-3 text-primary bg-box rounded shadow focus:outline-none hover:bg-box-fade focus:bg-box-fade focus:shadow-md">Cancel</a>
 		</div>
@@ -62,10 +72,10 @@
 <script>
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
 	import FormInput from 'Vue/components/forms/FormInput'
-	import LocationableInput from 'Vue/components/locationables/LocationableInput'
 	import NProgress from 'nprogress'
 	import Swal from 'sweetalert2'
 	import FileInput from 'Vue/components/forms/FileInput'
+	import CheckboxInput from 'Vue/components/forms/CheckboxInput'
 	import WeatherIconInput from 'Vue/components/forms/WeatherIconInput'
 	import ShowImage from 'Vue/components/sections/ShowImage'
 
@@ -82,8 +92,8 @@
 		components: {
 			RichTextInput,
 			FormInput,
-			LocationableInput,
 			FileInput,
+			CheckboxInput,
 			WeatherIconInput,
 			ShowImage,
 		},
