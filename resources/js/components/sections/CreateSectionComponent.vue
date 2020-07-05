@@ -157,7 +157,7 @@
 
 						this.$emit('created', response.data);
 					})
-					.catch(this.handleError);
+					.catch((e) => this.handleError(e));
 			},
 			calculateDuration: function() {
 				let start = this.start_time.split(":");
@@ -169,15 +169,6 @@
 
 				return (end[0] - start[0]) * 60 + (end[1] - start[1]);
 			},
-			handleError: function(error) {
-				if (error.response.status == 401) {
-					// log out
-				}
-
-				console.log(error.response);
-
-				//this.error = error.response.data;
-			}
 		},
 
 		watch: {

@@ -33,20 +33,8 @@
 
                         component.stopLoading();
                     })
-                    .catch(component.handleError)
+                    .catch(component.handleError);
             })
-        },
-
-        methods: {
-            handleError: function(error) {
-            	if (error.response.status == 500 || error.response.status == 403) {
-                    this.userData = error.response.data;
-                }
-                if (error.response.status == 401) {
-                    document.getElementById('logout').submit();
-                }
-                console.log("error: " + error);
-            },
         },
     }
 </script>

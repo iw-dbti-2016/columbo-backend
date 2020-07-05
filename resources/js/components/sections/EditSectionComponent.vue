@@ -174,7 +174,7 @@
 						this.$emit('input', response.data);
 						this.$emit('updated');
 					})
-					.catch(this.handleError)
+					.catch((e) => this.handleError(e));
 			},
 			calculateDuration: function() {
 				let start = this.startTime.split(":");
@@ -186,14 +186,6 @@
 
 				return (end[0] - start[0]) * 60 + (end[1] - start[1]);
 			},
-            handleError: function(error) {
-            	console.log(error.response);
-				if (error.response.status == 401) {
-					// log out
-				}
-
-				this.error = error.response.data;
-            },
 			changed: function() {
 				if (this.value.start_time !== this.section.start_time ||
 					this.value.end_time !== this.section.end_time ||

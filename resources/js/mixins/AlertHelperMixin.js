@@ -26,5 +26,21 @@ export default {
 				...config,
 			});
 		},
+		warningAlert(config) {
+			Swal.fire({
+				title: "Be Careful",
+				icon: "warning",
+				target: document.getElementById('parent-element'),
+				...config,
+			});
+		},
+		errorAlert(config) {
+			Swal.fire({
+				title: "Error",
+				icon: "error",
+				target: document.getElementById('parent-element'),
+				...config,
+			});
+		}
 	}
 }

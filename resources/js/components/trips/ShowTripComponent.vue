@@ -94,14 +94,7 @@
                     .then((response) => {
                         this.$router.push({name: 'home'});
                     })
-                    .catch(this.handleError);
-            },
-            handleError: function(error) {
-                if (error.response.status == 401) {
-                    document.getElementById('logout').submit();
-                }
-
-                this.userData = error.response.data;
+                    .catch((e) => this.handleError(e));
             },
         },
     }

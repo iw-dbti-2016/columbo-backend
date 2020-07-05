@@ -117,7 +117,7 @@
 
 						this.stopLoading();
 					})
-					.catch((error) => console.log(error));
+					.catch((e) => this.handleError(e));
 			},
 			selectLocationable: function(locationable) {
 				if (this.isSelected(locationable)) {

@@ -91,13 +91,7 @@
                     .then((response) => {
                         this.$router.push({name: 'showTrip', params: {tripId: response.data.id}});
                     })
-                    .catch((error) => {
-		                if (error.response.status == 401) {
-		                    document.getElementById('logout').submit();
-		                }
-
-		                this.userData = error.response.data;
-                    });
+                    .catch((error) => this.handleError(e));
             },
         },
 	}

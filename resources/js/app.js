@@ -7,6 +7,7 @@ import App from 'Vue/App.vue'
 import TimeHelperMixin from 'Vue/mixins/TimeHelperMixin'
 import AlertHelperMixin from 'Vue/mixins/AlertHelperMixin'
 import ProgressHelperMixin from 'Vue/mixins/ProgressHelperMixin'
+import ErrorHelperMixin from 'Vue/mixins/ErrorHelperMixin'
 
 require('./bootstrap')
 require('./font-awesome')
@@ -16,11 +17,13 @@ Vue.component('MapInputComponent', require('./components/global/MapInputComponen
 Vue.component('ErrorHandlerComponent', require('./components/global/ErrorHandlerComponent.vue').default);
 Vue.component('ProgressBarComponent', require('./components/global/ProgressBarComponent.vue').default);
 Vue.component('ActionBarComponent', require('./components/global/ActionBarComponent.vue').default);
+Vue.component('Logo', require('./components/global/Logo.vue').default);
 
 Vue.use(VueRouter);
 Vue.mixin(TimeHelperMixin);
 Vue.mixin(AlertHelperMixin);
 Vue.mixin(ProgressHelperMixin);
+Vue.mixin(ErrorHelperMixin);
 
 const router = new VueRouter({
 	routes: routes,

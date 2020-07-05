@@ -76,13 +76,7 @@
 					.then((response) => {
 						this.$router.push(`/app/trips/${tripId}/reports/${response.data.id}`);
 					})
-					.catch((error) => {
-						if (error.response.status == 401) {
-							document.getElementById('logout').submit();
-						}
-
-						this.userData = error.response.data;
-					});
+					.catch((e) => this.handleError(e));
 			},
 		},
 	}

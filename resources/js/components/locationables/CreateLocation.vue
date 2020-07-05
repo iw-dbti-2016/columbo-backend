@@ -72,7 +72,7 @@
 
 						this.$emit('created', response.data);
 					})
-					.catch((error) => console.log(error));
+					.catch((e) => this.handleError(e));
 			},
 		},
 	}

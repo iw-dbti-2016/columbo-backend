@@ -67,7 +67,7 @@
 
                         component.stopLoading();
                     })
-                    .catch(component.handleError)
+                    .catch(component.handleError);
             })
         },
 
@@ -86,14 +86,7 @@
 					.then((response) => {
 						this.$router.push(`/app/trips/${tripId}/reports/${reportId}`);
 					})
-					.catch(this.handleError);
-			},
-			handleError: function(error) {
-				if (error.response.status == 401) {
-					document.getElementById('logout').submit();
-				}
-
-				this.userData = error.response.data;
+					.catch((e) => this.handleError(e));
 			},
 		},
 	}
