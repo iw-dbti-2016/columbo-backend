@@ -63,8 +63,6 @@
 	import CheckboxInput from 'Vue/components/forms/CheckboxInput'
 	import ShowImage from 'Vue/components/sections/ShowImage'
 	import WeatherIconInput from 'Vue/components/forms/WeatherIconInput'
-	import NProgress from 'nprogress'
-	import Swal from 'sweetalert2'
 
 	export default {
 		name: 'create-section',
@@ -119,17 +117,9 @@
 			goBack: function() {
 				if (this.start_time !== "" || this.end_time !== "" || this.content !== "" ||
 					this.locationables.length !== 0) {
-					Swal.fire({
-						title: "Are you sure?",
+					this.confirmAlert({
 						text: "When you go back, you'll lose your new post!",
-						icon: "warning",
-						showCancelButton: true,
-						confirmButtonText: 'Yes, go back without saving!',
-						customClass: {
-							confirmButton: "green-button",
-							cancelButton: "red-button",
-						},
-						target: document.getElementById('parent-element'),
+						confirmButtonText: 'Yes, delete it!',
 					})
 					.then((result) => {
 						if (result.value) {
@@ -141,7 +131,7 @@
 				}
 			},
 			submitSection: function() {
-				NProgress.start();
+				this.startLoading();
 
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;
@@ -160,11 +150,9 @@
 					visibility: "friends", // TODO
 				})
 					.then((response) => {
-						Swal.fire({
+						this.notifyAlert({
 							title: "Done!",
 							text: "This section has been created, nice work!",
-							icon: "success",
-							target: document.getElementById('parent-element'),
 						});
 
 						this.$emit('created', response.data);

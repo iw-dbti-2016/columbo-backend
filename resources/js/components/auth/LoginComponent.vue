@@ -15,7 +15,6 @@
 </template>
 
 <script>
-	import NProgress from 'nprogress'
 	import { mapActions } from 'vuex'
 
 	export default {
@@ -37,7 +36,7 @@
             next(component => {
             	component.ready = true;
 
-                NProgress.done()
+                component.stopLoading();
             })
         },
 

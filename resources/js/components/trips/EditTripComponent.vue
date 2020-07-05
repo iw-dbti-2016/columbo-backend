@@ -45,7 +45,6 @@
 </template>
 
 <script>
-	import NProgress from 'nprogress'
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
 	import FormInput from 'Vue/components/forms/FormInput'
 
@@ -72,7 +71,7 @@
                     	component.trip = response.data;
                     	component.ready = true;
 
-                        NProgress.done()
+                        component.stopLoading();
                     })
                     .catch(component.handleError)
             })

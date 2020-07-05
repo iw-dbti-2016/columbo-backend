@@ -12,8 +12,6 @@
 </template>
 
 <script>
-	import NProgress from 'nprogress'
-
 	export default {
 		name: 'show-profile',
 
@@ -33,7 +31,7 @@
                     	component.user = response.data;
                     	component.ready = true;
 
-                        NProgress.done()
+                        component.stopLoading();
                     })
                     .catch(component.handleError)
             })

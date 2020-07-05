@@ -28,7 +28,6 @@
 </template>
 
 <script>
-	import NProgress from 'nprogress'
 	import { mapActions } from 'vuex'
 
 	export default {
@@ -49,7 +48,7 @@
                     	component.trips = response.data;
                     	component.ready = true;
 
-                        NProgress.done()
+                        component.stopLoading();
                     })
                     .catch(component.handleError)
             })

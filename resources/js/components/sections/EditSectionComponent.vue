@@ -72,8 +72,6 @@
 <script>
 	import RichTextInput from 'Vue/components/editor/RichTextInput'
 	import FormInput from 'Vue/components/forms/FormInput'
-	import NProgress from 'nprogress'
-	import Swal from 'sweetalert2'
 	import FileInput from 'Vue/components/forms/FileInput'
 	import CheckboxInput from 'Vue/components/forms/CheckboxInput'
 	import WeatherIconInput from 'Vue/components/forms/WeatherIconInput'
@@ -134,17 +132,9 @@
 			},
 			goBack: function() {
 				if (this.changed()) {
-					Swal.fire({
-						title: "Are you sure?",
+					this.confirmAlert({
 						text: "When you go back, you'll lose your changes to this post!",
-						icon: "warning",
-						showCancelButton: true,
 						confirmButtonText: 'Yes, go back without saving!',
-						customClass: {
-							confirmButton: "green-button",
-							cancelButton: "red-button",
-						},
-						target: document.getElementById('parent-element'),
 					})
 					.then((result) => {
 						if (result.value) {
@@ -156,7 +146,7 @@
 				}
 			},
 			updateSection: function() {
-				NProgress.start();
+				this.startLoading();
 
 				let tripId = this.$route.params.tripId;
 				let reportId = this.$route.params.reportId;
@@ -176,11 +166,9 @@
 					visibility: "friends", // TODO
 				})
 					.then((response) => {
-						Swal.fire({
+						this.notifyAlert({
 							title: "Done!",
 							text: "This section has been updated, you rock!",
-							icon: "success",
-							target: document.getElementById('parent-element'),
 						});
 
 						this.$emit('input', response.data);

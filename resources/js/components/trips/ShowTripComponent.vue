@@ -54,7 +54,6 @@
 </template>
 
 <script>
-	import NProgress from 'nprogress'
 	import RichTextOutput from 'Vue/components/editor/RichTextOutput'
 
 	export default {
@@ -82,7 +81,7 @@
                     	component.reports = response.data.reports;
                     	component.ready = true;
 
-                        NProgress.done()
+                        component.stopLoading();
                     })
                     .catch(component.handleError)
             })

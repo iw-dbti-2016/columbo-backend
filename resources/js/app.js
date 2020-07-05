@@ -5,6 +5,8 @@ import VueRouter from 'vue-router'
 import NProgress from 'nprogress'
 import App from 'Vue/App.vue'
 import TimeHelperMixin from 'Vue/mixins/TimeHelperMixin'
+import AlertHelperMixin from 'Vue/mixins/AlertHelperMixin'
+import ProgressHelperMixin from 'Vue/mixins/ProgressHelperMixin'
 
 require('./bootstrap')
 require('./font-awesome')
@@ -17,6 +19,8 @@ Vue.component('ActionBarComponent', require('./components/global/ActionBarCompon
 
 Vue.use(VueRouter);
 Vue.mixin(TimeHelperMixin);
+Vue.mixin(AlertHelperMixin);
+Vue.mixin(ProgressHelperMixin);
 
 const router = new VueRouter({
 	routes: routes,

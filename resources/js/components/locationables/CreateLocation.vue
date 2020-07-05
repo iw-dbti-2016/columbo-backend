@@ -23,8 +23,6 @@
 </template>
 
 <script>
-	import NProgress from 'nprogress'
-	import Swal from 'sweetalert2'
 	import FormInput from 'Vue/components/forms/FormInput'
 	import CheckboxInput from 'Vue/components/forms/CheckboxInput'
 
@@ -55,7 +53,7 @@
 
 		methods: {
 			submitLocation: function() {
-				NProgress.start();
+				this.startLoading();
 
 				axios.post(`/api/v1/trips/${this.$route.params.tripId}/locations`, {
 					coordinates: this.position.coordinates,
@@ -67,11 +65,9 @@
 					//published_at for postponed publication
 				})
 					.then((response) => {
-						Swal.fire({
+						this.notifyAlert({
 							title: "Done!",
 							text: "This location has been created, nice work!",
-							icon: "success",
-							target: document.getElementById('parent-element'),
 						});
 
 						this.$emit('created', response.data);

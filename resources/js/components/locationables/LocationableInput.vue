@@ -45,7 +45,6 @@
 </template>
 
 <script>
-	import NProgress from 'nprogress'
 	import CreateLocation from 'Vue/components/locationables/CreateLocation'
 	import CheckboxInput from 'Vue/components/forms/CheckboxInput'
 
@@ -102,10 +101,10 @@
 
 				this.creating = false;
 
-				NProgress.done();
+				this.stopLoading();
 			},
 			updateLocation: function(e) {
-				NProgress.start();
+				this.startLoading();
 
 				this.selectedPosition = e,
 				this.selected = true;
@@ -116,7 +115,7 @@
 						this.suggestions = response.data;
 						this.loading = false;
 
-						NProgress.done();
+						this.stopLoading();
 					})
 					.catch((error) => console.log(error));
 			},

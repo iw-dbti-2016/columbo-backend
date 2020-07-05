@@ -105,12 +105,10 @@
 </template>
 
 <script>
-	import NProgress from 'nprogress'
     import RichTextOutput from 'Vue/components/editor/RichTextOutput'
     import CreateSectionComponent from 'Vue/components/sections/CreateSectionComponent'
     import EditSectionComponent from 'Vue/components/sections/EditSectionComponent'
     import ShowSectionComponent from 'Vue/components/sections/ShowSectionComponent'
-	import Swal from 'sweetalert2'
 
 	export default {
 		name: 'show-report',
@@ -163,7 +161,7 @@
 							}
 						}
 
-                        NProgress.done()
+                        component.stopLoading();
                     })
                     .catch(component.handleError)
             })
@@ -192,7 +190,7 @@
 					setTimeout(() => {
 						window.location.hash = this.sections[this.activeSection].id;
 						document.getElementById('sections-top').scrollIntoView(true);
-						NProgress.done();
+						this.stopLoading();
 					}, 0);
 				}
 			},
@@ -203,7 +201,7 @@
 					setTimeout(() => {
 						window.location.hash = this.sections[this.activeSection].id;
 						document.getElementById('sections-top').scrollIntoView(true);
-						NProgress.done();
+						this.stopLoading();
 					}, 0);
 				}
 			},
@@ -223,42 +221,32 @@
 
 				this.activeSection = this.sections.findIndex(x => x.id === e.id);
 				window.location.hash = e.id;
-				NProgress.done();
+				this.stopLoading();
 			},
 			updateSection: function(e) {
 				// Section already updated in object by v-model
 				this.editing = false;
-				NProgress.done();
+				this.stopLoading();
 			},
 			removeSection: function() {
 				let toRemoveId = this.sections[this.activeSection].id;
 
-				Swal.fire({
-					title: "Are you sure?",
+				this.confirmAlert({
 					text: "Once deleted, you will not be able to recover this section!",
-					icon: "warning",
-					showCancelButton: true,
 					confirmButtonText: 'Yes, delete it!',
-					customClass: {
-						confirmButton: "green-button",
-						cancelButton: "red-button",
-					},
-					target: document.getElementById('parent-element'),
 				})
 				.then((result) => {
 					if (result.value) {
 
-						NProgress.start();
+						this.startLoading();
 
 						let tripId = this.$route.params.tripId;
 						let reportId = this.$route.params.reportId;
 
 						axios.delete(`/api/v1/trips/${tripId}/reports/${reportId}/sections/${toRemoveId}`)
 							.then((response) => {
-								Swal.fire({
+								this.notifyAlert({
 									title: "This section has been deleted!",
-									icon: "success",
-									target: document.getElementById('parent-element'),
 								});
 
 								this.filterSection(toRemoveId);
@@ -272,7 +260,7 @@
 
 				this.sections = this.sections.filter(section => section.id !== removedId);
 
-				NProgress.done();
+				this.stopLoading();
 			},
 			handleError: function(error) {
 				if (error.response.status == 401) {
