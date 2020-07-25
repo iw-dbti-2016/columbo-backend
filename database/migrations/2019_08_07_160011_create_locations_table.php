@@ -35,8 +35,7 @@ class CreateLocationsTable extends Migration
 
             $table->foreign('trip_id')
                     ->references('id')
-                    ->on('trips')
-                    ->onDelete('set null');
+                    ->on('trips');
 
             $table->foreign('user_id')
                     ->references('id')

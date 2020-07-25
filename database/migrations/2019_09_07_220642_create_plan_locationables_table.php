@@ -15,7 +15,7 @@ class CreatePlanLocationablesTable extends Migration
     {
         Schema::create('plan_locationables', function (Blueprint $table) {
             $table->bigInteger('plan_id')->unsigned()->index();
-            $table->morphs('plan_locationable', 'plan_locationable_id_type_index');
+            $table->morphs('locationable', 'plan_locationable_id_type_index');
 
             /* DATA */
             $table->text('description')->nullable();
