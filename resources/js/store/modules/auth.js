@@ -13,6 +13,10 @@ export default {
 			return state.authenticated
 		},
 
+		verified (state) {
+			return state.user.email_verified_at != null
+		},
+
 		user (state) {
 			return state.user
 		},
@@ -33,16 +37,16 @@ export default {
 			await axios.get('/sanctum/csrf-cookie')
 			await axios.post('/api/v1/auth/login', {...credentials, "device_name": "browser"})
 
-			return dispatch('me')
+			return dispatch('getUser')
 		},
 
 		async logout({ dispatch }) {
 			await axios.delete('/api/v1/auth/logout')
 
-			return dispatch('me')
+			return dispatch('getUser')
 		},
 
-		me ({ commit }) {
+		getUser ({ commit }) {
 			return axios.get('/api/v1/user').then((response) => {
 				commit('SET_AUTHENTICATED', true)
 				commit('SET_USER', response.data)

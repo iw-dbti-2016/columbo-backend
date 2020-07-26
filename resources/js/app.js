@@ -40,9 +40,9 @@ router.beforeEach((to, from, next) => {
 	} else if (to.meta.requiresAuthentication === false && isAuthenticated) {
 		next({name: 'home'})
 	} else {
-		let user = store.getters['auth/user'];
+		let verified = store.getters['auth/verified'];
 
-		if (isAuthenticated && to.meta.requiresVerification === true && user.email_verified_at == null) {
+		if (isAuthenticated && to.meta.requiresVerification === true && !verified) {
 			next({name: 'verify-email'});
 		} else {
 			next();
@@ -50,7 +50,7 @@ router.beforeEach((to, from, next) => {
 	}
 })
 
-store.dispatch('auth/me').then(() => {
+store.dispatch('auth/getUser').then(() => {
 	new Vue({
 		router,
 		store,
