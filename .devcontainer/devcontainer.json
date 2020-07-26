@@ -1,7 +1,7 @@
 {
     "name": "Columbo",
     "dockerComposeFile": "../laradock/docker-compose.yml",
-    "remoteUser": "laradock",
+    "remoteUser": "root",
     "extensions": [
         "streetsidesoftware.code-spell-checker",
         "felixfbecker.php-intellisense",
@@ -16,10 +16,14 @@
     "runServices": [
         "nginx",
         "mysql",
-        "redis"
+        "redis",
+        "phpmyadmin",
     ],
     "service": "workspace",
     "workspaceFolder": "/var/www",
     "shutdownAction": "stopCompose",
-    "postCreateCommand": "uname -a"
+    "postCreateCommand": "uname -a",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    }
 }
