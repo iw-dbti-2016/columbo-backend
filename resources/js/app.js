@@ -40,7 +40,13 @@ router.beforeEach((to, from, next) => {
 	} else if (to.meta.requiresAuthentication === false && isAuthenticated) {
 		next({name: 'home'})
 	} else {
-		next()
+		let user = store.getters['auth/user'];
+
+		if (isAuthenticated && to.meta.requiresVerification === true && user.email_verified_at == null) {
+			next({name: 'verify-email'});
+		} else {
+			next();
+		}
 	}
 })
 
