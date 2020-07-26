@@ -1,0 +1,25 @@
+{
+    "name": "Columbo",
+    "dockerComposeFile": "../laradock/docker-compose.yml",
+    "remoteUser": "laradock",
+    "extensions": [
+        "streetsidesoftware.code-spell-checker",
+        "felixfbecker.php-intellisense",
+        "felixfbecker.php-debug",
+        "neilbrayfield.php-docblocker",
+        "bradlc.vscode-tailwindcss",
+        "octref.vetur",
+        "stef-k.laravel-goto-controller",
+        "shd101wyy.markdown-preview-enhanced",
+        "mhutchie.git-graph",
+    ],
+    "runServices": [
+        "nginx",
+        "mysql",
+        "redis"
+    ],
+    "service": "workspace",
+    "workspaceFolder": "/var/www",
+    "shutdownAction": "stopCompose",
+    "postCreateCommand": "uname -a"
+}
