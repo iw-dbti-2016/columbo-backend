@@ -9,6 +9,7 @@ use Columbo\Action;
 $factory->define(Action::class, function (Faker $faker) {
     return [
     	'uuid' => Str::uuid(),
-        'action' => $faker->numberBetween(0, 255),
+        'action' => $faker->randomElement(array_keys(config("mapping.action"))),
+        'executed_at' => $faker->datetime(),
     ];
 });

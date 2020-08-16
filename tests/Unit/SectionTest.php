@@ -24,14 +24,4 @@ class SectionTest extends TestCase
 
         $this->assertDatabaseHas('sections', ['id' => $section->id]);
     }
-
-    /** @test */
-    public function a_section_can_have_a_location()
-    {
-        $section = $this->createSection();
-        $location = $this->createLocation(null, $section);
-
-        $this->assertDatabaseHas('locations', ['id' => $location->id]);
-        $this->assertCount(1, $section->locationable()->get());
-    }
 }

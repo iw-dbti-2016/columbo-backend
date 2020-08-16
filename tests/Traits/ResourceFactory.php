@@ -3,15 +3,12 @@
 namespace Tests\Traits;
 
 use Grimzy\LaravelMysqlSpatial\Types\Point;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Facades\Crypt;
 use Columbo\Location;
 use Columbo\Report;
 use Columbo\Role;
 use Columbo\Section;
 use Columbo\Trip;
 use Columbo\User;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 trait ResourceFactory
 {
@@ -98,29 +95,24 @@ trait ResourceFactory
 	}
 
 	/**
-	 * Creats a location. If data is passed, it is used
+	 * Creates a location. If data is passed, it is used
 	 * 	and if no user is passed it is created. If a
-	 * 	locationReferencer is passed, the location is
-	 * 	associated to that referencer.
+	 * 	trip is passed, it is used, and if no trip
+	 * 	is passed it is created.
 	 *
 	 * @param  Columbo\User|null   $user
-	 * @param  Location/POI				   $locationReferencer
+	 * @param  Columbo\Trip|null   $trip
 	 * @return Columbo\Location
 	 */
-	protected function createLocation(User $user=null, $locationReferencer=null, $data=[])
+	protected function createLocation(User $user=null, Trip $trip=null, $data=[])
 	{
-		if ($user               == null) $user               = $this->createUser();
-		if ($locationReferencer == null) $locationReferencer = $this->createSection($user);
+		if ($user == null) $user = $this->createUser();
+		if ($trip == null) $trip = $this->createTrip($user);
 
-		if (isset($data["coordinates"]) &&
-			is_array($data["coordinates"])) $data["coordinates"] = new Point($data["coordinates"][0],$data["coordinates"][1]);
-
-		$location = $user->locations()->save(factory(Location::class)->make($data));
-
-		$locationReferencer->locationable()->associate($location);
-		$locationReferencer->save();
-
-		return $location;
+		$location = factory(Location::class)->make($data);
+		$location->owner()->associate($user);
+		$location->trip()->associate($trip);
+		return $user->locations()->save($location);
 	}
 
 	protected function createRole($data=[])

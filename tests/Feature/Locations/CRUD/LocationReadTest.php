@@ -3,6 +3,7 @@
 namespace Tests\Feature\Locations\CRUD;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use Tests\Traits\APITestHelpers;
 
@@ -10,23 +11,28 @@ class LocationReadTest extends TestCase
 {
 	use RefreshDatabase, APITestHelpers;
 
-	/** @test */
-	public function a_user_can_read_location_details()
+	private $user;
+	private $trip;
+	private $location;
+
+	public function setUp() : void
 	{
-		$user		= $this->createUser();
-		$location	= $this->createLocation($user);
+		parent::setUp();
 
-		$response = $this->expectJSON()
-						 ->actingAs($user)
-						 ->get("/api/v1/locations/{$location->id}");
+		$this->user		= $this->createUser();
+		$this->trip		= $this->createTrip($this->user);
+		$this->location	= $this->createLocation($this->user, $this->trip);
 
-		$response->assertStatus(200);
-		$response->assertJSONStructure($this->successStructure());
+		Sanctum::actingAs($this->user);
 	}
 
 	/** @test */
-	public function a_user_can_read_the_closest_locations_to_given_coordinate()
+	public function a_user_can_read_location_details()
 	{
 
+		$response = $this->expectJSON()
+						 ->get("/api/v1/trips/{$this->trip->id}/locations/{$this->location->id}");
+
+		$response->assertStatus(200);
 	}
 }

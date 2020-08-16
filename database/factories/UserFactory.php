@@ -2,7 +2,6 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 use Faker\Generator as Faker;
-use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Support\Str;
 use Columbo\User;
 

@@ -12,6 +12,7 @@
         "stef-k.laravel-goto-controller",
         "shd101wyy.markdown-preview-enhanced",
         "mhutchie.git-graph",
+        "dbankier.vscode-quick-select",
     ],
     "runServices": [
         "nginx",

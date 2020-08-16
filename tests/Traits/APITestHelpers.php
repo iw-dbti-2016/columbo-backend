@@ -21,35 +21,9 @@ trait APITestHelpers
 		return $this;
 	}
 
-	/**
-	 * Sets the TTL for JWT tokens to 0.
-	 * 	Used to test token expiry.
-	 */
-	public function expireTokens($ttl=0)
+	public function showResponse($response)
 	{
-		config(['jwt.ttl' => $ttl]);
-
-		return $this;
-	}
-
-	/**
-	 * Adds the required Authorization-header for running
-	 * 	a test as a specific user.
-	 * From: https://github.com/tymondesigns/jwt-auth/issues/1246#issuecomment-426705432
-	 */
-	public function actingAs(Authenticatable $user, $driver = null)
-	{
-		$token = "";
-
-		try {
-			$token = JWTAuth::fromUser($user);
-		} catch (TokenExpiredException $e) {
-			$token = config('JWT_EXPIRED_TOKEN');
-		}
-
-		$this->withHeader('Authorization', 'bearer ' . $token);
-
-		return $this;
+		dd($response->decodeResponseJson());
 	}
 
 	/////////////////////////////////////

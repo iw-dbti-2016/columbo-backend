@@ -32,12 +32,13 @@ class LocationTest extends TestCase
     }
 
     /** @test */
-    public function a_location_can_belong_to_a_section()
+    public function a_location_belongs_to_a_trip()
     {
-		$section  = $this->createSection();
-		$location = $this->createLocation(null, $section);
+		$trip  = $this->createTrip();
+		$location = $this->createLocation(null, $trip);
 
-    	$this->assertDatabaseHas('sections', ['locationable_id' => $location->id]);
-    	$this->assertCount(1, $location->sections()->get());
+        $queried_trip = $location->trip()->first();
+        $this->assertEquals($trip->id, $queried_trip->id);
+    	$this->assertEquals(1, $location->trip()->count());
     }
 }
