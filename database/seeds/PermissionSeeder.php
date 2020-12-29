@@ -1,25 +1,27 @@
 <?php
 
+namespace Database\Seeders;
+
 use Columbo\Permission;
 use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        foreach ($this->getPermissionMap() as $permission) {
+	/**
+	 * Run the database seeds.
+	 *
+	 * @return void
+	 */
+	public function run()
+	{
+		foreach ($this->getPermissionMap() as $permission) {
 			Permission::create($permission);
 		}
-    }
+	}
 
-    public function getPermissionMap()
-    {
-    	return [
+	public function getPermissionMap()
+	{
+		return [
 			[
 				"name" => "edit all locations",
 				"label" => "location:all:edit",
@@ -313,5 +315,5 @@ class PermissionSeeder extends Seeder
 				"label" => "visitors:update",
 			],
 		];
-    }
+	}
 }

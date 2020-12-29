@@ -1,25 +1,27 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class PermissionRoleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        foreach ($this->getPermissionRoleMap() as $permissionRole) {
-        	DB::table('permission_role')->insert($permissionRole);
-        }
-    }
+	/**
+	 * Run the database seeds.
+	 *
+	 * @return void
+	 */
+	public function run()
+	{
+		foreach ($this->getPermissionRoleMap() as $permissionRole) {
+			DB::table('permission_role')->insert($permissionRole);
+		}
+	}
 
-    public function getPermissionRoleMap()
-    {
-    	return [
+	public function getPermissionRoleMap()
+	{
+		return [
 			["permission_label" => "location:all:edit", "role_label" => "owner"],
 			["permission_label" => "location:all:edit", "role_label" => "admin"],
 			["permission_label" => "location:all:remove", "role_label" => "owner"],
@@ -223,6 +225,6 @@ class PermissionRoleSeeder extends Seeder
 			["permission_label" => "visitors:remove", "role_label" => "admin"],
 			["permission_label" => "visitors:update", "role_label" => "owner"],
 			["permission_label" => "visitors:update", "role_label" => "admin"],
-    	];
-    }
+		];
+	}
 }

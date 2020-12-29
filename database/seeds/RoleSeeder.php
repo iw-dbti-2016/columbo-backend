@@ -1,21 +1,23 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use Columbo\Role;
 
 class RoleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        foreach ($this->getRoleMap() as $role) {
+	/**
+	 * Run the database seeds.
+	 *
+	 * @return void
+	 */
+	public function run()
+	{
+		foreach ($this->getRoleMap() as $role) {
 			Role::create($role);
 		}
-    }
+	}
 
 	public function getRoleMap()
 	{

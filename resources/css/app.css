@@ -220,7 +220,7 @@ div:not(.ProseMirror-editor) > .ProseMirror > iframe {
 
 /* EDITOR MENTIONS */
 .mention {
-	@apply bg-box text-primary font-bold rounded-lg px-2 py-1 whitespace-no-wrap cursor-pointer;
+	@apply bg-box text-primary font-bold rounded-lg px-2 py-1 whitespace-nowrap cursor-pointer;
 }
 .mention:hover {
 	@apply bg-box-fade text-primary;

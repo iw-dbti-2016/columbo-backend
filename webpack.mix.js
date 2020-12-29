@@ -1,4 +1,5 @@
 const mix = require('laravel-mix');
+var path = require('path');
 
 require('laravel-mix-tailwind');
 require('laravel-mix-purgecss');
@@ -14,21 +15,22 @@ require('laravel-mix-purgecss');
  |
  */
 mix.webpackConfig({
-    resolve: {
-        alias: {
-            Vue: path.resolve(__dirname, 'resources/js/'),
-        }
-    }
+	resolve: {
+		alias: {
+			Vue: path.resolve(__dirname, 'resources/js/'),
+		}
+	}
 });
 
 mix.js('resources/js/app.js', 'public/js')
-   .postCss('resources/css/app.css', 'public/css')
-   .tailwind('./tailwind.config.js');
+	.vue()
+	.postCss('resources/css/app.css', 'public/css')
+	.tailwind('./tailwind.config.js');
 
 if (mix.inProduction()) {
-  mix
-   .version()
-   .purgeCss();
+	mix
+		.version()
+		.purgeCss();
 }
 
 mix.browserSync('127.0.0.1:8000')
